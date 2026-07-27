@@ -26,6 +26,7 @@ class BusinessInfoScreen extends ConsumerWidget {
       data: (catalog) => PlaceholderScreen(
         title: AppStrings.businessInfoTitle,
         subtitle: catalog.business.businessName,
+        automaticallyImplyLeading: false,
       ),
     );
   }
@@ -39,7 +40,10 @@ class _BusinessInfoScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text(AppStrings.businessInfoTitle)),
+      appBar: AppBar(
+        title: const Text(AppStrings.businessInfoTitle),
+        automaticallyImplyLeading: false,
+      ),
       body: SafeArea(child: child),
     );
   }

@@ -6,17 +6,22 @@ class PlaceholderScreen extends StatelessWidget {
     required this.title,
     this.subtitle,
     this.actions = const [],
+    this.automaticallyImplyLeading = true,
     super.key,
   });
 
   final String title;
   final String? subtitle;
   final List<Widget> actions;
+  final bool automaticallyImplyLeading;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(title)),
+      appBar: AppBar(
+        title: Text(title),
+        automaticallyImplyLeading: automaticallyImplyLeading,
+      ),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.all(24),

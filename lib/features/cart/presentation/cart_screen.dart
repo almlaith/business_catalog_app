@@ -7,6 +7,9 @@ class CartScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const PlaceholderScreen(title: AppStrings.cartTitle);
+    return const PlaceholderScreen(
+      title: AppStrings.cartTitle,
+      automaticallyImplyLeading: false,
+    );
   }
 }

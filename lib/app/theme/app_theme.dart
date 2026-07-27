@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 
 abstract final class AppTheme {
-  static ThemeData get light {
+  static const fallbackPrimary = Color(0xFF1C7C70);
+  static const fallbackSecondary = Color(0xFFF4A261);
+
+  static ThemeData light({
+    Color primaryColor = fallbackPrimary,
+    Color secondaryColor = fallbackSecondary,
+  }) {
     final colorScheme = ColorScheme.fromSeed(
-      seedColor: const Color(0xFF1C7C70),
+      seedColor: primaryColor,
       brightness: Brightness.light,
-    );
+    ).copyWith(secondary: secondaryColor);
 
     return ThemeData(
       useMaterial3: true,

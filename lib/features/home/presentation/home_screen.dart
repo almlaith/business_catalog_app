@@ -1,64 +1,131 @@
 import 'package:business_catalog_app/core/constants/app_route_paths.dart';
 import 'package:business_catalog_app/core/constants/app_strings.dart';
+import 'package:business_catalog_app/core/widgets/app_async_state.dart';
+import 'package:business_catalog_app/features/catalog/data/catalog_providers.dart';
+import 'package:business_catalog_app/features/catalog/utils/catalog_view_data.dart';
+import 'package:business_catalog_app/features/catalog/widgets/category_card.dart';
+import 'package:business_catalog_app/features/catalog/widgets/product_card.dart';
+import 'package:business_catalog_app/features/home/widgets/home_header.dart';
+import 'package:business_catalog_app/features/home/widgets/home_section_header.dart';
+import 'package:business_catalog_app/models/catalog_data.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final destinations = [
-      _HomeDestination(
-        title: AppStrings.catalogTitle,
-        icon: Icons.storefront_outlined,
-        location: AppRoutePaths.catalog,
-      ),
-      _HomeDestination(
-        title: AppStrings.cartTitle,
-        icon: Icons.shopping_bag_outlined,
-        location: AppRoutePaths.cart,
-      ),
-      _HomeDestination(
-        title: AppStrings.businessInfoTitle,
-        icon: Icons.info_outline,
-        location: AppRoutePaths.businessInfo,
-      ),
-    ];
+  Widget build(BuildContext context, WidgetRef ref) {
+    final catalogState = ref.watch(catalogDataProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text(AppStrings.appTitle)),
+      appBar: AppBar(
+        title: const Text(AppStrings.homeTitle),
+        automaticallyImplyLeading: false,
+      ),
       body: SafeArea(
-        child: ListView.separated(
-          padding: const EdgeInsets.all(16),
-          itemCount: destinations.length,
-          separatorBuilder: (context, index) => const SizedBox(height: 8),
-          itemBuilder: (context, index) {
-            final destination = destinations[index];
-
-            return Card(
-              child: ListTile(
-                leading: Icon(destination.icon),
-                title: Text(destination.title),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () => context.go(destination.location),
-              ),
-            );
-          },
+        child: catalogState.when(
+          loading: () => const AppLoadingState(),
+          error: (error, stackTrace) => AppErrorState(
+            error: error,
+            onRetry: () => ref.invalidate(catalogDataProvider),
+          ),
+          data: (catalog) => _HomeContent(catalog: catalog),
         ),
       ),
     );
   }
 }
 
-class _HomeDestination {
-  const _HomeDestination({
-    required this.title,
-    required this.icon,
-    required this.location,
-  });
+class _HomeContent extends StatelessWidget {
+  const _HomeContent({required this.catalog});
 
-  final String title;
-  final IconData icon;
-  final String location;
+  final CatalogData catalog;
+
+  @override
+  Widget build(BuildContext context) {
+    final categories = catalog.activeCategoriesSorted;
+    final featuredProducts = catalog.featuredAvailableProductsSorted;
+
+    if (categories.isEmpty && featuredProducts.isEmpty) {
+      return const AppEmptyState(message: AppStrings.noProducts);
+    }
+
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        HomeHeader(business: catalog.business),
+        const SizedBox(height: 24),
+        HomeSectionHeader(
+          title: AppStrings.categoriesSection,
+          action: TextButton(
+            onPressed: () => context.go(AppRoutePaths.catalog),
+            child: const Text(AppStrings.viewCatalog),
+          ),
+        ),
+        const SizedBox(height: 12),
+        if (categories.isEmpty)
+          const SizedBox(
+            height: 120,
+            child: AppEmptyState(message: AppStrings.noCategories),
+          )
+        else
+          SizedBox(
+            height: 188,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              itemCount: categories.length,
+              separatorBuilder: (context, index) => const SizedBox(width: 12),
+              itemBuilder: (context, index) {
+                final category = categories[index];
+
+                return CategoryCard(
+                  category: category,
+                  onTap: () =>
+                      context.go(AppRoutePaths.catalogForCategory(category.id)),
+                );
+              },
+            ),
+          ),
+        const SizedBox(height: 24),
+        HomeSectionHeader(
+          title: AppStrings.featuredSection,
+          action: TextButton(
+            onPressed: () => context.go(AppRoutePaths.catalog),
+            child: const Text(AppStrings.viewCatalog),
+          ),
+        ),
+        const SizedBox(height: 12),
+        if (featuredProducts.isEmpty)
+          const SizedBox(
+            height: 120,
+            child: AppEmptyState(message: AppStrings.noFeaturedProducts),
+          )
+        else
+          SizedBox(
+            height: 282,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              itemCount: featuredProducts.length,
+              separatorBuilder: (context, index) => const SizedBox(width: 12),
+              itemBuilder: (context, index) {
+                final product = featuredProducts[index];
+
+                return SizedBox(
+                  width: 192,
+                  child: ProductCard(
+                    product: product,
+                    currencyCode: catalog.business.currencyCode,
+                    onTap: () => context.push(
+                      AppRoutePaths.productDetailsPath(product.id),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+      ],
+    );
+  }
 }

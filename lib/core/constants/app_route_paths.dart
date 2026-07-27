@@ -8,6 +8,7 @@ abstract final class AppRouteNames {
 
 abstract final class AppRouteParams {
   static const productId = 'productId';
+  static const categoryId = 'categoryId';
 }
 
 abstract final class AppRoutePaths {
@@ -19,4 +20,11 @@ abstract final class AppRoutePaths {
   static const businessInfo = '/business-info';
 
   static String productDetailsPath(String productId) => '/catalog/$productId';
+
+  static String catalogForCategory(String categoryId) {
+    return Uri(
+      path: catalog,
+      queryParameters: {AppRouteParams.categoryId: categoryId},
+    ).toString();
+  }
 }
