@@ -6,4 +6,7 @@ abstract final class AppStrings {
   static const cartTitle = 'Cart';
   static const businessInfoTitle = 'Business Information';
   static const placeholderLabel = 'Placeholder screen';
+  static const loadingCatalog = 'Loading catalog...';
+  static const unableToLoadCatalog = 'Unable to load catalog data.';
+  static const productNotFound = 'Product not found.';
 }

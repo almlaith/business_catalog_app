@@ -1,0 +1,219 @@
+{
+  "business": {
+    "id": "catalogly-kitchen",
+    "businessName": "Catalogly Kitchen",
+    "shortDescription": "Fresh, comforting dishes prepared for easy local pickup and delivery.",
+    "logoAsset": "assets/images/catalogly_kitchen/logo.png",
+    "phoneNumber": "+15550101444",
+    "whatsappNumber": "+15550101444",
+    "email": "hello@cataloglykitchen.example",
+    "address": "184 Market Street, Springfield, USA",
+    "currencyCode": "USD",
+    "defaultLocale": "en",
+    "primaryColorHex": "#1C7C70",
+    "secondaryColorHex": "#F4A261",
+    "instagramUrl": "https://instagram.com/cataloglykitchen",
+    "facebookUrl": "https://facebook.com/cataloglykitchen",
+    "openingHours": {
+      "monday": "10:00 AM - 9:00 PM",
+      "tuesday": "10:00 AM - 9:00 PM",
+      "wednesday": "10:00 AM - 9:00 PM",
+      "thursday": "10:00 AM - 9:00 PM",
+      "friday": "10:00 AM - 10:00 PM",
+      "saturday": "9:00 AM - 10:00 PM",
+      "sunday": "9:00 AM - 8:00 PM"
+    }
+  },
+  "categories": [
+    {
+      "id": "starters",
+      "name": "Starters",
+      "description": "Small plates made for sharing before the main course.",
+      "imageAsset": "assets/images/catalogly_kitchen/categories/starters.jpg",
+      "displayOrder": 1,
+      "isActive": true
+    },
+    {
+      "id": "mains",
+      "name": "Mains",
+      "description": "Signature plates with balanced portions and bold flavor.",
+      "imageAsset": "assets/images/catalogly_kitchen/categories/mains.jpg",
+      "displayOrder": 2,
+      "isActive": true
+    },
+    {
+      "id": "desserts",
+      "name": "Desserts",
+      "description": "House-made sweets for a gentle finish.",
+      "imageAsset": "assets/images/catalogly_kitchen/categories/desserts.jpg",
+      "displayOrder": 3,
+      "isActive": true
+    },
+    {
+      "id": "drinks",
+      "name": "Drinks",
+      "description": "Refreshing cold drinks and warm cafe favorites.",
+      "imageAsset": "assets/images/catalogly_kitchen/categories/drinks.jpg",
+      "displayOrder": 4,
+      "isActive": true
+    }
+  ],
+  "products": [
+    {
+      "id": "crispy-halloumi-bites",
+      "categoryId": "starters",
+      "name": "Crispy Halloumi Bites",
+      "description": "Golden halloumi cubes served with lemon herb dip.",
+      "imageAsset": "assets/images/catalogly_kitchen/products/crispy_halloumi_bites.jpg",
+      "price": 7.5,
+      "oldPrice": null,
+      "isFeatured": true,
+      "isAvailable": true,
+      "displayOrder": 1,
+      "tags": ["vegetarian", "shareable"]
+    },
+    {
+      "id": "roasted-tomato-soup",
+      "categoryId": "starters",
+      "name": "Roasted Tomato Soup",
+      "description": "Slow-roasted tomatoes blended with basil and cream.",
+      "imageAsset": "assets/images/catalogly_kitchen/products/roasted_tomato_soup.jpg",
+      "price": 6.25,
+      "oldPrice": null,
+      "isFeatured": false,
+      "isAvailable": true,
+      "displayOrder": 2,
+      "tags": ["comfort", "vegetarian"]
+    },
+    {
+      "id": "garden-mezze-board",
+      "categoryId": "starters",
+      "name": "Garden Mezze Board",
+      "description": "Hummus, labneh, olives, pickles, and warm flatbread.",
+      "imageAsset": "assets/images/catalogly_kitchen/products/garden_mezze_board.jpg",
+      "price": 11.0,
+      "oldPrice": 13.0,
+      "isFeatured": true,
+      "isAvailable": true,
+      "displayOrder": 3,
+      "tags": ["shareable", "vegetarian"]
+    },
+    {
+      "id": "chargrilled-chicken-plate",
+      "categoryId": "mains",
+      "name": "Chargrilled Chicken Plate",
+      "description": "Marinated chicken with rice pilaf, salad, and garlic sauce.",
+      "imageAsset": "assets/images/catalogly_kitchen/products/chargrilled_chicken_plate.jpg",
+      "price": 15.75,
+      "oldPrice": null,
+      "isFeatured": true,
+      "isAvailable": true,
+      "displayOrder": 1,
+      "tags": ["signature", "high-protein"]
+    },
+    {
+      "id": "slow-cooked-beef-bowl",
+      "categoryId": "mains",
+      "name": "Slow-Cooked Beef Bowl",
+      "description": "Tender beef over herbed rice with roasted vegetables.",
+      "imageAsset": "assets/images/catalogly_kitchen/products/slow_cooked_beef_bowl.jpg",
+      "price": 17.5,
+      "oldPrice": null,
+      "isFeatured": false,
+      "isAvailable": true,
+      "displayOrder": 2,
+      "tags": ["hearty"]
+    },
+    {
+      "id": "market-vegetable-pasta",
+      "categoryId": "mains",
+      "name": "Market Vegetable Pasta",
+      "description": "Penne tossed with seasonal vegetables and tomato basil sauce.",
+      "imageAsset": "assets/images/catalogly_kitchen/products/market_vegetable_pasta.jpg",
+      "price": 13.25,
+      "oldPrice": null,
+      "isFeatured": false,
+      "isAvailable": true,
+      "displayOrder": 3,
+      "tags": ["vegetarian"]
+    },
+    {
+      "id": "seared-salmon-rice",
+      "categoryId": "mains",
+      "name": "Seared Salmon Rice",
+      "description": "Crisp-skinned salmon with citrus rice and cucumber salad.",
+      "imageAsset": "assets/images/catalogly_kitchen/products/seared_salmon_rice.jpg",
+      "price": 19.0,
+      "oldPrice": 21.0,
+      "isFeatured": true,
+      "isAvailable": true,
+      "displayOrder": 4,
+      "tags": ["seafood", "signature"]
+    },
+    {
+      "id": "classic-cheesecake",
+      "categoryId": "desserts",
+      "name": "Classic Cheesecake",
+      "description": "Creamy vanilla cheesecake with berry compote.",
+      "imageAsset": "assets/images/catalogly_kitchen/products/classic_cheesecake.jpg",
+      "price": 6.75,
+      "oldPrice": null,
+      "isFeatured": true,
+      "isAvailable": true,
+      "displayOrder": 1,
+      "tags": ["sweet", "house-made"]
+    },
+    {
+      "id": "date-caramel-pudding",
+      "categoryId": "desserts",
+      "name": "Date Caramel Pudding",
+      "description": "Warm date cake with salted caramel sauce.",
+      "imageAsset": "assets/images/catalogly_kitchen/products/date_caramel_pudding.jpg",
+      "price": 7.25,
+      "oldPrice": null,
+      "isFeatured": false,
+      "isAvailable": true,
+      "displayOrder": 2,
+      "tags": ["warm", "house-made"]
+    },
+    {
+      "id": "chocolate-tahini-brownie",
+      "categoryId": "desserts",
+      "name": "Chocolate Tahini Brownie",
+      "description": "Fudgy brownie finished with sesame tahini swirl.",
+      "imageAsset": "assets/images/catalogly_kitchen/products/chocolate_tahini_brownie.jpg",
+      "price": 5.5,
+      "oldPrice": null,
+      "isFeatured": false,
+      "isAvailable": true,
+      "displayOrder": 3,
+      "tags": ["sweet"]
+    },
+    {
+      "id": "mint-lemonade",
+      "categoryId": "drinks",
+      "name": "Mint Lemonade",
+      "description": "Fresh lemon, mint, and crushed ice.",
+      "imageAsset": "assets/images/catalogly_kitchen/products/mint_lemonade.jpg",
+      "price": 4.5,
+      "oldPrice": null,
+      "isFeatured": true,
+      "isAvailable": true,
+      "displayOrder": 1,
+      "tags": ["cold", "refreshing"]
+    },
+    {
+      "id": "cardamom-latte",
+      "categoryId": "drinks",
+      "name": "Cardamom Latte",
+      "description": "Espresso with steamed milk and fragrant cardamom.",
+      "imageAsset": "assets/images/catalogly_kitchen/products/cardamom_latte.jpg",
+      "price": 5.25,
+      "oldPrice": null,
+      "isFeatured": false,
+      "isAvailable": true,
+      "displayOrder": 2,
+      "tags": ["hot", "coffee"]
+    }
+  ]
+}

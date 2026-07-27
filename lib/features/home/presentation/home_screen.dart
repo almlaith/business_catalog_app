@@ -1,4 +1,3 @@
-import 'package:business_catalog_app/core/constants/app_constants.dart';
 import 'package:business_catalog_app/core/constants/app_route_paths.dart';
 import 'package:business_catalog_app/core/constants/app_strings.dart';
 import 'package:flutter/material.dart';
@@ -14,13 +13,6 @@ class HomeScreen extends StatelessWidget {
         title: AppStrings.catalogTitle,
         icon: Icons.storefront_outlined,
         location: AppRoutePaths.catalog,
-      ),
-      _HomeDestination(
-        title: AppStrings.productDetailsTitle,
-        icon: Icons.inventory_2_outlined,
-        location: AppRoutePaths.productDetailsPath(
-          AppConstants.placeholderProductId,
-        ),
       ),
       _HomeDestination(
         title: AppStrings.cartTitle,

@@ -20,13 +20,15 @@ final appRouterProvider = Provider<GoRouter>(
         path: AppRoutePaths.catalog,
         name: AppRouteNames.catalog,
         builder: (context, state) => const CatalogScreen(),
-      ),
-      GoRoute(
-        path: AppRoutePaths.productDetails,
-        name: AppRouteNames.productDetails,
-        builder: (context, state) => ProductDetailsScreen(
-          productId: state.pathParameters[AppRouteParams.productId] ?? '',
-        ),
+        routes: [
+          GoRoute(
+            path: AppRoutePaths.productDetailsSegment,
+            name: AppRouteNames.productDetails,
+            builder: (context, state) => ProductDetailsScreen(
+              productId: state.pathParameters[AppRouteParams.productId] ?? '',
+            ),
+          ),
+        ],
       ),
       GoRoute(
         path: AppRoutePaths.cart,
