@@ -137,10 +137,22 @@ Products are sorted by `displayOrder`. Negative prices, duplicate IDs, and unkno
 
 ## Images, Icon, and Splash
 
-Replace these files for each client:
+Replace these two source branding files for each client:
 
-- App icon: `android/app/src/main/res/mipmap-*/ic_launcher.png` and `ios/Runner/Assets.xcassets/AppIcon.appiconset/`.
-- Splash assets: `android/app/src/main/res/drawable*/launch_background.xml` and `ios/Runner/Assets.xcassets/LaunchImage.imageset/`.
+- App icon source: `assets/branding/app_icon.png`
+- Splash logo source: `assets/branding/splash_logo.png`
+
+Then regenerate the native Android and iOS assets:
+
+```sh
+dart run flutter_launcher_icons
+dart run flutter_native_splash:create
+```
+
+Do not edit generated native icon and splash files by hand unless a platform-specific client requirement truly needs it. The generated outputs include Android mipmap icons, Android adaptive icon resources, iOS app icon assets, Android launch backgrounds, Android 12 splash resources, and the iOS launch storyboard configuration.
+
+Other client image files:
+
 - Business logo: path referenced by `business.logoAsset`.
 - Category images: paths referenced by each category `imageAsset`.
 - Product images: paths referenced by each product `imageAsset`.
