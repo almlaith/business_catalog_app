@@ -1,3 +1,4 @@
+import 'package:business_catalog_app/core/constants/app_spacing.dart';
 import 'package:business_catalog_app/core/constants/app_route_paths.dart';
 import 'package:business_catalog_app/core/extensions/build_context_extensions.dart';
 import 'package:business_catalog_app/core/widgets/app_async_state.dart';
@@ -54,10 +55,13 @@ class _HomeContent extends StatelessWidget {
     }
 
     return ListView(
-      padding: const EdgeInsets.all(16),
+      padding: AppSpacing.page,
       children: [
-        HomeHeader(business: catalog.business),
-        const SizedBox(height: 24),
+        HomeHeader(
+          business: catalog.business,
+          onBrowse: () => context.go(AppRoutePaths.catalog),
+        ),
+        const SizedBox(height: AppSpacing.xxl),
         HomeSectionHeader(
           title: l10n.categoriesSection,
           action: TextButton(
@@ -65,7 +69,7 @@ class _HomeContent extends StatelessWidget {
             child: Text(l10n.viewCatalog),
           ),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: AppSpacing.md),
         if (categories.isEmpty)
           SizedBox(
             height: 120,
@@ -73,11 +77,12 @@ class _HomeContent extends StatelessWidget {
           )
         else
           SizedBox(
-            height: 188,
+            height: 128,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               itemCount: categories.length,
-              separatorBuilder: (context, index) => const SizedBox(width: 12),
+              separatorBuilder: (context, index) =>
+                  const SizedBox(width: AppSpacing.md),
               itemBuilder: (context, index) {
                 final category = categories[index];
 
@@ -89,7 +94,7 @@ class _HomeContent extends StatelessWidget {
               },
             ),
           ),
-        const SizedBox(height: 24),
+        const SizedBox(height: AppSpacing.xxl),
         HomeSectionHeader(
           title: l10n.featuredSection,
           action: TextButton(
@@ -97,7 +102,7 @@ class _HomeContent extends StatelessWidget {
             child: Text(l10n.viewCatalog),
           ),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: AppSpacing.md),
         if (featuredProducts.isEmpty)
           SizedBox(
             height: 120,
@@ -105,16 +110,17 @@ class _HomeContent extends StatelessWidget {
           )
         else
           SizedBox(
-            height: 282,
+            height: 318,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               itemCount: featuredProducts.length,
-              separatorBuilder: (context, index) => const SizedBox(width: 12),
+              separatorBuilder: (context, index) =>
+                  const SizedBox(width: AppSpacing.md),
               itemBuilder: (context, index) {
                 final product = featuredProducts[index];
 
                 return SizedBox(
-                  width: 192,
+                  width: 212,
                   child: ProductCard(
                     product: product,
                     currencyCode: catalog.business.currencyCode,

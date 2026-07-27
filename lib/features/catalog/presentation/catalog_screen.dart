@@ -1,4 +1,5 @@
 import 'package:business_catalog_app/core/constants/app_route_paths.dart';
+import 'package:business_catalog_app/core/constants/app_spacing.dart';
 import 'package:business_catalog_app/core/extensions/build_context_extensions.dart';
 import 'package:business_catalog_app/core/widgets/app_async_state.dart';
 import 'package:business_catalog_app/features/catalog/data/catalog_providers.dart';
@@ -107,7 +108,7 @@ class _CatalogContent extends StatelessWidget {
           selectedCategoryId: selectedCategoryId,
           onSelected: onCategorySelected,
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: AppSpacing.md),
         Expanded(
           child: products.isEmpty
               ? AppEmptyState(message: l10n.noProducts)
@@ -116,12 +117,17 @@ class _CatalogContent extends StatelessWidget {
                     final columns = constraints.maxWidth < 360 ? 1 : 2;
 
                     return GridView.builder(
-                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                      padding: const EdgeInsets.fromLTRB(
+                        AppSpacing.lg,
+                        0,
+                        AppSpacing.lg,
+                        AppSpacing.lg,
+                      ),
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: columns,
-                        mainAxisSpacing: 12,
-                        crossAxisSpacing: 12,
-                        childAspectRatio: columns == 1 ? 1.55 : 0.72,
+                        mainAxisSpacing: AppSpacing.md,
+                        crossAxisSpacing: AppSpacing.md,
+                        childAspectRatio: columns == 1 ? 1.82 : 0.66,
                       ),
                       itemCount: products.length,
                       itemBuilder: (context, index) {

@@ -1,5 +1,7 @@
+import 'package:business_catalog_app/core/constants/app_spacing.dart';
 import 'package:business_catalog_app/core/extensions/build_context_extensions.dart';
 import 'package:business_catalog_app/core/widgets/app_async_state.dart';
+import 'package:business_catalog_app/core/widgets/local_asset_image.dart';
 import 'package:business_catalog_app/features/business_info/widgets/business_info_row.dart';
 import 'package:business_catalog_app/features/catalog/data/catalog_providers.dart';
 import 'package:business_catalog_app/models/business_config.dart';
@@ -49,16 +51,11 @@ class _BusinessInfoContent extends ConsumerWidget {
 
     return ListView(
       key: const ValueKey('business-info-scroll-view'),
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.only(bottom: AppSpacing.lg),
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-          child: Text(
-            business.businessName,
-            style: Theme.of(
-              context,
-            ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700),
-          ),
+          padding: AppSpacing.page,
+          child: _BusinessHeader(business: business),
         ),
         BusinessInfoRow(
           icon: Icons.description_outlined,
@@ -153,5 +150,65 @@ class _BusinessInfoContent extends ConsumerWidget {
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(SnackBar(content: Text(context.l10n.unableToOpenLink)));
+  }
+}
+
+class _BusinessHeader extends StatelessWidget {
+  const _BusinessHeader({required this.business});
+
+  final BusinessConfig business;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Card(
+      color: theme.colorScheme.primary,
+      child: Padding(
+        padding: AppSpacing.card,
+        child: Row(
+          children: [
+            LocalAssetImage(
+              assetPath: business.logoAsset,
+              width: 72,
+              height: 72,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            const SizedBox(width: AppSpacing.lg),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    business.businessName,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.headlineSmall?.copyWith(
+                      color: theme.colorScheme.onPrimary,
+                      fontWeight: FontWeight.w800,
+                      height: 1.08,
+                    ),
+                  ),
+                  if (business.address.trim().isNotEmpty) ...[
+                    const SizedBox(height: AppSpacing.sm),
+                    Text(
+                      business.address,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.colorScheme.onPrimary.withValues(
+                          alpha: 0.82,
+                        ),
+                        height: 1.25,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

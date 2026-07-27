@@ -75,6 +75,11 @@ class _CartIcon extends StatelessWidget {
       return iconWidget;
     }
 
-    return Badge(label: Text('$totalItemQuantity'), child: iconWidget);
+    return Badge(
+      backgroundColor: Theme.of(context).colorScheme.secondary,
+      textColor: Theme.of(context).colorScheme.onSecondary,
+      label: Text('$totalItemQuantity'),
+      child: iconWidget,
+    );
   }
 }

@@ -1,3 +1,4 @@
+import 'package:business_catalog_app/core/constants/app_spacing.dart';
 import 'package:flutter/material.dart';
 
 class BusinessInfoRow extends StatelessWidget {
@@ -20,12 +21,46 @@ class BusinessInfoRow extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
-    return ListTile(
-      leading: Icon(icon),
-      title: Text(title, maxLines: 1, overflow: TextOverflow.ellipsis),
-      subtitle: Text(value),
-      trailing: onTap == null ? null : const Icon(Icons.open_in_new),
-      onTap: onTap,
+    final theme = Theme.of(context);
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.lg,
+        vertical: AppSpacing.xs,
+      ),
+      child: Card(
+        child: ListTile(
+          minVerticalPadding: AppSpacing.md,
+          leading: DecoratedBox(
+            decoration: BoxDecoration(
+              color: theme.colorScheme.primaryContainer,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(AppSpacing.sm),
+              child: Icon(icon, color: theme.colorScheme.onPrimaryContainer),
+            ),
+          ),
+          title: Text(
+            title,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: theme.textTheme.labelLarge?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          subtitle: Padding(
+            padding: const EdgeInsets.only(top: AppSpacing.xs),
+            child: Text(
+              value,
+              style: theme.textTheme.bodyMedium?.copyWith(height: 1.32),
+            ),
+          ),
+          trailing: onTap == null ? null : const Icon(Icons.open_in_new),
+          onTap: onTap,
+        ),
+      ),
     );
   }
 }

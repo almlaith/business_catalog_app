@@ -47,8 +47,14 @@ void main() {
 
     expect(find.text('Catalogly Kitchen'), findsOneWidget);
     expect(find.text(l10n.categoriesSection), findsOneWidget);
-    expect(find.text(l10n.featuredSection), findsOneWidget);
     expect(find.text('Starters'), findsOneWidget);
+
+    await tester.scrollUntilVisible(
+      find.text(l10n.featuredSection),
+      120,
+      scrollable: find.byType(Scrollable).first,
+    );
+    expect(find.text(l10n.featuredSection), findsOneWidget);
 
     await tester.scrollUntilVisible(
       find.text('Crispy Halloumi Bites'),

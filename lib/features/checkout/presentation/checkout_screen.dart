@@ -1,3 +1,4 @@
+import 'package:business_catalog_app/core/constants/app_spacing.dart';
 import 'package:business_catalog_app/core/extensions/build_context_extensions.dart';
 import 'package:business_catalog_app/core/validation/form_validators.dart';
 import 'package:business_catalog_app/core/widgets/app_async_state.dart';
@@ -193,93 +194,100 @@ class _CheckoutContent extends StatelessWidget {
       key: formKey,
       child: ListView(
         key: const ValueKey('checkout-scroll-view'),
-        padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+        padding: const EdgeInsets.fromLTRB(
+          AppSpacing.lg,
+          AppSpacing.lg,
+          AppSpacing.lg,
+          AppSpacing.xxl,
+        ),
         children: [
           CheckoutOrderSummary(cart: cart, currencyCode: business.currencyCode),
-          const SizedBox(height: 16),
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(l10n.customerDetails, style: theme.textTheme.titleLarge),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    key: const ValueKey('checkout-name-field'),
-                    controller: nameController,
-                    textInputAction: TextInputAction.next,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                    ).copyWith(labelText: l10n.customerName),
-                    validator: FormValidators.requiredText(l10n.requiredField),
+          const SizedBox(height: AppSpacing.lg),
+          _CheckoutSection(
+            icon: Icons.person_outline,
+            title: l10n.customerDetails,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextFormField(
+                  key: const ValueKey('checkout-name-field'),
+                  controller: nameController,
+                  textInputAction: TextInputAction.next,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                  ).copyWith(labelText: l10n.customerName),
+                  validator: FormValidators.requiredText(l10n.requiredField),
+                ),
+                const SizedBox(height: AppSpacing.md),
+                TextFormField(
+                  key: const ValueKey('checkout-phone-field'),
+                  controller: phoneController,
+                  keyboardType: TextInputType.phone,
+                  textInputAction: TextInputAction.next,
+                  decoration: InputDecoration(
+                    labelText: l10n.phoneNumber,
+                    border: OutlineInputBorder(),
                   ),
-                  const SizedBox(height: 12),
-                  TextFormField(
-                    key: const ValueKey('checkout-phone-field'),
-                    controller: phoneController,
-                    keyboardType: TextInputType.phone,
-                    textInputAction: TextInputAction.next,
-                    decoration: InputDecoration(
-                      labelText: l10n.phoneNumber,
-                      border: OutlineInputBorder(),
+                  validator: FormValidators.requiredText(l10n.requiredField),
+                ),
+                const SizedBox(height: AppSpacing.lg),
+                Text(
+                  l10n.orderType,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                SegmentedButton<OrderType>(
+                  segments: [
+                    ButtonSegment(
+                      value: OrderType.pickup,
+                      label: Text(l10n.pickup),
+                      icon: const Icon(Icons.shopping_bag_outlined),
                     ),
-                    validator: FormValidators.requiredText(l10n.requiredField),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(l10n.orderType, style: theme.textTheme.titleMedium),
-                  const SizedBox(height: 8),
-                  SegmentedButton<OrderType>(
-                    segments: [
-                      ButtonSegment(
-                        value: OrderType.pickup,
-                        label: Text(l10n.pickup),
-                        icon: const Icon(Icons.shopping_bag_outlined),
-                      ),
-                      ButtonSegment(
-                        value: OrderType.delivery,
-                        label: Text(l10n.delivery),
-                        icon: const Icon(Icons.local_shipping_outlined),
-                      ),
-                    ],
-                    selected: {orderType},
-                    onSelectionChanged: (values) {
-                      onOrderTypeChanged(values.single);
-                    },
-                  ),
-                  if (orderType == OrderType.delivery) ...[
-                    const SizedBox(height: 12),
-                    TextFormField(
-                      key: const ValueKey('checkout-delivery-address-field'),
-                      controller: deliveryAddressController,
-                      textInputAction: TextInputAction.next,
-                      decoration: InputDecoration(
-                        labelText: l10n.deliveryAddress,
-                        border: OutlineInputBorder(),
-                      ),
-                      validator: (value) => FormValidators.requiredWhen(
-                        value,
-                        condition: orderType == OrderType.delivery,
-                        message: l10n.requiredField,
-                      ),
+                    ButtonSegment(
+                      value: OrderType.delivery,
+                      label: Text(l10n.delivery),
+                      icon: const Icon(Icons.local_shipping_outlined),
                     ),
                   ],
-                  const SizedBox(height: 12),
+                  selected: {orderType},
+                  onSelectionChanged: (values) {
+                    onOrderTypeChanged(values.single);
+                  },
+                ),
+                if (orderType == OrderType.delivery) ...[
+                  const SizedBox(height: AppSpacing.md),
                   TextFormField(
-                    key: const ValueKey('checkout-notes-field'),
-                    controller: notesController,
-                    minLines: 2,
-                    maxLines: 4,
+                    key: const ValueKey('checkout-delivery-address-field'),
+                    controller: deliveryAddressController,
+                    textInputAction: TextInputAction.next,
                     decoration: InputDecoration(
-                      labelText: l10n.orderNotes,
+                      labelText: l10n.deliveryAddress,
                       border: OutlineInputBorder(),
+                    ),
+                    validator: (value) => FormValidators.requiredWhen(
+                      value,
+                      condition: orderType == OrderType.delivery,
+                      message: l10n.requiredField,
                     ),
                   ),
                 ],
-              ),
+                const SizedBox(height: AppSpacing.md),
+                TextFormField(
+                  key: const ValueKey('checkout-notes-field'),
+                  controller: notesController,
+                  minLines: 2,
+                  maxLines: 4,
+                  decoration: InputDecoration(
+                    labelText: l10n.orderNotes,
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AppSpacing.lg),
           FilledButton.icon(
             onPressed: onSubmit,
             icon: isSubmitting
@@ -290,13 +298,57 @@ class _CheckoutContent extends StatelessWidget {
                 : const Icon(Icons.send_outlined),
             label: Text(l10n.sendOrderViaWhatsapp),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.sm),
           Text(
             l10n.checkoutNotImplemented,
             textAlign: TextAlign.center,
             style: theme.textTheme.bodySmall,
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _CheckoutSection extends StatelessWidget {
+  const _CheckoutSection({
+    required this.icon,
+    required this.title,
+    required this.child,
+  });
+
+  final IconData icon;
+  final String title;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Card(
+      child: Padding(
+        padding: AppSpacing.card,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(icon, color: theme.colorScheme.primary),
+                const SizedBox(width: AppSpacing.sm),
+                Expanded(
+                  child: Text(
+                    title,
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            child,
+          ],
+        ),
       ),
     );
   }

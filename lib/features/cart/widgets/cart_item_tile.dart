@@ -1,3 +1,4 @@
+import 'package:business_catalog_app/core/constants/app_spacing.dart';
 import 'package:business_catalog_app/core/extensions/build_context_extensions.dart';
 import 'package:business_catalog_app/core/utils/currency_formatter.dart';
 import 'package:business_catalog_app/core/widgets/local_asset_image.dart';
@@ -24,20 +25,21 @@ class CartItemTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(AppSpacing.md),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             LocalAssetImage(
               assetPath: item.product.imageAsset,
-              width: 76,
-              height: 76,
+              width: 84,
+              height: 96,
               borderRadius: BorderRadius.circular(8),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: AppSpacing.md),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -50,13 +52,17 @@ class CartItemTile extends StatelessWidget {
                           item.product.name,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          style: theme.textTheme.titleMedium,
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w800,
+                            height: 1.14,
+                          ),
                         ),
                       ),
                       IconButton(
                         tooltip: context.l10n.removeItem,
                         onPressed: onRemove,
                         icon: const Icon(Icons.delete_outline),
+                        color: colorScheme.onSurfaceVariant,
                       ),
                     ],
                   ),
@@ -65,12 +71,14 @@ class CartItemTile extends StatelessWidget {
                       item.product.price,
                       currencyCode: currencyCode,
                     ),
-                    style: theme.textTheme.bodyMedium,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: colorScheme.onSurfaceVariant,
+                    ),
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: AppSpacing.md),
                   Wrap(
-                    spacing: 12,
-                    runSpacing: 8,
+                    spacing: AppSpacing.md,
+                    runSpacing: AppSpacing.sm,
                     crossAxisAlignment: WrapCrossAlignment.center,
                     children: [
                       QuantityStepper(
@@ -84,8 +92,8 @@ class CartItemTile extends StatelessWidget {
                           currencyCode: currencyCode,
                         ),
                         style: theme.textTheme.titleMedium?.copyWith(
-                          color: theme.colorScheme.primary,
-                          fontWeight: FontWeight.w700,
+                          color: colorScheme.primary,
+                          fontWeight: FontWeight.w900,
                         ),
                       ),
                     ],

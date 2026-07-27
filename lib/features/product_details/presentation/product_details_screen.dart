@@ -1,4 +1,5 @@
 import 'package:business_catalog_app/core/constants/app_route_paths.dart';
+import 'package:business_catalog_app/core/constants/app_spacing.dart';
 import 'package:business_catalog_app/core/extensions/build_context_extensions.dart';
 import 'package:business_catalog_app/core/utils/currency_formatter.dart';
 import 'package:business_catalog_app/core/widgets/app_async_state.dart';
@@ -88,76 +89,132 @@ class _ProductDetailsContentState
       body: SafeArea(
         top: false,
         child: ListView(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 120),
+          padding: const EdgeInsets.only(bottom: 140),
           children: [
             AspectRatio(
-              aspectRatio: 1.35,
+              aspectRatio: 1.08,
               child: LocalAssetImage(
                 assetPath: product.imageAsset,
                 width: double.infinity,
-                borderRadius: BorderRadius.circular(8),
               ),
             ),
-            const SizedBox(height: 20),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Text(
-                    product.name,
-                    style: theme.textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.w700,
-                    ),
+            Padding(
+              padding: AppSpacing.page,
+              child: Card(
+                child: Padding(
+                  padding: AppSpacing.card,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              product.name,
+                              maxLines: 3,
+                              overflow: TextOverflow.ellipsis,
+                              style: theme.textTheme.headlineSmall?.copyWith(
+                                fontWeight: FontWeight.w800,
+                                height: 1.08,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: AppSpacing.md),
+                          _AvailabilityChip(isAvailable: product.isAvailable),
+                        ],
+                      ),
+                      const SizedBox(height: AppSpacing.md),
+                      _ProductDetailsPrice(
+                        price: product.price,
+                        oldPrice: product.oldPrice,
+                        currencyCode: business.currencyCode,
+                      ),
+                      const SizedBox(height: AppSpacing.lg),
+                      Text(
+                        product.description,
+                        style: theme.textTheme.bodyLarge?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                          height: 1.42,
+                        ),
+                      ),
+                      if (product.tags.isNotEmpty) ...[
+                        const SizedBox(height: AppSpacing.xl),
+                        Wrap(
+                          spacing: AppSpacing.sm,
+                          runSpacing: AppSpacing.sm,
+                          children: [
+                            for (final tag in product.tags)
+                              Chip(
+                                label: Text(tag),
+                                visualDensity: VisualDensity.compact,
+                              ),
+                          ],
+                        ),
+                      ],
+                    ],
                   ),
                 ),
-                const SizedBox(width: 12),
-                _AvailabilityChip(isAvailable: product.isAvailable),
-              ],
-            ),
-            const SizedBox(height: 12),
-            _ProductDetailsPrice(
-              price: product.price,
-              oldPrice: product.oldPrice,
-              currencyCode: business.currencyCode,
-            ),
-            const SizedBox(height: 16),
-            Text(product.description, style: theme.textTheme.bodyLarge),
-            if (product.tags.isNotEmpty) ...[
-              const SizedBox(height: 20),
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: [
-                  for (final tag in product.tags)
-                    Chip(
-                      label: Text(tag),
-                      visualDensity: VisualDensity.compact,
-                    ),
-                ],
               ),
-            ],
-            const SizedBox(height: 24),
-            QuantityStepper(
-              quantity: _quantity,
-              canDecrement: _quantity > 1,
-              onIncrement: () => setState(() => _quantity += 1),
-              onDecrement: () {
-                if (_quantity == 1) {
-                  return;
-                }
-
-                setState(() => _quantity -= 1);
-              },
             ),
           ],
         ),
       ),
       bottomNavigationBar: SafeArea(
-        minimum: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-        child: FilledButton.icon(
-          onPressed: product.isAvailable ? _addToCart : null,
-          icon: const Icon(Icons.add_shopping_cart),
-          label: Text(l10n.addToCart),
+        minimum: const EdgeInsets.fromLTRB(
+          AppSpacing.lg,
+          AppSpacing.sm,
+          AppSpacing.lg,
+          AppSpacing.lg,
+        ),
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: theme.colorScheme.surface,
+            borderRadius: BorderRadius.circular(8),
+            boxShadow: [
+              BoxShadow(
+                color: theme.colorScheme.shadow.withValues(alpha: 0.10),
+                blurRadius: 18,
+                offset: const Offset(0, -4),
+              ),
+            ],
+          ),
+          child: Padding(
+            padding: AppSpacing.card,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  children: [
+                    QuantityStepper(
+                      quantity: _quantity,
+                      canDecrement: _quantity > 1,
+                      onIncrement: () => setState(() => _quantity += 1),
+                      onDecrement: () {
+                        if (_quantity == 1) {
+                          return;
+                        }
+
+                        setState(() => _quantity -= 1);
+                      },
+                    ),
+                    const SizedBox(width: AppSpacing.md),
+                    Expanded(
+                      child: FilledButton.icon(
+                        onPressed: product.isAvailable ? _addToCart : null,
+                        icon: const Icon(Icons.add_shopping_cart),
+                        label: Text(
+                          l10n.addToCart,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
