@@ -6,7 +6,8 @@ import 'package:business_catalog_app/features/catalog/presentation/catalog_scree
 import 'package:business_catalog_app/features/checkout/presentation/checkout_screen.dart';
 import 'package:business_catalog_app/features/home/presentation/home_screen.dart';
 import 'package:business_catalog_app/features/product_details/presentation/product_details_screen.dart';
-import 'package:flutter/widgets.dart';
+import 'package:business_catalog_app/features/settings/presentation/settings_screen.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -49,9 +50,13 @@ final appRouterProvider = Provider<GoRouter>(
                   GoRoute(
                     path: AppRoutePaths.productDetailsSegment,
                     name: AppRouteNames.productDetails,
-                    builder: (context, state) => ProductDetailsScreen(
-                      productId:
-                          state.pathParameters[AppRouteParams.productId] ?? '',
+                    pageBuilder: (context, state) => _nestedPage(
+                      state,
+                      ProductDetailsScreen(
+                        productId:
+                            state.pathParameters[AppRouteParams.productId] ??
+                            '',
+                      ),
                     ),
                   ),
                 ],
@@ -69,7 +74,8 @@ final appRouterProvider = Provider<GoRouter>(
                   GoRoute(
                     path: AppRoutePaths.checkoutSegment,
                     name: AppRouteNames.checkout,
-                    builder: (context, state) => const CheckoutScreen(),
+                    pageBuilder: (context, state) =>
+                        _nestedPage(state, const CheckoutScreen()),
                   ),
                 ],
               ),
@@ -82,6 +88,14 @@ final appRouterProvider = Provider<GoRouter>(
                 path: AppRoutePaths.businessInfo,
                 name: AppRouteNames.businessInfo,
                 builder: (context, state) => const BusinessInfoScreen(),
+                routes: [
+                  GoRoute(
+                    path: AppRoutePaths.settingsSegment,
+                    name: AppRouteNames.settings,
+                    pageBuilder: (context, state) =>
+                        _nestedPage(state, const SettingsScreen()),
+                  ),
+                ],
               ),
             ],
           ),
@@ -90,3 +104,23 @@ final appRouterProvider = Provider<GoRouter>(
     ],
   ),
 );
+
+CustomTransitionPage<void> _nestedPage(GoRouterState state, Widget child) {
+  return CustomTransitionPage<void>(
+    key: state.pageKey,
+    transitionDuration: const Duration(milliseconds: 240),
+    reverseTransitionDuration: const Duration(milliseconds: 180),
+    child: child,
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      final offset = Tween<Offset>(
+        begin: const Offset(0.08, 0),
+        end: Offset.zero,
+      ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOutCubic));
+
+      return FadeTransition(
+        opacity: animation,
+        child: SlideTransition(position: offset, child: child),
+      );
+    },
+  );
+}

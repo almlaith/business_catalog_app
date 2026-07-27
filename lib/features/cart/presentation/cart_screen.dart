@@ -3,6 +3,7 @@ import 'package:business_catalog_app/core/constants/app_spacing.dart';
 import 'package:business_catalog_app/core/extensions/build_context_extensions.dart';
 import 'package:business_catalog_app/core/utils/currency_formatter.dart';
 import 'package:business_catalog_app/core/widgets/app_async_state.dart';
+import 'package:business_catalog_app/core/widgets/app_confirmation_dialog.dart';
 import 'package:business_catalog_app/features/cart/application/cart_controller.dart';
 import 'package:business_catalog_app/features/cart/domain/cart_state.dart';
 import 'package:business_catalog_app/features/cart/widgets/cart_item_tile.dart';
@@ -30,9 +31,16 @@ class CartScreen extends ConsumerWidget {
       ),
       data: (catalog) => _CartScaffold(
         cart: cart,
-        child: cart.isEmpty
-            ? const _EmptyCart()
-            : _CartContent(cart: cart, business: catalog.business),
+        child: AnimatedSwitcher(
+          duration: AppDurations.medium,
+          child: cart.isEmpty
+              ? const _EmptyCart(key: ValueKey('empty-cart'))
+              : _CartContent(
+                  key: const ValueKey('filled-cart'),
+                  cart: cart,
+                  business: catalog.business,
+                ),
+        ),
       ),
     );
   }
@@ -67,32 +75,24 @@ class _CartScaffold extends ConsumerWidget {
   }
 
   Future<void> _confirmClearCart(BuildContext context, WidgetRef ref) async {
-    final shouldClear = await showDialog<bool>(
+    final shouldClear = await showAppConfirmationDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(context.l10n.clearCartQuestion),
-        content: Text(context.l10n.clearCartMessage),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: Text(context.l10n.cancel),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: Text(context.l10n.clear),
-          ),
-        ],
-      ),
+      icon: Icons.delete_sweep_outlined,
+      title: context.l10n.clearCartQuestion,
+      message: context.l10n.clearCartMessage,
+      cancelLabel: context.l10n.cancel,
+      confirmLabel: context.l10n.clear,
+      isDestructive: true,
     );
 
-    if (shouldClear ?? false) {
+    if (shouldClear) {
       ref.read(cartControllerProvider.notifier).clear();
     }
   }
 }
 
 class _EmptyCart extends StatelessWidget {
-  const _EmptyCart();
+  const _EmptyCart({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -142,7 +142,7 @@ class _EmptyCart extends StatelessWidget {
 }
 
 class _CartContent extends ConsumerWidget {
-  const _CartContent({required this.cart, required this.business});
+  const _CartContent({required this.cart, required this.business, super.key});
 
   final CartState cart;
   final BusinessConfig business;

@@ -9,6 +9,8 @@ import 'package:business_catalog_app/core/widgets/local_asset_image.dart';
 import 'package:business_catalog_app/features/catalog/data/catalog_providers.dart';
 import 'package:business_catalog_app/models/app_settings.dart';
 import 'package:business_catalog_app/models/catalog_data.dart';
+import 'package:business_catalog_app/core/widgets/app_feedback.dart';
+import 'package:business_catalog_app/features/settings/presentation/settings_screen.dart';
 import 'package:business_catalog_app/services/external_link_launcher.dart';
 import 'package:business_catalog_app/services/local_settings_service.dart';
 import 'package:flutter/material.dart';
@@ -440,6 +442,132 @@ void main() {
     expect(find.text(l10n.facebook), findsNothing);
   });
 
+  testWidgets('settings navigation opens from business information', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpCatalogApp(catalogState: AsyncData(sampleCatalog));
+
+    await tester.tap(find.byIcon(Icons.info_outline));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip(l10n.settingsTooltip));
+    await tester.pumpAndSettle();
+
+    expect(find.text(l10n.settingsTitle), findsOneWidget);
+    expect(find.byTooltip('Back'), findsOneWidget);
+  });
+
+  testWidgets('switching to Arabic applies RTL immediately', (
+    WidgetTester tester,
+  ) async {
+    final service = _FakeSettingsStore();
+    await tester.pumpCatalogAppWithSettingsController(
+      catalogState: AsyncData(sampleCatalog),
+      localSettingsService: service,
+    );
+
+    await tester.openSettings();
+    await tester.tap(find.text(l10n.arabicLanguage));
+    await tester.pumpAndSettle();
+
+    expect(find.text(arL10n.settingsTitle), findsOneWidget);
+    expect(
+      Directionality.of(tester.element(find.text(arL10n.settingsTitle).first)),
+      TextDirection.rtl,
+    );
+    expect(service.readSettings().localeCode, 'ar');
+  });
+
+  testWidgets('switches between system, light, and dark themes', (
+    WidgetTester tester,
+  ) async {
+    final service = _FakeSettingsStore();
+    await tester.pumpCatalogAppWithSettingsController(
+      catalogState: AsyncData(sampleCatalog),
+      localSettingsService: service,
+    );
+
+    await tester.openSettings();
+    await tester.drag(find.byType(ListView).last, const Offset(0, -220));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(l10n.darkTheme));
+    await tester.pumpAndSettle();
+    expect(
+      Theme.of(tester.element(find.byType(SettingsScreen))).brightness,
+      Brightness.dark,
+    );
+    expect(service.readSettings().themeMode, 'dark');
+
+    await tester.ensureVisible(find.text(l10n.lightTheme));
+    await tester.tap(find.text(l10n.lightTheme));
+    await tester.pumpAndSettle();
+    expect(
+      Theme.of(tester.element(find.byType(SettingsScreen))).brightness,
+      Brightness.light,
+    );
+    expect(service.readSettings().themeMode, 'light');
+
+    await tester.drag(find.byType(ListView).last, const Offset(0, 160));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text(l10n.systemTheme));
+    await tester.tap(find.text(l10n.systemTheme));
+    await tester.pumpAndSettle();
+    expect(service.readSettings().themeMode, 'system');
+  });
+
+  testWidgets('resetting appearance settings uses confirmation dialog', (
+    WidgetTester tester,
+  ) async {
+    final service = _FakeSettingsStore(
+      const AppSettings(localeCode: 'ar', themeMode: 'dark'),
+    );
+    await tester.pumpCatalogAppWithSettingsController(
+      catalogState: AsyncData(sampleCatalog),
+      localSettingsService: service,
+    );
+
+    await tester.openSettings();
+    await tester.drag(find.byType(ListView).last, const Offset(0, -320));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(arL10n.resetAppearance));
+    await tester.pumpAndSettle();
+    expect(find.text(arL10n.resetAppearanceQuestion), findsOneWidget);
+
+    await tester.tap(find.text(arL10n.reset));
+    await tester.pumpAndSettle();
+
+    expect(service.readSettings().localeCode, isNull);
+    expect(service.readSettings().themeMode, 'system');
+    expect(find.text(l10n.settingsTitle), findsOneWidget);
+  });
+
+  testWidgets('modern feedback component renders title and message', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Builder(
+            builder: (context) => FilledButton(
+              onPressed: () => showAppFeedback(
+                context,
+                type: AppFeedbackType.success,
+                title: 'Saved',
+                message: 'Preference applied',
+              ),
+              child: const Text('Show'),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('Show'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Saved'), findsOneWidget);
+    expect(find.text('Preference applied'), findsOneWidget);
+  });
+
   testWidgets('arabic localization uses RTL layout', (
     WidgetTester tester,
   ) async {
@@ -524,6 +652,33 @@ extension on WidgetTester {
     );
   }
 
+  Future<void> pumpCatalogAppWithSettingsController({
+    required AsyncValue<CatalogData> catalogState,
+    required AppSettingsStore localSettingsService,
+    ExternalLinkLauncher? externalLinkLauncher,
+  }) {
+    return pumpWidget(
+      ProviderScope(
+        overrides: [
+          localSettingsServiceProvider.overrideWithValue(localSettingsService),
+          catalogDataProvider.overrideWithValue(catalogState),
+          if (externalLinkLauncher != null)
+            externalLinkLauncherProvider.overrideWithValue(
+              externalLinkLauncher,
+            ),
+        ],
+        child: const BusinessCatalogApp(),
+      ),
+    );
+  }
+
+  Future<void> openSettings() async {
+    await tap(find.byIcon(Icons.info_outline));
+    await pumpAndSettle();
+    await tap(find.byIcon(Icons.settings_outlined));
+    await pumpAndSettle();
+  }
+
   Future<void> openFirstProduct(
     CatalogData catalog, {
     ExternalLinkLauncher? externalLinkLauncher,
@@ -604,6 +759,30 @@ extension on WidgetTester {
         matching: find.byType(Scrollable),
       ),
     );
+  }
+}
+
+class _FakeSettingsStore implements AppSettingsStore {
+  _FakeSettingsStore([this._settings = const AppSettings()]);
+
+  AppSettings _settings;
+
+  @override
+  AppSettings readSettings() => _settings;
+
+  @override
+  Future<void> saveLocaleCode(String localeCode) async {
+    _settings = _settings.copyWith(localeCode: localeCode);
+  }
+
+  @override
+  Future<void> saveThemeMode(String themeMode) async {
+    _settings = _settings.copyWith(themeMode: themeMode);
+  }
+
+  @override
+  Future<void> resetAppearanceSettings() async {
+    _settings = const AppSettings();
   }
 }
 

@@ -189,6 +189,105 @@ class AppLocalizationsEn extends AppLocalizations {
   String get unableToOpenLink => 'Unable to open this link.';
 
   @override
+  String get settingsTitle => 'Settings';
+
+  @override
+  String get settingsTooltip => 'Open settings';
+
+  @override
+  String get appearanceSection => 'Appearance';
+
+  @override
+  String get languageSetting => 'Language';
+
+  @override
+  String get languageSettingDescription =>
+      'Choose the interface language for this app.';
+
+  @override
+  String get englishLanguage => 'English';
+
+  @override
+  String get arabicLanguage => 'Arabic';
+
+  @override
+  String get themeSetting => 'Theme';
+
+  @override
+  String get themeSettingDescription =>
+      'Control how the app follows your device appearance.';
+
+  @override
+  String get systemTheme => 'System default';
+
+  @override
+  String get lightTheme => 'Light';
+
+  @override
+  String get darkTheme => 'Dark';
+
+  @override
+  String get aboutSection => 'About';
+
+  @override
+  String get aboutAppDescription =>
+      'A reusable local catalog and WhatsApp ordering template for small businesses.';
+
+  @override
+  String get appVersion => 'App version';
+
+  @override
+  String get resetAppearance => 'Reset appearance settings';
+
+  @override
+  String get resetAppearanceDescription =>
+      'Return language and theme to the template defaults.';
+
+  @override
+  String get resetAppearanceQuestion => 'Reset appearance settings?';
+
+  @override
+  String get resetAppearanceMessage =>
+      'Language and theme preferences will return to their defaults.';
+
+  @override
+  String get reset => 'Reset';
+
+  @override
+  String get settingsSavedTitle => 'Settings updated';
+
+  @override
+  String get settingsSavedMessage => 'Your preference was applied.';
+
+  @override
+  String get settingsResetTitle => 'Settings reset';
+
+  @override
+  String get settingsResetMessage => 'Appearance settings were reset.';
+
+  @override
+  String get successTitle => 'Success';
+
+  @override
+  String get errorTitle => 'Something went wrong';
+
+  @override
+  String get warningTitle => 'Check this';
+
+  @override
+  String get infoTitle => 'Information';
+
+  @override
+  String get productUnavailableMessage => 'This item is currently unavailable.';
+
+  @override
+  String get invalidFormTitle => 'Complete required fields';
+
+  @override
+  String get invalidFormMessage =>
+      'Please review the highlighted fields and try again.';
+
+  @override
   String get removeItem => 'Remove item';
 
   @override

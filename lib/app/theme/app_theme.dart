@@ -13,6 +13,31 @@ abstract final class AppTheme {
       brightness: Brightness.light,
     ).copyWith(secondary: secondaryColor);
 
+    return _baseTheme(colorScheme);
+  }
+
+  static ThemeData dark({
+    Color primaryColor = fallbackPrimary,
+    Color secondaryColor = fallbackSecondary,
+  }) {
+    final colorScheme =
+        ColorScheme.fromSeed(
+          seedColor: primaryColor,
+          brightness: Brightness.dark,
+        ).copyWith(
+          secondary: secondaryColor,
+          surface: const Color(0xFF121614),
+          surfaceContainerLowest: const Color(0xFF0C0F0E),
+          surfaceContainerLow: const Color(0xFF151A18),
+          surfaceContainer: const Color(0xFF1A201D),
+          surfaceContainerHigh: const Color(0xFF202724),
+          surfaceContainerHighest: const Color(0xFF29312E),
+        );
+
+    return _baseTheme(colorScheme);
+  }
+
+  static ThemeData _baseTheme(ColorScheme colorScheme) {
     return ThemeData(
       useMaterial3: true,
       colorScheme: colorScheme,
@@ -61,6 +86,13 @@ abstract final class AppTheme {
       chipTheme: ChipThemeData(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         side: BorderSide(color: colorScheme.outlineVariant),
+      ),
+      dialogTheme: DialogThemeData(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      ),
+      snackBarTheme: SnackBarThemeData(
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
       listTileTheme: const ListTileThemeData(
         contentPadding: EdgeInsets.symmetric(horizontal: 16),

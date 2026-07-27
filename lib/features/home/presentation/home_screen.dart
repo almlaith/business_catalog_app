@@ -2,6 +2,7 @@ import 'package:business_catalog_app/core/constants/app_spacing.dart';
 import 'package:business_catalog_app/core/constants/app_route_paths.dart';
 import 'package:business_catalog_app/core/extensions/build_context_extensions.dart';
 import 'package:business_catalog_app/core/widgets/app_async_state.dart';
+import 'package:business_catalog_app/core/widgets/app_skeleton.dart';
 import 'package:business_catalog_app/features/catalog/data/catalog_providers.dart';
 import 'package:business_catalog_app/features/catalog/utils/catalog_view_data.dart';
 import 'package:business_catalog_app/features/catalog/widgets/category_card.dart';
@@ -27,7 +28,7 @@ class HomeScreen extends ConsumerWidget {
       ),
       body: SafeArea(
         child: catalogState.when(
-          loading: () => const AppLoadingState(),
+          loading: () => const AppSkeletonCatalog(),
           error: (error, stackTrace) => AppErrorState(
             error: error,
             onRetry: () => ref.invalidate(catalogDataProvider),
@@ -57,16 +58,35 @@ class _HomeContent extends StatelessWidget {
     return ListView(
       padding: AppSpacing.page,
       children: [
-        HomeHeader(
-          business: catalog.business,
-          onBrowse: () => context.go(AppRoutePaths.catalog),
+        TweenAnimationBuilder<double>(
+          tween: Tween(begin: 0, end: 1),
+          duration: AppDurations.slow,
+          curve: Curves.easeOutCubic,
+          builder: (context, value, child) => Opacity(
+            opacity: value,
+            child: Transform.translate(
+              offset: Offset(0, 16 * (1 - value)),
+              child: child,
+            ),
+          ),
+          child: HomeHeader(
+            business: catalog.business,
+            onBrowse: () => context.go(AppRoutePaths.catalog),
+          ),
         ),
         const SizedBox(height: AppSpacing.xxl),
-        HomeSectionHeader(
-          title: l10n.categoriesSection,
-          action: TextButton(
-            onPressed: () => context.go(AppRoutePaths.catalog),
-            child: Text(l10n.viewCatalog),
+        TweenAnimationBuilder<double>(
+          tween: Tween(begin: 0, end: 1),
+          duration: AppDurations.slow,
+          curve: Curves.easeOutCubic,
+          builder: (context, value, child) =>
+              Opacity(opacity: value, child: child),
+          child: HomeSectionHeader(
+            title: l10n.categoriesSection,
+            action: TextButton(
+              onPressed: () => context.go(AppRoutePaths.catalog),
+              child: Text(l10n.viewCatalog),
+            ),
           ),
         ),
         const SizedBox(height: AppSpacing.md),

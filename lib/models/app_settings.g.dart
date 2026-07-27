@@ -6,8 +6,13 @@ part of 'app_settings.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_AppSettings _$AppSettingsFromJson(Map<String, dynamic> json) =>
-    _AppSettings(localeCode: json['localeCode'] as String?);
+_AppSettings _$AppSettingsFromJson(Map<String, dynamic> json) => _AppSettings(
+  localeCode: json['localeCode'] as String?,
+  themeMode: json['themeMode'] as String? ?? 'system',
+);
 
 Map<String, dynamic> _$AppSettingsToJson(_AppSettings instance) =>
-    <String, dynamic>{'localeCode': instance.localeCode};
+    <String, dynamic>{
+      'localeCode': instance.localeCode,
+      'themeMode': instance.themeMode,
+    };

@@ -39,6 +39,11 @@ class BusinessCatalogApp extends ConsumerWidget {
         primaryColor: primaryColor,
         secondaryColor: secondaryColor,
       ),
+      darkTheme: AppTheme.dark(
+        primaryColor: primaryColor,
+        secondaryColor: secondaryColor,
+      ),
+      themeMode: _themeModeFromSetting(settings.themeMode),
       routerConfig: router,
       locale: resolveSupportedLocale(
         Locale(localeCode),
@@ -48,5 +53,13 @@ class BusinessCatalogApp extends ConsumerWidget {
       localizationsDelegates: AppLocales.localizationsDelegates,
       localeResolutionCallback: resolveSupportedLocale,
     );
+  }
+
+  ThemeMode _themeModeFromSetting(String value) {
+    return switch (value) {
+      'light' => ThemeMode.light,
+      'dark' => ThemeMode.dark,
+      _ => ThemeMode.system,
+    };
   }
 }

@@ -1,6 +1,9 @@
+import 'package:business_catalog_app/core/constants/app_route_paths.dart';
 import 'package:business_catalog_app/core/constants/app_spacing.dart';
 import 'package:business_catalog_app/core/extensions/build_context_extensions.dart';
 import 'package:business_catalog_app/core/widgets/app_async_state.dart';
+import 'package:business_catalog_app/core/widgets/app_feedback.dart';
+import 'package:business_catalog_app/core/widgets/app_skeleton.dart';
 import 'package:business_catalog_app/core/widgets/local_asset_image.dart';
 import 'package:business_catalog_app/features/business_info/widgets/business_info_row.dart';
 import 'package:business_catalog_app/features/catalog/data/catalog_providers.dart';
@@ -8,6 +11,7 @@ import 'package:business_catalog_app/models/business_config.dart';
 import 'package:business_catalog_app/services/external_link_launcher.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class BusinessInfoScreen extends ConsumerWidget {
@@ -21,10 +25,17 @@ class BusinessInfoScreen extends ConsumerWidget {
       appBar: AppBar(
         title: Text(context.l10n.businessInfoTitle),
         automaticallyImplyLeading: false,
+        actions: [
+          IconButton(
+            tooltip: context.l10n.settingsTooltip,
+            onPressed: () => context.push(AppRoutePaths.settings),
+            icon: const Icon(Icons.settings_outlined),
+          ),
+        ],
       ),
       body: SafeArea(
         child: catalogState.when(
-          loading: () => const AppLoadingState(),
+          loading: () => const AppSkeletonInfo(),
           error: (error, stackTrace) => AppErrorState(
             error: error,
             onRetry: () => ref.invalidate(catalogDataProvider),
@@ -147,9 +158,13 @@ class _BusinessInfoContent extends ConsumerWidget {
   }
 
   void _showError(BuildContext context) {
-    ScaffoldMessenger.of(
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    showAppFeedback(
       context,
-    ).showSnackBar(SnackBar(content: Text(context.l10n.unableToOpenLink)));
+      type: AppFeedbackType.error,
+      title: context.l10n.errorTitle,
+      message: context.l10n.unableToOpenLink,
+    );
   }
 }
 

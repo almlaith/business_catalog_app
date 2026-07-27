@@ -3,6 +3,8 @@ import 'package:business_catalog_app/core/constants/app_spacing.dart';
 import 'package:business_catalog_app/core/extensions/build_context_extensions.dart';
 import 'package:business_catalog_app/core/utils/currency_formatter.dart';
 import 'package:business_catalog_app/core/widgets/app_async_state.dart';
+import 'package:business_catalog_app/core/widgets/app_feedback.dart';
+import 'package:business_catalog_app/core/widgets/app_skeleton.dart';
 import 'package:business_catalog_app/core/widgets/local_asset_image.dart';
 import 'package:business_catalog_app/features/cart/application/cart_controller.dart';
 import 'package:business_catalog_app/features/cart/widgets/quantity_stepper.dart';
@@ -24,7 +26,7 @@ class ProductDetailsScreen extends ConsumerWidget {
     final catalogState = ref.watch(catalogDataProvider);
 
     return catalogState.when(
-      loading: () => const _ProductDetailsScaffold(child: AppLoadingState()),
+      loading: () => const _ProductDetailsScaffold(child: AppSkeletonDetails()),
       error: (error, stackTrace) =>
           _ProductDetailsScaffold(child: AppErrorState(error: error)),
       data: (catalog) {
@@ -93,9 +95,12 @@ class _ProductDetailsContentState
           children: [
             AspectRatio(
               aspectRatio: 1.08,
-              child: LocalAssetImage(
-                assetPath: product.imageAsset,
-                width: double.infinity,
+              child: Hero(
+                tag: 'product-image-${product.id}',
+                child: LocalAssetImage(
+                  assetPath: product.imageAsset,
+                  width: double.infinity,
+                ),
               ),
             ),
             Padding(
@@ -225,13 +230,14 @@ class _ProductDetailsContentState
         .read(cartControllerProvider.notifier)
         .addProduct(widget.product, quantity: _quantity);
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(context.l10n.addedToCart),
-        action: SnackBarAction(
-          label: context.l10n.viewCart,
-          onPressed: () => context.go(AppRoutePaths.cart),
-        ),
+    showAppFeedback(
+      context,
+      type: AppFeedbackType.success,
+      title: context.l10n.successTitle,
+      message: context.l10n.addedToCart,
+      action: SnackBarAction(
+        label: context.l10n.viewCart,
+        onPressed: () => context.go(AppRoutePaths.cart),
       ),
     );
   }

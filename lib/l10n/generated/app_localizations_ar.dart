@@ -187,6 +187,104 @@ class AppLocalizationsAr extends AppLocalizations {
   String get unableToOpenLink => 'تعذر فتح هذا الرابط.';
 
   @override
+  String get settingsTitle => 'الإعدادات';
+
+  @override
+  String get settingsTooltip => 'فتح الإعدادات';
+
+  @override
+  String get appearanceSection => 'المظهر';
+
+  @override
+  String get languageSetting => 'اللغة';
+
+  @override
+  String get languageSettingDescription => 'اختر لغة واجهة التطبيق.';
+
+  @override
+  String get englishLanguage => 'الإنجليزية';
+
+  @override
+  String get arabicLanguage => 'العربية';
+
+  @override
+  String get themeSetting => 'النمط';
+
+  @override
+  String get themeSettingDescription =>
+      'تحكم بكيفية اتباع التطبيق لمظهر الجهاز.';
+
+  @override
+  String get systemTheme => 'حسب النظام';
+
+  @override
+  String get lightTheme => 'فاتح';
+
+  @override
+  String get darkTheme => 'داكن';
+
+  @override
+  String get aboutSection => 'حول التطبيق';
+
+  @override
+  String get aboutAppDescription =>
+      'قالب كتالوج محلي وطلبات واتساب قابل لإعادة الاستخدام للأنشطة الصغيرة.';
+
+  @override
+  String get appVersion => 'إصدار التطبيق';
+
+  @override
+  String get resetAppearance => 'إعادة ضبط المظهر';
+
+  @override
+  String get resetAppearanceDescription =>
+      'إرجاع اللغة والنمط إلى الإعدادات الافتراضية.';
+
+  @override
+  String get resetAppearanceQuestion => 'هل تريد إعادة ضبط إعدادات المظهر؟';
+
+  @override
+  String get resetAppearanceMessage =>
+      'ستعود تفضيلات اللغة والنمط إلى القيم الافتراضية.';
+
+  @override
+  String get reset => 'إعادة ضبط';
+
+  @override
+  String get settingsSavedTitle => 'تم تحديث الإعدادات';
+
+  @override
+  String get settingsSavedMessage => 'تم تطبيق تفضيلك.';
+
+  @override
+  String get settingsResetTitle => 'تمت إعادة الضبط';
+
+  @override
+  String get settingsResetMessage => 'تمت إعادة ضبط إعدادات المظهر.';
+
+  @override
+  String get successTitle => 'تم بنجاح';
+
+  @override
+  String get errorTitle => 'حدث خطأ';
+
+  @override
+  String get warningTitle => 'يرجى الانتباه';
+
+  @override
+  String get infoTitle => 'معلومة';
+
+  @override
+  String get productUnavailableMessage => 'هذا العنصر غير متاح حاليا.';
+
+  @override
+  String get invalidFormTitle => 'أكمل الحقول المطلوبة';
+
+  @override
+  String get invalidFormMessage =>
+      'يرجى مراجعة الحقول المحددة ثم المحاولة مرة أخرى.';
+
+  @override
   String get removeItem => 'إزالة العنصر';
 
   @override

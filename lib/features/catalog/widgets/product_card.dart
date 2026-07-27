@@ -1,6 +1,7 @@
 import 'package:business_catalog_app/core/constants/app_spacing.dart';
 import 'package:business_catalog_app/core/extensions/build_context_extensions.dart';
 import 'package:business_catalog_app/core/utils/currency_formatter.dart';
+import 'package:business_catalog_app/core/widgets/app_pressable.dart';
 import 'package:business_catalog_app/core/widgets/local_asset_image.dart';
 import 'package:business_catalog_app/models/product.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +27,7 @@ class ProductCard extends StatelessWidget {
 
     return Card(
       clipBehavior: Clip.antiAlias,
-      child: InkWell(
+      child: AppPressable(
         onTap: onTap,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -36,9 +37,12 @@ class ProductCard extends StatelessWidget {
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  LocalAssetImage(
-                    assetPath: product.imageAsset,
-                    width: double.infinity,
+                  Hero(
+                    tag: 'product-image-${product.id}',
+                    child: LocalAssetImage(
+                      assetPath: product.imageAsset,
+                      width: double.infinity,
+                    ),
                   ),
                   PositionedDirectional(
                     start: AppSpacing.sm,

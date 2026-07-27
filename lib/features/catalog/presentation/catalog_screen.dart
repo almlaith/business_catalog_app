@@ -2,6 +2,7 @@ import 'package:business_catalog_app/core/constants/app_route_paths.dart';
 import 'package:business_catalog_app/core/constants/app_spacing.dart';
 import 'package:business_catalog_app/core/extensions/build_context_extensions.dart';
 import 'package:business_catalog_app/core/widgets/app_async_state.dart';
+import 'package:business_catalog_app/core/widgets/app_skeleton.dart';
 import 'package:business_catalog_app/features/catalog/data/catalog_providers.dart';
 import 'package:business_catalog_app/features/catalog/utils/catalog_view_data.dart';
 import 'package:business_catalog_app/features/catalog/widgets/category_selector.dart';
@@ -49,7 +50,7 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
       ),
       body: SafeArea(
         child: catalogState.when(
-          loading: () => const AppLoadingState(),
+          loading: () => const AppSkeletonCatalog(),
           error: (error, stackTrace) => AppErrorState(
             error: error,
             onRetry: () => ref.invalidate(catalogDataProvider),
@@ -110,41 +111,52 @@ class _CatalogContent extends StatelessWidget {
         ),
         const SizedBox(height: AppSpacing.md),
         Expanded(
-          child: products.isEmpty
-              ? AppEmptyState(message: l10n.noProducts)
-              : LayoutBuilder(
-                  builder: (context, constraints) {
-                    final columns = constraints.maxWidth < 360 ? 1 : 2;
+          child: AnimatedSwitcher(
+            duration: AppDurations.medium,
+            switchInCurve: Curves.easeOutCubic,
+            switchOutCurve: Curves.easeInCubic,
+            child: products.isEmpty
+                ? AppEmptyState(
+                    key: ValueKey('empty-$selectedCategoryId'),
+                    message: l10n.noProducts,
+                  )
+                : LayoutBuilder(
+                    key: ValueKey(
+                      products.map((product) => product.id).join(','),
+                    ),
+                    builder: (context, constraints) {
+                      final columns = constraints.maxWidth < 360 ? 1 : 2;
 
-                    return GridView.builder(
-                      padding: const EdgeInsets.fromLTRB(
-                        AppSpacing.lg,
-                        0,
-                        AppSpacing.lg,
-                        AppSpacing.lg,
-                      ),
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: columns,
-                        mainAxisSpacing: AppSpacing.md,
-                        crossAxisSpacing: AppSpacing.md,
-                        childAspectRatio: columns == 1 ? 1.82 : 0.66,
-                      ),
-                      itemCount: products.length,
-                      itemBuilder: (context, index) {
-                        final product = products[index];
+                      return GridView.builder(
+                        padding: const EdgeInsets.fromLTRB(
+                          AppSpacing.lg,
+                          0,
+                          AppSpacing.lg,
+                          AppSpacing.lg,
+                        ),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: columns,
+                          mainAxisSpacing: AppSpacing.md,
+                          crossAxisSpacing: AppSpacing.md,
+                          childAspectRatio: columns == 1 ? 1.82 : 0.66,
+                        ),
+                        itemCount: products.length,
+                        itemBuilder: (context, index) {
+                          final product = products[index];
 
-                        return ProductCard(
-                          product: product,
-                          currencyCode: catalog.business.currencyCode,
-                          compact: columns == 1,
-                          onTap: () => context.push(
-                            AppRoutePaths.productDetailsPath(product.id),
-                          ),
-                        );
-                      },
-                    );
-                  },
-                ),
+                          return ProductCard(
+                            product: product,
+                            currencyCode: catalog.business.currencyCode,
+                            compact: columns == 1,
+                            onTap: () => context.push(
+                              AppRoutePaths.productDetailsPath(product.id),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
+          ),
         ),
       ],
     );

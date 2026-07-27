@@ -1,4 +1,5 @@
 import 'package:business_catalog_app/core/extensions/build_context_extensions.dart';
+import 'package:business_catalog_app/core/constants/app_spacing.dart';
 import 'package:business_catalog_app/features/cart/application/cart_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,7 +18,22 @@ class AppShell extends ConsumerWidget {
     final l10n = context.l10n;
 
     return Scaffold(
-      body: navigationShell,
+      body: TweenAnimationBuilder<double>(
+        key: ValueKey(navigationShell.currentIndex),
+        tween: Tween(begin: 0, end: 1),
+        duration: AppDurations.fast,
+        curve: Curves.easeOutCubic,
+        builder: (context, value, child) {
+          return Opacity(
+            opacity: value,
+            child: Transform.translate(
+              offset: Offset(0, 6 * (1 - value)),
+              child: child,
+            ),
+          );
+        },
+        child: navigationShell,
+      ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: navigationShell.currentIndex,
         onDestinationSelected: _goToBranch,
@@ -75,11 +91,19 @@ class _CartIcon extends StatelessWidget {
       return iconWidget;
     }
 
-    return Badge(
-      backgroundColor: Theme.of(context).colorScheme.secondary,
-      textColor: Theme.of(context).colorScheme.onSecondary,
-      label: Text('$totalItemQuantity'),
-      child: iconWidget,
+    return TweenAnimationBuilder<double>(
+      key: ValueKey(totalItemQuantity),
+      tween: Tween(begin: 0.86, end: 1),
+      duration: const Duration(milliseconds: 220),
+      curve: Curves.easeOutBack,
+      builder: (context, scale, child) =>
+          Transform.scale(scale: scale, child: child),
+      child: Badge(
+        backgroundColor: Theme.of(context).colorScheme.secondary,
+        textColor: Theme.of(context).colorScheme.onSecondary,
+        label: Text('$totalItemQuantity'),
+        child: iconWidget,
+      ),
     );
   }
 }

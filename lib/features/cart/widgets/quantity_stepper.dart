@@ -1,3 +1,4 @@
+import 'package:business_catalog_app/core/constants/app_spacing.dart';
 import 'package:business_catalog_app/core/extensions/build_context_extensions.dart';
 import 'package:flutter/material.dart';
 
@@ -36,12 +37,18 @@ class QuantityStepper extends StatelessWidget {
           ),
           SizedBox(
             width: 36,
-            child: Text(
-              '$quantity',
-              textAlign: TextAlign.center,
-              style: Theme.of(
-                context,
-              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800),
+            child: AnimatedSwitcher(
+              duration: AppDurations.fast,
+              transitionBuilder: (child, animation) =>
+                  ScaleTransition(scale: animation, child: child),
+              child: Text(
+                '$quantity',
+                key: ValueKey(quantity),
+                textAlign: TextAlign.center,
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800),
+              ),
             ),
           ),
           IconButton(

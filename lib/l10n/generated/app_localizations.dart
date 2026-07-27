@@ -452,6 +452,192 @@ abstract class AppLocalizations {
   /// **'Unable to open this link.'**
   String get unableToOpenLink;
 
+  /// No description provided for @settingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settingsTitle;
+
+  /// No description provided for @settingsTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Open settings'**
+  String get settingsTooltip;
+
+  /// No description provided for @appearanceSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance'**
+  String get appearanceSection;
+
+  /// No description provided for @languageSetting.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get languageSetting;
+
+  /// No description provided for @languageSettingDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the interface language for this app.'**
+  String get languageSettingDescription;
+
+  /// No description provided for @englishLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get englishLanguage;
+
+  /// No description provided for @arabicLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Arabic'**
+  String get arabicLanguage;
+
+  /// No description provided for @themeSetting.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme'**
+  String get themeSetting;
+
+  /// No description provided for @themeSettingDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Control how the app follows your device appearance.'**
+  String get themeSettingDescription;
+
+  /// No description provided for @systemTheme.
+  ///
+  /// In en, this message translates to:
+  /// **'System default'**
+  String get systemTheme;
+
+  /// No description provided for @lightTheme.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get lightTheme;
+
+  /// No description provided for @darkTheme.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get darkTheme;
+
+  /// No description provided for @aboutSection.
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get aboutSection;
+
+  /// No description provided for @aboutAppDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'A reusable local catalog and WhatsApp ordering template for small businesses.'**
+  String get aboutAppDescription;
+
+  /// No description provided for @appVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'App version'**
+  String get appVersion;
+
+  /// No description provided for @resetAppearance.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset appearance settings'**
+  String get resetAppearance;
+
+  /// No description provided for @resetAppearanceDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Return language and theme to the template defaults.'**
+  String get resetAppearanceDescription;
+
+  /// No description provided for @resetAppearanceQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset appearance settings?'**
+  String get resetAppearanceQuestion;
+
+  /// No description provided for @resetAppearanceMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Language and theme preferences will return to their defaults.'**
+  String get resetAppearanceMessage;
+
+  /// No description provided for @reset.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset'**
+  String get reset;
+
+  /// No description provided for @settingsSavedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings updated'**
+  String get settingsSavedTitle;
+
+  /// No description provided for @settingsSavedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your preference was applied.'**
+  String get settingsSavedMessage;
+
+  /// No description provided for @settingsResetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings reset'**
+  String get settingsResetTitle;
+
+  /// No description provided for @settingsResetMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance settings were reset.'**
+  String get settingsResetMessage;
+
+  /// No description provided for @successTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Success'**
+  String get successTitle;
+
+  /// No description provided for @errorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong'**
+  String get errorTitle;
+
+  /// No description provided for @warningTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Check this'**
+  String get warningTitle;
+
+  /// No description provided for @infoTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Information'**
+  String get infoTitle;
+
+  /// No description provided for @productUnavailableMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This item is currently unavailable.'**
+  String get productUnavailableMessage;
+
+  /// No description provided for @invalidFormTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete required fields'**
+  String get invalidFormTitle;
+
+  /// No description provided for @invalidFormMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Please review the highlighted fields and try again.'**
+  String get invalidFormMessage;
+
   /// No description provided for @removeItem.
   ///
   /// In en, this message translates to:

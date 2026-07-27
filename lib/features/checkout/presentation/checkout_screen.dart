@@ -2,6 +2,8 @@ import 'package:business_catalog_app/core/constants/app_spacing.dart';
 import 'package:business_catalog_app/core/extensions/build_context_extensions.dart';
 import 'package:business_catalog_app/core/validation/form_validators.dart';
 import 'package:business_catalog_app/core/widgets/app_async_state.dart';
+import 'package:business_catalog_app/core/widgets/app_confirmation_dialog.dart';
+import 'package:business_catalog_app/core/widgets/app_feedback.dart';
 import 'package:business_catalog_app/features/cart/application/cart_controller.dart';
 import 'package:business_catalog_app/features/cart/domain/cart_state.dart';
 import 'package:business_catalog_app/features/catalog/data/catalog_providers.dart';
@@ -78,6 +80,12 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
     FocusScope.of(context).unfocus();
 
     if (!(_formKey.currentState?.validate() ?? false)) {
+      showAppFeedback(
+        context,
+        type: AppFeedbackType.warning,
+        title: context.l10n.invalidFormTitle,
+        message: context.l10n.invalidFormMessage,
+      );
       return;
     }
 
@@ -109,16 +117,28 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
       }
 
       if (!launched) {
-        _showSnackBar(context.l10n.whatsappUnavailable);
+        _showFeedback(
+          type: AppFeedbackType.error,
+          title: context.l10n.errorTitle,
+          message: context.l10n.whatsappUnavailable,
+        );
         return;
       }
 
       setState(() => _isSubmitting = false);
-      _showSnackBar(context.l10n.orderSent);
+      _showFeedback(
+        type: AppFeedbackType.success,
+        title: context.l10n.successTitle,
+        message: context.l10n.orderSent,
+      );
       await _confirmClearCart();
     } on FormatException {
       if (mounted) {
-        _showSnackBar(context.l10n.invalidWhatsappNumber);
+        _showFeedback(
+          type: AppFeedbackType.error,
+          title: context.l10n.errorTitle,
+          message: context.l10n.invalidWhatsappNumber,
+        );
       }
     } finally {
       if (mounted && _isSubmitting) {
@@ -128,33 +148,27 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
   }
 
   Future<void> _confirmClearCart() async {
-    final shouldClear = await showDialog<bool>(
+    final shouldClear = await showAppConfirmationDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(context.l10n.clearCartAfterOrderQuestion),
-        content: Text(context.l10n.clearCartAfterOrderMessage),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: Text(context.l10n.keepCart),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: Text(context.l10n.clear),
-          ),
-        ],
-      ),
+      icon: Icons.shopping_bag_outlined,
+      title: context.l10n.clearCartAfterOrderQuestion,
+      message: context.l10n.clearCartAfterOrderMessage,
+      cancelLabel: context.l10n.keepCart,
+      confirmLabel: context.l10n.clear,
+      isDestructive: true,
     );
 
-    if (shouldClear ?? false) {
+    if (shouldClear) {
       ref.read(cartControllerProvider.notifier).clear();
     }
   }
 
-  void _showSnackBar(String message) {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(message)));
+  void _showFeedback({
+    required AppFeedbackType type,
+    required String title,
+    required String message,
+  }) {
+    showAppFeedback(context, type: type, title: title, message: message);
   }
 }
 
@@ -256,23 +270,35 @@ class _CheckoutContent extends StatelessWidget {
                     onOrderTypeChanged(values.single);
                   },
                 ),
-                if (orderType == OrderType.delivery) ...[
-                  const SizedBox(height: AppSpacing.md),
-                  TextFormField(
-                    key: const ValueKey('checkout-delivery-address-field'),
-                    controller: deliveryAddressController,
-                    textInputAction: TextInputAction.next,
-                    decoration: InputDecoration(
-                      labelText: l10n.deliveryAddress,
-                      border: OutlineInputBorder(),
-                    ),
-                    validator: (value) => FormValidators.requiredWhen(
-                      value,
-                      condition: orderType == OrderType.delivery,
-                      message: l10n.requiredField,
-                    ),
-                  ),
-                ],
+                AnimatedSwitcher(
+                  duration: AppDurations.medium,
+                  switchInCurve: Curves.easeOutCubic,
+                  switchOutCurve: Curves.easeInCubic,
+                  child: orderType == OrderType.delivery
+                      ? Padding(
+                          key: const ValueKey('delivery-address-visible'),
+                          padding: const EdgeInsets.only(top: AppSpacing.md),
+                          child: TextFormField(
+                            key: const ValueKey(
+                              'checkout-delivery-address-field',
+                            ),
+                            controller: deliveryAddressController,
+                            textInputAction: TextInputAction.next,
+                            decoration: InputDecoration(
+                              labelText: l10n.deliveryAddress,
+                              border: OutlineInputBorder(),
+                            ),
+                            validator: (value) => FormValidators.requiredWhen(
+                              value,
+                              condition: orderType == OrderType.delivery,
+                              message: l10n.requiredField,
+                            ),
+                          ),
+                        )
+                      : const SizedBox.shrink(
+                          key: ValueKey('delivery-address-hidden'),
+                        ),
+                ),
                 const SizedBox(height: AppSpacing.md),
                 TextFormField(
                   key: const ValueKey('checkout-notes-field'),
