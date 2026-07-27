@@ -3,6 +3,8 @@ import 'package:business_catalog_app/core/constants/app_spacing.dart';
 import 'package:business_catalog_app/core/extensions/build_context_extensions.dart';
 import 'package:business_catalog_app/core/widgets/app_async_state.dart';
 import 'package:business_catalog_app/core/widgets/app_skeleton.dart';
+import 'package:business_catalog_app/core/widgets/aurora_background.dart';
+import 'package:business_catalog_app/core/widgets/aurora_components.dart';
 import 'package:business_catalog_app/features/catalog/data/catalog_providers.dart';
 import 'package:business_catalog_app/features/catalog/utils/catalog_view_data.dart';
 import 'package:business_catalog_app/features/catalog/widgets/category_selector.dart';
@@ -48,19 +50,21 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
         title: Text(context.l10n.catalogTitle),
         automaticallyImplyLeading: false,
       ),
-      body: SafeArea(
-        child: catalogState.when(
-          loading: () => const AppSkeletonCatalog(),
-          error: (error, stackTrace) => AppErrorState(
-            error: error,
-            onRetry: () => ref.invalidate(catalogDataProvider),
-          ),
-          data: (catalog) => _CatalogContent(
-            catalog: catalog,
-            selectedCategoryId: _validSelectedCategoryId(catalog),
-            onCategorySelected: (categoryId) {
-              setState(() => _selectedCategoryId = categoryId);
-            },
+      body: AuroraBackground(
+        child: SafeArea(
+          child: catalogState.when(
+            loading: () => const AppSkeletonCatalog(),
+            error: (error, stackTrace) => AppErrorState(
+              error: error,
+              onRetry: () => ref.invalidate(catalogDataProvider),
+            ),
+            data: (catalog) => _CatalogContent(
+              catalog: catalog,
+              selectedCategoryId: _validSelectedCategoryId(catalog),
+              onCategorySelected: (categoryId) {
+                setState(() => _selectedCategoryId = categoryId);
+              },
+            ),
           ),
         ),
       ),
@@ -99,11 +103,31 @@ class _CatalogContent extends StatelessWidget {
     final categories = catalog.activeCategoriesSorted;
     final products = catalog.availableProductsForCategory(selectedCategoryId);
     final l10n = context.l10n;
+    final selectedId = selectedCategoryId;
+    final selectedCategory = selectedId == null
+        ? null
+        : catalog.categoryById(selectedId);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(height: 12),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.lg,
+            AppSpacing.lg,
+            AppSpacing.lg,
+            AppSpacing.md,
+          ),
+          child: AuroraCard(
+            padding: const EdgeInsets.all(AppSpacing.lg),
+            child: AuroraSectionHeader(
+              title: selectedCategory?.name ?? l10n.catalogTitle,
+              subtitle:
+                  selectedCategory?.description ??
+                  catalog.business.shortDescription,
+            ),
+          ),
+        ),
         CategorySelector(
           categories: categories,
           selectedCategoryId: selectedCategoryId,
@@ -132,13 +156,13 @@ class _CatalogContent extends StatelessWidget {
                           AppSpacing.lg,
                           0,
                           AppSpacing.lg,
-                          AppSpacing.lg,
+                          118,
                         ),
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: columns,
                           mainAxisSpacing: AppSpacing.md,
                           crossAxisSpacing: AppSpacing.md,
-                          childAspectRatio: columns == 1 ? 1.82 : 0.66,
+                          childAspectRatio: columns == 1 ? 1.72 : 0.62,
                         ),
                         itemCount: products.length,
                         itemBuilder: (context, index) {

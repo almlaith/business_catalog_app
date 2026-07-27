@@ -3,6 +3,7 @@ import 'package:business_catalog_app/core/constants/app_route_paths.dart';
 import 'package:business_catalog_app/core/extensions/build_context_extensions.dart';
 import 'package:business_catalog_app/core/widgets/app_async_state.dart';
 import 'package:business_catalog_app/core/widgets/app_skeleton.dart';
+import 'package:business_catalog_app/core/widgets/aurora_background.dart';
 import 'package:business_catalog_app/features/catalog/data/catalog_providers.dart';
 import 'package:business_catalog_app/features/catalog/utils/catalog_view_data.dart';
 import 'package:business_catalog_app/features/catalog/widgets/category_card.dart';
@@ -26,14 +27,16 @@ class HomeScreen extends ConsumerWidget {
         title: Text(context.l10n.homeTitle),
         automaticallyImplyLeading: false,
       ),
-      body: SafeArea(
-        child: catalogState.when(
-          loading: () => const AppSkeletonCatalog(),
-          error: (error, stackTrace) => AppErrorState(
-            error: error,
-            onRetry: () => ref.invalidate(catalogDataProvider),
+      body: AuroraBackground(
+        child: SafeArea(
+          child: catalogState.when(
+            loading: () => const AppSkeletonCatalog(),
+            error: (error, stackTrace) => AppErrorState(
+              error: error,
+              onRetry: () => ref.invalidate(catalogDataProvider),
+            ),
+            data: (catalog) => _HomeContent(catalog: catalog),
           ),
-          data: (catalog) => _HomeContent(catalog: catalog),
         ),
       ),
     );
@@ -56,7 +59,12 @@ class _HomeContent extends StatelessWidget {
     }
 
     return ListView(
-      padding: AppSpacing.page,
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.lg,
+        AppSpacing.lg,
+        AppSpacing.lg,
+        118,
+      ),
       children: [
         TweenAnimationBuilder<double>(
           tween: Tween(begin: 0, end: 1),
@@ -97,7 +105,7 @@ class _HomeContent extends StatelessWidget {
           )
         else
           SizedBox(
-            height: 128,
+            height: 146,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               itemCount: categories.length,
@@ -130,7 +138,7 @@ class _HomeContent extends StatelessWidget {
           )
         else
           SizedBox(
-            height: 318,
+            height: 338,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               itemCount: featuredProducts.length,

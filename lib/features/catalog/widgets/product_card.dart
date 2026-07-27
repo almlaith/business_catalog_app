@@ -1,3 +1,4 @@
+import 'package:business_catalog_app/app/theme/aurora_tokens.dart';
 import 'package:business_catalog_app/core/constants/app_spacing.dart';
 import 'package:business_catalog_app/core/extensions/build_context_extensions.dart';
 import 'package:business_catalog_app/core/utils/currency_formatter.dart';
@@ -23,75 +24,157 @@ class ProductCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final l10n = context.l10n;
+    final colorScheme = theme.colorScheme;
 
-    return Card(
-      clipBehavior: Clip.antiAlias,
-      child: AppPressable(
-        onTap: onTap,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            AspectRatio(
-              aspectRatio: compact ? 1.55 : 1.18,
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  Hero(
-                    tag: 'product-image-${product.id}',
-                    child: LocalAssetImage(
-                      assetPath: product.imageAsset,
-                      width: double.infinity,
-                    ),
-                  ),
-                  PositionedDirectional(
-                    start: AppSpacing.sm,
-                    top: AppSpacing.sm,
-                    child: _AvailabilityPill(
-                      label: product.isAvailable
-                          ? l10n.available
-                          : l10n.unavailable,
-                      isAvailable: product.isAvailable,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(AppSpacing.md),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: colorScheme.surface,
+        borderRadius: BorderRadius.circular(AppRadii.xl),
+        border: Border.all(color: colorScheme.outlineVariant),
+        boxShadow: AuroraShadows.card(context),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(AppRadii.xl),
+        child: AppPressable(
+          onTap: onTap,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              AspectRatio(
+                aspectRatio: compact ? 1.72 : 1.10,
+                child: Stack(
+                  fit: StackFit.expand,
                   children: [
-                    Text(
-                      product.name,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w800,
-                        height: 1.12,
+                    Hero(
+                      tag: 'product-image-${product.id}',
+                      child: LocalAssetImage(
+                        assetPath: product.imageAsset,
+                        width: double.infinity,
                       ),
                     ),
-                    if (!compact) ...[
-                      const SizedBox(height: AppSpacing.xs),
-                      Text(
-                        product.description,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant,
-                          height: 1.28,
+                    DecoratedBox(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.transparent,
+                            Colors.black.withValues(alpha: 0.18),
+                          ],
                         ),
                       ),
-                    ],
-                    const Spacer(),
-                    _ProductPrice(
-                      price: product.price,
-                      oldPrice: product.oldPrice,
-                      currencyCode: currencyCode,
                     ),
+                    PositionedDirectional(
+                      start: AppSpacing.sm,
+                      top: AppSpacing.sm,
+                      child: _AvailabilityPill(
+                        isAvailable: product.isAvailable,
+                      ),
+                    ),
+                    if (product.oldPrice != null &&
+                        product.oldPrice! > product.price)
+                      PositionedDirectional(
+                        end: AppSpacing.sm,
+                        top: AppSpacing.sm,
+                        child: _PromoPill(label: context.l10n.featuredSection),
+                      ),
+                    if (!product.isAvailable)
+                      Positioned.fill(
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            color: Colors.black.withValues(alpha: 0.42),
+                          ),
+                          child: Center(
+                            child: _UnavailableOverlay(
+                              label: context.l10n.unavailable,
+                            ),
+                          ),
+                        ),
+                      ),
                   ],
                 ),
+              ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(AppSpacing.md),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        product.name,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w900,
+                          height: 1.08,
+                        ),
+                      ),
+                      if (!compact) ...[
+                        const SizedBox(height: AppSpacing.xs),
+                        Text(
+                          product.description,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: colorScheme.onSurfaceVariant,
+                            height: 1.28,
+                          ),
+                        ),
+                      ],
+                      const Spacer(),
+                      _ProductPrice(
+                        price: product.price,
+                        oldPrice: product.oldPrice,
+                        currencyCode: currencyCode,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _AvailabilityPill extends StatelessWidget {
+  const _AvailabilityPill({required this.isAvailable});
+
+  final bool isAvailable;
+
+  @override
+  Widget build(BuildContext context) {
+    final label = isAvailable
+        ? context.l10n.available
+        : context.l10n.unavailable;
+    final accent = isAvailable ? AuroraColors.success : AuroraColors.error;
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: Colors.black.withValues(alpha: 0.48),
+        borderRadius: BorderRadius.circular(AppRadii.pill),
+        border: Border.all(color: accent.withValues(alpha: 0.58)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              isAvailable ? Icons.check_circle_rounded : Icons.block_rounded,
+              color: accent,
+              size: 13,
+            ),
+            const SizedBox(width: 5),
+            Text(
+              label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                color: Colors.white,
+                fontWeight: FontWeight.w900,
               ),
             ),
           ],
@@ -101,34 +184,54 @@ class ProductCard extends StatelessWidget {
   }
 }
 
-class _AvailabilityPill extends StatelessWidget {
-  const _AvailabilityPill({required this.label, required this.isAvailable});
+class _PromoPill extends StatelessWidget {
+  const _PromoPill({required this.label});
 
   final String label;
-  final bool isAvailable;
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: isAvailable
-            ? colorScheme.secondaryContainer.withValues(alpha: 0.94)
-            : colorScheme.errorContainer.withValues(alpha: 0.94),
-        borderRadius: BorderRadius.circular(8),
+        gradient: AuroraGradients.primary,
+        borderRadius: BorderRadius.circular(AppRadii.pill),
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+        padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
+        child: Icon(
+          Icons.auto_awesome_rounded,
+          color: Colors.white,
+          size: AppIconSizes.sm,
+          semanticLabel: label,
+        ),
+      ),
+    );
+  }
+}
+
+class _UnavailableOverlay extends StatelessWidget {
+  const _UnavailableOverlay({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: Colors.black.withValues(alpha: 0.48),
+        borderRadius: BorderRadius.circular(AppRadii.pill),
+        border: Border.all(color: AuroraColors.error.withValues(alpha: 0.42)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md,
+          vertical: AppSpacing.sm,
+        ),
         child: Text(
           label,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: Theme.of(context).textTheme.labelSmall?.copyWith(
-            color: isAvailable
-                ? colorScheme.onSecondaryContainer
-                : colorScheme.onErrorContainer,
-            fontWeight: FontWeight.w800,
+          style: Theme.of(context).textTheme.labelMedium?.copyWith(
+            color: Colors.white,
+            fontWeight: FontWeight.w900,
           ),
         ),
       ),
@@ -154,13 +257,15 @@ class _ProductPrice extends StatelessWidget {
 
     return Wrap(
       spacing: 8,
+      runSpacing: 2,
       crossAxisAlignment: WrapCrossAlignment.center,
       children: [
         Text(
           formatCurrency(price, currencyCode: currencyCode),
-          style: theme.textTheme.titleSmall?.copyWith(
+          style: theme.textTheme.titleMedium?.copyWith(
             color: theme.colorScheme.primary,
             fontWeight: FontWeight.w900,
+            height: 1,
           ),
         ),
         if (oldPrice != null && oldPrice > price)
@@ -169,6 +274,7 @@ class _ProductPrice extends StatelessWidget {
             style: theme.textTheme.bodySmall?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
               decoration: TextDecoration.lineThrough,
+              decorationThickness: 2,
             ),
           ),
       ],

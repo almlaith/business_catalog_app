@@ -1,5 +1,6 @@
-import 'package:business_catalog_app/core/extensions/build_context_extensions.dart';
+import 'package:business_catalog_app/app/theme/aurora_tokens.dart';
 import 'package:business_catalog_app/core/constants/app_spacing.dart';
+import 'package:business_catalog_app/core/extensions/build_context_extensions.dart';
 import 'package:business_catalog_app/features/cart/application/cart_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -34,34 +35,30 @@ class AppShell extends ConsumerWidget {
         },
         child: navigationShell,
       ),
-      bottomNavigationBar: NavigationBar(
+      extendBody: true,
+      bottomNavigationBar: _AuroraBottomNavigation(
         selectedIndex: navigationShell.currentIndex,
         onDestinationSelected: _goToBranch,
-        destinations: [
-          NavigationDestination(
-            icon: const Icon(Icons.home_outlined),
-            selectedIcon: const Icon(Icons.home),
+        items: [
+          _AuroraNavItem(
+            icon: Icons.home_rounded,
+            inactiveIcon: Icons.home_outlined,
             label: l10n.homeTitle,
           ),
-          NavigationDestination(
-            icon: const Icon(Icons.storefront_outlined),
-            selectedIcon: const Icon(Icons.storefront),
+          _AuroraNavItem(
+            icon: Icons.storefront_rounded,
+            inactiveIcon: Icons.storefront_outlined,
             label: l10n.catalogTitle,
           ),
-          NavigationDestination(
-            icon: _CartIcon(
-              icon: Icons.shopping_bag_outlined,
-              totalItemQuantity: totalItemQuantity,
-            ),
-            selectedIcon: _CartIcon(
-              icon: Icons.shopping_bag,
-              totalItemQuantity: totalItemQuantity,
-            ),
+          _AuroraNavItem(
+            icon: Icons.shopping_bag_rounded,
+            inactiveIcon: Icons.shopping_bag_outlined,
             label: l10n.cartTitle,
+            badgeCount: totalItemQuantity,
           ),
-          NavigationDestination(
-            icon: const Icon(Icons.info_outline),
-            selectedIcon: const Icon(Icons.info),
+          _AuroraNavItem(
+            icon: Icons.info_rounded,
+            inactiveIcon: Icons.info_outline_rounded,
             label: l10n.businessInfoTitle,
           ),
         ],
@@ -77,33 +74,188 @@ class AppShell extends ConsumerWidget {
   }
 }
 
-class _CartIcon extends StatelessWidget {
-  const _CartIcon({required this.icon, required this.totalItemQuantity});
+class _AuroraBottomNavigation extends StatelessWidget {
+  const _AuroraBottomNavigation({
+    required this.selectedIndex,
+    required this.onDestinationSelected,
+    required this.items,
+  });
 
-  final IconData icon;
-  final int totalItemQuantity;
+  final int selectedIndex;
+  final ValueChanged<int> onDestinationSelected;
+  final List<_AuroraNavItem> items;
 
   @override
   Widget build(BuildContext context) {
-    final iconWidget = Icon(icon);
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
 
-    if (totalItemQuantity <= 0) {
+    return SafeArea(
+      minimum: const EdgeInsets.fromLTRB(14, 0, 14, 12),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: colorScheme.surfaceContainerLow.withValues(
+            alpha: isDark ? 0.92 : 0.88,
+          ),
+          borderRadius: BorderRadius.circular(AppRadii.xxl),
+          border: Border.all(
+            color: colorScheme.outlineVariant.withValues(alpha: 0.88),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: colorScheme.shadow.withValues(alpha: isDark ? 0.35 : 0.12),
+              blurRadius: 34,
+              offset: const Offset(0, 18),
+            ),
+            BoxShadow(
+              color: colorScheme.primary.withValues(
+                alpha: isDark ? 0.18 : 0.10,
+              ),
+              blurRadius: 28,
+              offset: const Offset(0, 8),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(AppRadii.xxl),
+          child: SizedBox(
+            height: AppHeights.navDock,
+            child: Row(
+              children: [
+                for (var index = 0; index < items.length; index++)
+                  Expanded(
+                    child: _AuroraNavDestination(
+                      item: items[index],
+                      selected: selectedIndex == index,
+                      onTap: () => onDestinationSelected(index),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _AuroraNavDestination extends StatelessWidget {
+  const _AuroraNavDestination({
+    required this.item,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final _AuroraNavItem item;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return Semantics(
+      button: true,
+      selected: selected,
+      label: item.label,
+      child: InkWell(
+        onTap: onTap,
+        customBorder: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppRadii.xxl),
+        ),
+        child: AnimatedContainer(
+          duration: AppDurations.medium,
+          curve: AuroraMotion.curve,
+          margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 9),
+          padding: const EdgeInsets.symmetric(horizontal: 6),
+          decoration: BoxDecoration(
+            gradient: selected ? AuroraGradients.primary : null,
+            color: selected ? null : Colors.transparent,
+            borderRadius: BorderRadius.circular(AppRadii.xl),
+            boxShadow: selected
+                ? AuroraShadows.glow(colorScheme.primary, opacity: 0.24)
+                : null,
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _AuroraNavIcon(item: item, selected: selected),
+              const SizedBox(height: 4),
+              AnimatedDefaultTextStyle(
+                duration: AppDurations.fast,
+                curve: AuroraMotion.curve,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: theme.textTheme.labelSmall!.copyWith(
+                  color: selected
+                      ? Colors.white
+                      : colorScheme.onSurfaceVariant.withValues(alpha: 0.88),
+                  fontWeight: selected ? FontWeight.w900 : FontWeight.w700,
+                ),
+                child: Text(item.label, textAlign: TextAlign.center),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _AuroraNavIcon extends StatelessWidget {
+  const _AuroraNavIcon({required this.item, required this.selected});
+
+  final _AuroraNavItem item;
+  final bool selected;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final iconWidget = AnimatedSwitcher(
+      duration: AppDurations.fast,
+      child: Icon(
+        selected ? item.icon : item.inactiveIcon,
+        key: ValueKey(selected),
+        size: 23,
+        color: selected ? Colors.white : colorScheme.onSurfaceVariant,
+      ),
+    );
+
+    if (item.badgeCount <= 0) {
       return iconWidget;
     }
 
     return TweenAnimationBuilder<double>(
-      key: ValueKey(totalItemQuantity),
+      key: ValueKey(item.badgeCount),
       tween: Tween(begin: 0.86, end: 1),
       duration: const Duration(milliseconds: 220),
-      curve: Curves.easeOutBack,
+      curve: AuroraMotion.emphasized,
       builder: (context, scale, child) =>
           Transform.scale(scale: scale, child: child),
       child: Badge(
-        backgroundColor: Theme.of(context).colorScheme.secondary,
-        textColor: Theme.of(context).colorScheme.onSecondary,
-        label: Text('$totalItemQuantity'),
+        backgroundColor: AuroraColors.coral,
+        textColor: Colors.white,
+        largeSize: 18,
+        padding: const EdgeInsets.symmetric(horizontal: 5),
+        label: Text('${item.badgeCount}'),
         child: iconWidget,
       ),
     );
   }
+}
+
+class _AuroraNavItem {
+  const _AuroraNavItem({
+    required this.icon,
+    required this.inactiveIcon,
+    required this.label,
+    this.badgeCount = 0,
+  });
+
+  final IconData icon;
+  final IconData inactiveIcon;
+  final String label;
+  final int badgeCount;
 }

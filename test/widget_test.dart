@@ -2,11 +2,14 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:business_catalog_app/app/app.dart';
+import 'package:business_catalog_app/app/theme/aurora_tokens.dart';
 import 'package:business_catalog_app/core/constants/app_assets.dart';
 import 'package:business_catalog_app/l10n/generated/app_localizations_en.dart';
 import 'package:business_catalog_app/l10n/generated/app_localizations_ar.dart';
 import 'package:business_catalog_app/core/widgets/local_asset_image.dart';
 import 'package:business_catalog_app/features/catalog/data/catalog_providers.dart';
+import 'package:business_catalog_app/features/catalog/widgets/category_card.dart';
+import 'package:business_catalog_app/features/catalog/widgets/product_card.dart';
 import 'package:business_catalog_app/models/app_settings.dart';
 import 'package:business_catalog_app/models/catalog_data.dart';
 import 'package:business_catalog_app/core/widgets/app_feedback.dart';
@@ -73,21 +76,62 @@ void main() {
   ) async {
     await tester.pumpCatalogApp(catalogState: AsyncData(sampleCatalog));
 
-    await tester.tap(find.byIcon(Icons.storefront_outlined));
+    await tester.tapNavLabel(l10n.catalogTitle);
     await tester.pumpAndSettle();
     expect(find.text(l10n.catalogTitle), findsWidgets);
     expect(find.byTooltip('Back'), findsNothing);
 
-    await tester.tap(find.byIcon(Icons.shopping_bag_outlined));
+    await tester.tapNavLabel(l10n.cartTitle);
     await tester.pumpAndSettle();
     expect(find.text(l10n.cartTitle), findsWidgets);
     expect(find.byTooltip('Back'), findsNothing);
 
-    await tester.tap(find.byIcon(Icons.info_outline));
+    await tester.tapNavLabel(l10n.businessInfoTitle);
     await tester.pumpAndSettle();
     expect(find.text(l10n.businessInfoTitle), findsWidgets);
     expect(find.text('Catalogly Kitchen'), findsOneWidget);
     expect(find.byTooltip('Back'), findsNothing);
+  });
+
+  testWidgets('custom bottom navigation replaces default NavigationBar', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpCatalogApp(catalogState: AsyncData(sampleCatalog));
+
+    expect(find.byType(NavigationBar), findsNothing);
+    expect(find.text(l10n.homeTitle), findsWidgets);
+    expect(find.text(l10n.catalogTitle), findsWidgets);
+    expect(find.text(l10n.cartTitle), findsWidgets);
+    expect(find.text(l10n.businessInfoTitle), findsWidgets);
+  });
+
+  testWidgets('light theme uses tinted Midnight Aurora background', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpCatalogApp(catalogState: AsyncData(sampleCatalog));
+
+    final theme = Theme.of(tester.element(find.byType(Scaffold).first));
+
+    expect(theme.scaffoldBackgroundColor, isNot(Colors.white));
+    expect(theme.scaffoldBackgroundColor, AuroraColors.lightBackground);
+    expect(theme.colorScheme.surface, AuroraColors.lightCard);
+  });
+
+  testWidgets('dark theme uses layered ink surfaces', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpCatalogApp(
+      catalogState: AsyncData(sampleCatalog),
+      appSettings: const AppSettings(themeMode: 'dark'),
+    );
+
+    final theme = Theme.of(tester.element(find.byType(Scaffold).first));
+
+    expect(theme.brightness, Brightness.dark);
+    expect(theme.scaffoldBackgroundColor, AuroraColors.darkBackground);
+    expect(theme.colorScheme.surface, AuroraColors.darkCard);
+    expect(theme.colorScheme.surfaceContainerHighest, AuroraColors.darkStrong);
+    expect(theme.scaffoldBackgroundColor, isNot(Colors.black));
   });
 
   testWidgets('home category tap opens catalog filtered by that category', (
@@ -95,7 +139,11 @@ void main() {
   ) async {
     await tester.pumpCatalogApp(catalogState: AsyncData(sampleCatalog));
 
-    await tester.tap(find.text('Mains'));
+    await tester.tap(
+      find
+          .ancestor(of: find.text('Mains'), matching: find.byType(CategoryCard))
+          .first,
+    );
     await tester.pumpAndSettle();
 
     expect(find.text(l10n.catalogTitle), findsWidgets);
@@ -108,7 +156,7 @@ void main() {
   ) async {
     await tester.pumpCatalogApp(catalogState: AsyncData(sampleCatalog));
 
-    await tester.tap(find.byIcon(Icons.storefront_outlined));
+    await tester.tapNavLabel(l10n.catalogTitle);
     await tester.pumpAndSettle();
 
     expect(find.text('Crispy Halloumi Bites'), findsOneWidget);
@@ -125,9 +173,9 @@ void main() {
   ) async {
     await tester.pumpCatalogApp(catalogState: AsyncData(sampleCatalog));
 
-    await tester.tap(find.byIcon(Icons.storefront_outlined));
+    await tester.tapNavLabel(l10n.catalogTitle);
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Crispy Halloumi Bites'));
+    await tester.tapProductCard('Crispy Halloumi Bites');
     await tester.pumpAndSettle();
 
     expect(find.text(l10n.productDetailsTitle), findsWidgets);
@@ -251,7 +299,7 @@ void main() {
   testWidgets('cart shows empty state', (WidgetTester tester) async {
     await tester.pumpCatalogApp(catalogState: AsyncData(sampleCatalog));
 
-    await tester.tap(find.byIcon(Icons.shopping_bag_outlined));
+    await tester.tapNavLabel(l10n.cartTitle);
     await tester.pumpAndSettle();
 
     expect(find.text(l10n.cartEmpty), findsOneWidget);
@@ -288,7 +336,7 @@ void main() {
   ) async {
     await tester.pumpCatalogApp(catalogState: AsyncData(sampleCatalog));
 
-    await tester.tap(find.byIcon(Icons.shopping_bag_outlined));
+    await tester.tapNavLabel(l10n.cartTitle);
     await tester.pumpAndSettle();
 
     final button = tester.widget<FilledButton>(
@@ -327,8 +375,17 @@ void main() {
       findsNothing,
     );
 
-    await tester.tap(find.text(l10n.delivery));
+    await tester.drag(
+      find
+          .descendant(
+            of: find.byKey(const ValueKey('checkout-scroll-view')),
+            matching: find.byType(Scrollable),
+          )
+          .first,
+      const Offset(0, -170),
+    );
     await tester.pumpAndSettle();
+    await tester.tapInkForText(l10n.delivery);
     expect(
       find.byKey(const ValueKey('checkout-delivery-address-field')),
       findsOneWidget,
@@ -423,7 +480,7 @@ void main() {
     );
     await tester.pumpCatalogApp(catalogState: AsyncData(catalog));
 
-    await tester.tap(find.byIcon(Icons.info_outline));
+    await tester.tapNavLabel(l10n.businessInfoTitle);
     await tester.pumpAndSettle();
 
     expect(find.text(l10n.phone), findsOneWidget);
@@ -447,12 +504,12 @@ void main() {
   ) async {
     await tester.pumpCatalogApp(catalogState: AsyncData(sampleCatalog));
 
-    await tester.tap(find.byIcon(Icons.info_outline));
+    await tester.tapNavLabel(l10n.businessInfoTitle);
     await tester.pumpAndSettle();
     await tester.tap(find.byTooltip(l10n.settingsTooltip));
     await tester.pumpAndSettle();
 
-    expect(find.text(l10n.settingsTitle), findsOneWidget);
+    expect(find.text(l10n.settingsTitle), findsWidgets);
     expect(find.byTooltip('Back'), findsOneWidget);
   });
 
@@ -466,10 +523,10 @@ void main() {
     );
 
     await tester.openSettings();
-    await tester.tap(find.text(l10n.arabicLanguage));
+    await tester.tapInkForText(l10n.arabicLanguage);
     await tester.pumpAndSettle();
 
-    expect(find.text(arL10n.settingsTitle), findsOneWidget);
+    expect(find.text(arL10n.settingsTitle), findsWidgets);
     expect(
       Directionality.of(tester.element(find.text(arL10n.settingsTitle).first)),
       TextDirection.rtl,
@@ -487,9 +544,11 @@ void main() {
     );
 
     await tester.openSettings();
+    expect(find.byIcon(Icons.light_mode_rounded), findsOneWidget);
+    expect(find.byIcon(Icons.dark_mode_rounded), findsOneWidget);
     await tester.drag(find.byType(ListView).last, const Offset(0, -220));
     await tester.pumpAndSettle();
-    await tester.tap(find.text(l10n.darkTheme));
+    await tester.tapInkForText(l10n.darkTheme);
     await tester.pumpAndSettle();
     expect(
       Theme.of(tester.element(find.byType(SettingsScreen))).brightness,
@@ -497,8 +556,10 @@ void main() {
     );
     expect(service.readSettings().themeMode, 'dark');
 
+    await tester.pump(const Duration(seconds: 5));
+    await tester.pumpAndSettle();
     await tester.ensureVisible(find.text(l10n.lightTheme));
-    await tester.tap(find.text(l10n.lightTheme));
+    await tester.tapInkForText(l10n.lightTheme);
     await tester.pumpAndSettle();
     expect(
       Theme.of(tester.element(find.byType(SettingsScreen))).brightness,
@@ -506,10 +567,12 @@ void main() {
     );
     expect(service.readSettings().themeMode, 'light');
 
+    await tester.pump(const Duration(seconds: 5));
+    await tester.pumpAndSettle();
     await tester.drag(find.byType(ListView).last, const Offset(0, 160));
     await tester.pumpAndSettle();
     await tester.ensureVisible(find.text(l10n.systemTheme));
-    await tester.tap(find.text(l10n.systemTheme));
+    await tester.tapInkForText(l10n.systemTheme);
     await tester.pumpAndSettle();
     expect(service.readSettings().themeMode, 'system');
   });
@@ -528,7 +591,7 @@ void main() {
     await tester.openSettings();
     await tester.drag(find.byType(ListView).last, const Offset(0, -320));
     await tester.pumpAndSettle();
-    await tester.tap(find.text(arL10n.resetAppearance));
+    await tester.tapInkForText(arL10n.resetAppearance);
     await tester.pumpAndSettle();
     expect(find.text(arL10n.resetAppearanceQuestion), findsOneWidget);
 
@@ -537,7 +600,7 @@ void main() {
 
     expect(service.readSettings().localeCode, isNull);
     expect(service.readSettings().themeMode, 'system');
-    expect(find.text(l10n.settingsTitle), findsOneWidget);
+    expect(find.text(l10n.settingsTitle), findsWidgets);
   });
 
   testWidgets('modern feedback component renders title and message', (
@@ -566,6 +629,36 @@ void main() {
 
     expect(find.text('Saved'), findsOneWidget);
     expect(find.text('Preference applied'), findsOneWidget);
+  });
+
+  testWidgets('feedback component renders all variants', (
+    WidgetTester tester,
+  ) async {
+    for (final type in AppFeedbackType.values) {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Builder(
+              builder: (context) => FilledButton(
+                onPressed: () => showAppFeedback(
+                  context,
+                  type: type,
+                  title: type.name,
+                  message: 'variant',
+                ),
+                child: const Text('Show'),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('Show'));
+      await tester.pump();
+
+      expect(find.text(type.name), findsOneWidget);
+      expect(find.text('variant'), findsOneWidget);
+    }
   });
 
   testWidgets('arabic localization uses RTL layout', (
@@ -673,9 +766,13 @@ extension on WidgetTester {
   }
 
   Future<void> openSettings() async {
-    await tap(find.byIcon(Icons.info_outline));
+    await tapNavLabelAny([l10n.businessInfoTitle, arL10n.businessInfoTitle]);
     await pumpAndSettle();
-    await tap(find.byIcon(Icons.settings_outlined));
+    final settingsTooltip =
+        find.byTooltip(l10n.settingsTooltip).evaluate().isNotEmpty
+        ? find.byTooltip(l10n.settingsTooltip)
+        : find.byTooltip(arL10n.settingsTooltip);
+    await tap(settingsTooltip);
     await pumpAndSettle();
   }
 
@@ -687,15 +784,15 @@ extension on WidgetTester {
       catalogState: AsyncData(catalog),
       externalLinkLauncher: externalLinkLauncher,
     );
-    await tap(find.byIcon(Icons.storefront_outlined));
+    await tapNavLabel(l10n.catalogTitle);
     await pumpAndSettle();
-    await tap(find.text('Crispy Halloumi Bites'));
+    await tapProductCard('Crispy Halloumi Bites');
     await pumpAndSettle();
   }
 
   Future<void> openProductByRoute(CatalogData catalog, String productId) async {
     await pumpCatalogApp(catalogState: AsyncData(catalog));
-    final context = element(find.byType(NavigationBar));
+    final context = element(find.byType(Scaffold).first);
     GoRouter.of(context).push('/catalog/$productId');
     await pumpAndSettle();
   }
@@ -736,17 +833,20 @@ extension on WidgetTester {
   }
 
   Future<void> tapSendOrder() async {
+    final scrollable = find
+        .descendant(
+          of: find.byKey(const ValueKey('checkout-scroll-view')),
+          matching: find.byType(Scrollable),
+        )
+        .first;
     await scrollUntilVisible(
       find.text(l10n.sendOrderViaWhatsapp),
       180,
-      scrollable: find
-          .descendant(
-            of: find.byKey(const ValueKey('checkout-scroll-view')),
-            matching: find.byType(Scrollable),
-          )
-          .first,
+      scrollable: scrollable,
     );
-    await tap(find.text(l10n.sendOrderViaWhatsapp));
+    await drag(scrollable, const Offset(0, -160));
+    await pumpAndSettle();
+    await tap(find.widgetWithText(FilledButton, l10n.sendOrderViaWhatsapp));
     await pumpAndSettle();
   }
 
@@ -754,11 +854,45 @@ extension on WidgetTester {
     await scrollUntilVisible(
       finder,
       120,
-      scrollable: find.descendant(
-        of: find.byType(Scaffold).last,
-        matching: find.byType(Scrollable),
-      ),
+      scrollable: find.byType(Scrollable).last,
     );
+  }
+
+  Future<void> tapNavLabel(String label) async {
+    await tap(find.text(label).last);
+    await pumpAndSettle();
+  }
+
+  Future<void> tapNavLabelAny(List<String> labels) async {
+    for (final label in labels) {
+      final finder = find.text(label);
+      if (finder.evaluate().isNotEmpty) {
+        await tap(finder.last);
+        await pumpAndSettle();
+        return;
+      }
+    }
+    throw StateError('No navigation label found for $labels');
+  }
+
+  Future<void> tapProductCard(String productName) async {
+    final card = find
+        .ancestor(
+          of: find.text(productName),
+          matching: find.byType(ProductCard),
+        )
+        .last;
+    final topLeft = getTopLeft(card);
+    await tapAt(topLeft + const Offset(24, 24));
+  }
+
+  Future<void> tapInkForText(String text) async {
+    final ink = find
+        .ancestor(of: find.text(text), matching: find.byType(InkWell))
+        .last;
+    final topLeft = getTopLeft(ink);
+    await tapAt(topLeft + const Offset(18, 18));
+    await pumpAndSettle();
   }
 }
 

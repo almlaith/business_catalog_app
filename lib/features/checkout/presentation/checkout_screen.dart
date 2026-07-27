@@ -1,9 +1,12 @@
+import 'package:business_catalog_app/app/theme/aurora_tokens.dart';
 import 'package:business_catalog_app/core/constants/app_spacing.dart';
 import 'package:business_catalog_app/core/extensions/build_context_extensions.dart';
 import 'package:business_catalog_app/core/validation/form_validators.dart';
 import 'package:business_catalog_app/core/widgets/app_async_state.dart';
 import 'package:business_catalog_app/core/widgets/app_confirmation_dialog.dart';
 import 'package:business_catalog_app/core/widgets/app_feedback.dart';
+import 'package:business_catalog_app/core/widgets/aurora_background.dart';
+import 'package:business_catalog_app/core/widgets/aurora_components.dart';
 import 'package:business_catalog_app/features/cart/application/cart_controller.dart';
 import 'package:business_catalog_app/features/cart/domain/cart_state.dart';
 import 'package:business_catalog_app/features/catalog/data/catalog_providers.dart';
@@ -47,29 +50,32 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
 
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.checkoutTitle)),
-      body: SafeArea(
-        child: catalogState.when(
-          loading: () => const AppLoadingState(),
-          error: (error, stackTrace) => AppErrorState(
-            error: error,
-            onRetry: () => ref.invalidate(catalogDataProvider),
-          ),
-          data: (catalog) => _CheckoutContent(
-            cart: cart,
-            business: catalog.business,
-            formKey: _formKey,
-            nameController: _nameController,
-            phoneController: _phoneController,
-            notesController: _notesController,
-            deliveryAddressController: _deliveryAddressController,
-            orderType: _orderType,
-            isSubmitting: _isSubmitting,
-            onOrderTypeChanged: (orderType) {
-              setState(() => _orderType = orderType);
-            },
-            onSubmit: cart.isEmpty || _isSubmitting
-                ? null
-                : () => _submitOrder(catalog.business, cart),
+      body: AuroraBackground(
+        bottomSafeGlow: true,
+        child: SafeArea(
+          child: catalogState.when(
+            loading: () => const AppLoadingState(),
+            error: (error, stackTrace) => AppErrorState(
+              error: error,
+              onRetry: () => ref.invalidate(catalogDataProvider),
+            ),
+            data: (catalog) => _CheckoutContent(
+              cart: cart,
+              business: catalog.business,
+              formKey: _formKey,
+              nameController: _nameController,
+              phoneController: _phoneController,
+              notesController: _notesController,
+              deliveryAddressController: _deliveryAddressController,
+              orderType: _orderType,
+              isSubmitting: _isSubmitting,
+              onOrderTypeChanged: (orderType) {
+                setState(() => _orderType = orderType);
+              },
+              onSubmit: cart.isEmpty || _isSubmitting
+                  ? null
+                  : () => _submitOrder(catalog.business, cart),
+            ),
           ),
         ),
       ),
@@ -212,7 +218,7 @@ class _CheckoutContent extends StatelessWidget {
           AppSpacing.lg,
           AppSpacing.lg,
           AppSpacing.lg,
-          AppSpacing.xxl,
+          128,
         ),
         children: [
           CheckoutOrderSummary(cart: cart, currencyCode: business.currencyCode),
@@ -228,7 +234,7 @@ class _CheckoutContent extends StatelessWidget {
                   controller: nameController,
                   textInputAction: TextInputAction.next,
                   decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.person_outline_rounded),
                   ).copyWith(labelText: l10n.customerName),
                   validator: FormValidators.requiredText(l10n.requiredField),
                 ),
@@ -240,7 +246,7 @@ class _CheckoutContent extends StatelessWidget {
                   textInputAction: TextInputAction.next,
                   decoration: InputDecoration(
                     labelText: l10n.phoneNumber,
-                    border: OutlineInputBorder(),
+                    prefixIcon: const Icon(Icons.phone_outlined),
                   ),
                   validator: FormValidators.requiredText(l10n.requiredField),
                 ),
@@ -252,23 +258,9 @@ class _CheckoutContent extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: AppSpacing.sm),
-                SegmentedButton<OrderType>(
-                  segments: [
-                    ButtonSegment(
-                      value: OrderType.pickup,
-                      label: Text(l10n.pickup),
-                      icon: const Icon(Icons.shopping_bag_outlined),
-                    ),
-                    ButtonSegment(
-                      value: OrderType.delivery,
-                      label: Text(l10n.delivery),
-                      icon: const Icon(Icons.local_shipping_outlined),
-                    ),
-                  ],
-                  selected: {orderType},
-                  onSelectionChanged: (values) {
-                    onOrderTypeChanged(values.single);
-                  },
+                _OrderTypeSelector(
+                  orderType: orderType,
+                  onChanged: onOrderTypeChanged,
                 ),
                 AnimatedSwitcher(
                   duration: AppDurations.medium,
@@ -286,7 +278,9 @@ class _CheckoutContent extends StatelessWidget {
                             textInputAction: TextInputAction.next,
                             decoration: InputDecoration(
                               labelText: l10n.deliveryAddress,
-                              border: OutlineInputBorder(),
+                              prefixIcon: const Icon(
+                                Icons.location_on_outlined,
+                              ),
                             ),
                             validator: (value) => FormValidators.requiredWhen(
                               value,
@@ -307,21 +301,21 @@ class _CheckoutContent extends StatelessWidget {
                   maxLines: 4,
                   decoration: InputDecoration(
                     labelText: l10n.orderNotes,
-                    border: OutlineInputBorder(),
+                    prefixIcon: const Icon(Icons.notes_outlined),
                   ),
                 ),
               ],
             ),
           ),
           const SizedBox(height: AppSpacing.lg),
-          FilledButton.icon(
+          AuroraGradientFilledButton(
             onPressed: onSubmit,
             icon: isSubmitting
                 ? const SizedBox.square(
                     dimension: 18,
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
-                : const Icon(Icons.send_outlined),
+                : const Icon(Icons.send_rounded),
             label: Text(l10n.sendOrderViaWhatsapp),
           ),
           const SizedBox(height: AppSpacing.sm),
@@ -351,29 +345,135 @@ class _CheckoutSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return Card(
-      child: Padding(
-        padding: AppSpacing.card,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(icon, color: theme.colorScheme.primary),
-                const SizedBox(width: AppSpacing.sm),
-                Expanded(
-                  child: Text(
-                    title,
-                    style: theme.textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.w800,
-                    ),
+    return AuroraCard(
+      padding: const EdgeInsets.all(AppSpacing.xl),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              AuroraIconContainer(icon: icon),
+              const SizedBox(width: AppSpacing.md),
+              Expanded(
+                child: Text(
+                  title,
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.w800,
                   ),
                 ),
-              ],
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          child,
+        ],
+      ),
+    );
+  }
+}
+
+class _OrderTypeSelector extends StatelessWidget {
+  const _OrderTypeSelector({required this.orderType, required this.onChanged});
+
+  final OrderType orderType;
+  final ValueChanged<OrderType> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceContainerLow,
+        borderRadius: BorderRadius.circular(AppRadii.xl),
+        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.xs),
+        child: Row(
+          children: [
+            Expanded(
+              child: _OrderTypeOption(
+                label: l10n.pickup,
+                icon: Icons.shopping_bag_outlined,
+                selected: orderType == OrderType.pickup,
+                onTap: () => onChanged(OrderType.pickup),
+              ),
             ),
-            const SizedBox(height: AppSpacing.lg),
-            child,
+            Expanded(
+              child: _OrderTypeOption(
+                label: l10n.delivery,
+                icon: Icons.local_shipping_outlined,
+                selected: orderType == OrderType.delivery,
+                onTap: () => onChanged(OrderType.delivery),
+              ),
+            ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _OrderTypeOption extends StatelessWidget {
+  const _OrderTypeOption({
+    required this.label,
+    required this.icon,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String label;
+  final IconData icon;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return AnimatedContainer(
+      duration: AppDurations.medium,
+      curve: AuroraMotion.curve,
+      decoration: BoxDecoration(
+        gradient: selected ? AuroraGradients.primary : null,
+        borderRadius: BorderRadius.circular(AppRadii.lg),
+        boxShadow: selected
+            ? AuroraShadows.glow(colorScheme.primary, opacity: 0.16, blur: 18)
+            : null,
+      ),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(AppRadii.lg),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.sm,
+            vertical: AppSpacing.md,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                icon,
+                size: AppIconSizes.sm,
+                color: selected ? Colors.white : colorScheme.onSurfaceVariant,
+              ),
+              const SizedBox(width: AppSpacing.xs),
+              Flexible(
+                child: Text(
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                    color: selected
+                        ? Colors.white
+                        : colorScheme.onSurfaceVariant,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

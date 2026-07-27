@@ -1,4 +1,5 @@
 import 'package:business_catalog_app/core/constants/app_spacing.dart';
+import 'package:business_catalog_app/core/widgets/aurora_components.dart';
 import 'package:flutter/material.dart';
 
 class BusinessInfoRow extends StatelessWidget {
@@ -28,37 +29,55 @@ class BusinessInfoRow extends StatelessWidget {
         horizontal: AppSpacing.lg,
         vertical: AppSpacing.xs,
       ),
-      child: Card(
-        child: ListTile(
-          minVerticalPadding: AppSpacing.md,
-          leading: DecoratedBox(
-            decoration: BoxDecoration(
-              color: theme.colorScheme.primaryContainer,
-              borderRadius: BorderRadius.circular(8),
-            ),
+      child: AuroraCard(
+        padding: const EdgeInsets.all(AppSpacing.md),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: onTap,
+            borderRadius: BorderRadius.circular(AppRadii.xl),
             child: Padding(
-              padding: const EdgeInsets.all(AppSpacing.sm),
-              child: Icon(icon, color: theme.colorScheme.onPrimaryContainer),
+              padding: const EdgeInsets.all(AppSpacing.xs),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  AuroraIconContainer(icon: icon),
+                  const SizedBox(width: AppSpacing.md),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.labelLarge?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
+                        const SizedBox(height: AppSpacing.xs),
+                        Text(
+                          value,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            height: 1.32,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (onTap != null) ...[
+                    const SizedBox(width: AppSpacing.sm),
+                    Icon(
+                      Icons.north_east_rounded,
+                      color: theme.colorScheme.onSurfaceVariant,
+                      size: AppIconSizes.sm,
+                    ),
+                  ],
+                ],
+              ),
             ),
           ),
-          title: Text(
-            title,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: theme.textTheme.labelLarge?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          subtitle: Padding(
-            padding: const EdgeInsets.only(top: AppSpacing.xs),
-            child: Text(
-              value,
-              style: theme.textTheme.bodyMedium?.copyWith(height: 1.32),
-            ),
-          ),
-          trailing: onTap == null ? null : const Icon(Icons.open_in_new),
-          onTap: onTap,
         ),
       ),
     );

@@ -1,3 +1,4 @@
+import 'package:business_catalog_app/core/widgets/aurora_components.dart';
 import 'package:flutter/material.dart';
 
 class HomeSectionHeader extends StatelessWidget {
@@ -8,20 +9,6 @@ class HomeSectionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          child: Text(
-            title,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: Theme.of(
-              context,
-            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800),
-          ),
-        ),
-        ?action,
-      ],
-    );
+    return AuroraSectionHeader(title: title, action: action);
   }
 }

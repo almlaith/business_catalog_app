@@ -1,3 +1,4 @@
+import 'package:business_catalog_app/app/theme/aurora_tokens.dart';
 import 'package:business_catalog_app/core/constants/app_spacing.dart';
 import 'package:business_catalog_app/core/extensions/build_context_extensions.dart';
 import 'package:flutter/material.dart';
@@ -22,9 +23,9 @@ class QuantityStepper extends StatelessWidget {
 
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.52),
+        color: colorScheme.surfaceContainerLow,
         border: Border.all(color: colorScheme.outlineVariant),
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(AppRadii.pill),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -33,12 +34,13 @@ class QuantityStepper extends StatelessWidget {
             tooltip: context.l10n.decreaseQuantity,
             visualDensity: VisualDensity.compact,
             onPressed: canDecrement ? onDecrement : null,
-            icon: const Icon(Icons.remove),
+            icon: const Icon(Icons.remove_rounded),
           ),
           SizedBox(
-            width: 36,
+            width: 38,
             child: AnimatedSwitcher(
               duration: AppDurations.fast,
+              switchInCurve: AuroraMotion.curve,
               transitionBuilder: (child, animation) =>
                   ScaleTransition(scale: animation, child: child),
               child: Text(
@@ -55,7 +57,8 @@ class QuantityStepper extends StatelessWidget {
             tooltip: context.l10n.increaseQuantity,
             visualDensity: VisualDensity.compact,
             onPressed: onIncrement,
-            icon: const Icon(Icons.add),
+            color: colorScheme.primary,
+            icon: const Icon(Icons.add_rounded),
           ),
         ],
       ),

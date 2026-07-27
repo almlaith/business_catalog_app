@@ -1,9 +1,12 @@
+import 'package:business_catalog_app/app/theme/aurora_tokens.dart';
 import 'package:business_catalog_app/core/constants/app_route_paths.dart';
 import 'package:business_catalog_app/core/constants/app_spacing.dart';
 import 'package:business_catalog_app/core/extensions/build_context_extensions.dart';
 import 'package:business_catalog_app/core/utils/currency_formatter.dart';
 import 'package:business_catalog_app/core/widgets/app_async_state.dart';
 import 'package:business_catalog_app/core/widgets/app_confirmation_dialog.dart';
+import 'package:business_catalog_app/core/widgets/aurora_background.dart';
+import 'package:business_catalog_app/core/widgets/aurora_components.dart';
 import 'package:business_catalog_app/features/cart/application/cart_controller.dart';
 import 'package:business_catalog_app/features/cart/domain/cart_state.dart';
 import 'package:business_catalog_app/features/cart/widgets/cart_item_tile.dart';
@@ -70,7 +73,10 @@ class _CartScaffold extends ConsumerWidget {
             ),
         ],
       ),
-      body: SafeArea(child: child),
+      body: AuroraBackground(
+        bottomSafeGlow: true,
+        child: SafeArea(child: child),
+      ),
     );
   }
 
@@ -101,40 +107,51 @@ class _EmptyCart extends StatelessWidget {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.xxl),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            DecoratedBox(
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primaryContainer,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(AppSpacing.lg),
-                child: Icon(
-                  Icons.shopping_bag_outlined,
-                  size: 42,
-                  color: Theme.of(context).colorScheme.onPrimaryContainer,
+        child: AuroraCard(
+          useGradientBorder: true,
+          padding: const EdgeInsets.all(AppSpacing.xxl),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: AuroraGradients.primary,
+                  borderRadius: BorderRadius.circular(AppRadii.xxl),
+                  boxShadow: AuroraShadows.glow(
+                    Theme.of(context).colorScheme.primary,
+                    opacity: 0.20,
+                  ),
+                ),
+                child: const Padding(
+                  padding: EdgeInsets.all(AppSpacing.xl),
+                  child: Icon(
+                    Icons.shopping_bag_outlined,
+                    size: 46,
+                    color: Colors.white,
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: AppSpacing.lg),
-            Text(
-              l10n.cartEmpty,
-              textAlign: TextAlign.center,
-              style: Theme.of(
-                context,
-              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
-            ),
-            const SizedBox(height: AppSpacing.lg),
-            FilledButton.icon(
-              onPressed: () => context.go(AppRoutePaths.catalog),
-              icon: const Icon(Icons.storefront_outlined),
-              label: Text(l10n.browseCatalog),
-            ),
-            const SizedBox(height: AppSpacing.md),
-            FilledButton(onPressed: null, child: Text(l10n.continueAction)),
-          ],
+              const SizedBox(height: AppSpacing.lg),
+              Text(
+                l10n.cartEmpty,
+                textAlign: TextAlign.center,
+                style: Theme.of(
+                  context,
+                ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w900),
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              FilledButton.icon(
+                onPressed: () => context.go(AppRoutePaths.catalog),
+                icon: const Icon(Icons.storefront_rounded),
+                label: Text(l10n.browseCatalog),
+              ),
+              const SizedBox(height: AppSpacing.md),
+              AuroraGradientFilledButton(
+                onPressed: null,
+                label: Text(l10n.continueAction),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -159,7 +176,7 @@ class _CartContent extends ConsumerWidget {
               AppSpacing.lg,
               AppSpacing.lg,
               AppSpacing.lg,
-              AppSpacing.lg,
+              AppSpacing.xxl,
             ),
             itemCount: cart.items.length,
             separatorBuilder: (context, index) =>
@@ -196,52 +213,54 @@ class _CartSummary extends StatelessWidget {
 
     return SafeArea(
       top: false,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: theme.colorScheme.surface,
-          border: Border(
-            top: BorderSide(color: theme.colorScheme.outlineVariant),
-          ),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(
-            AppSpacing.lg,
-            AppSpacing.md,
-            AppSpacing.lg,
-            AppSpacing.lg,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      l10n.subtotal,
-                      style: theme.textTheme.titleMedium,
+      minimum: const EdgeInsets.fromLTRB(14, 0, 14, 100),
+      child: AuroraCard(
+        padding: const EdgeInsets.all(AppSpacing.lg),
+        useGradientBorder: true,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              children: [
+                const AuroraIconContainer(icon: Icons.receipt_long_rounded),
+                const SizedBox(width: AppSpacing.md),
+                Expanded(
+                  child: Text(
+                    l10n.subtotal,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w900,
                     ),
                   ),
-                  Text(
+                ),
+                AnimatedSwitcher(
+                  duration: AppDurations.fast,
+                  child: Text(
                     formatCurrency(cart.subtotal, currencyCode: currencyCode),
+                    key: ValueKey(cart.subtotalCents),
                     style: theme.textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.w700,
+                      color: theme.colorScheme.primary,
+                      fontWeight: FontWeight.w900,
                     ),
                   ),
-                ],
-              ),
-              const SizedBox(height: AppSpacing.sm),
-              Text(
-                l10n.checkoutNotImplemented,
-                style: theme.textTheme.bodySmall,
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: AppSpacing.md),
-              FilledButton(
+                ),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            Text(
+              l10n.checkoutNotImplemented,
+              style: theme.textTheme.bodySmall,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: AppSpacing.md),
+            SizedBox(
+              width: double.infinity,
+              child: AuroraGradientFilledButton(
                 onPressed: () => context.push(AppRoutePaths.checkout),
-                child: Text(l10n.continueAction),
+                icon: const Icon(Icons.arrow_forward_rounded),
+                label: Text(l10n.continueAction),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

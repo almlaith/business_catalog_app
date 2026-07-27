@@ -1,3 +1,4 @@
+import 'package:business_catalog_app/app/theme/aurora_tokens.dart';
 import 'package:business_catalog_app/core/constants/app_route_paths.dart';
 import 'package:business_catalog_app/core/constants/app_spacing.dart';
 import 'package:business_catalog_app/core/extensions/build_context_extensions.dart';
@@ -5,6 +6,8 @@ import 'package:business_catalog_app/core/utils/currency_formatter.dart';
 import 'package:business_catalog_app/core/widgets/app_async_state.dart';
 import 'package:business_catalog_app/core/widgets/app_feedback.dart';
 import 'package:business_catalog_app/core/widgets/app_skeleton.dart';
+import 'package:business_catalog_app/core/widgets/aurora_background.dart';
+import 'package:business_catalog_app/core/widgets/aurora_components.dart';
 import 'package:business_catalog_app/core/widgets/local_asset_image.dart';
 import 'package:business_catalog_app/features/cart/application/cart_controller.dart';
 import 'package:business_catalog_app/features/cart/widgets/quantity_stepper.dart';
@@ -59,7 +62,7 @@ class _ProductDetailsScaffold extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.productDetailsTitle)),
-      body: SafeArea(child: child),
+      body: AuroraBackground(child: SafeArea(child: child)),
     );
   }
 }
@@ -88,40 +91,52 @@ class _ProductDetailsContentState
 
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.productDetailsTitle)),
-      body: SafeArea(
-        top: false,
-        child: ListView(
-          padding: const EdgeInsets.only(bottom: 140),
-          children: [
-            AspectRatio(
-              aspectRatio: 1.08,
-              child: Hero(
-                tag: 'product-image-${product.id}',
-                child: LocalAssetImage(
-                  assetPath: product.imageAsset,
-                  width: double.infinity,
-                ),
-              ),
-            ),
-            Padding(
-              padding: AppSpacing.page,
-              child: Card(
-                child: Padding(
-                  padding: AppSpacing.card,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+      body: AuroraBackground(
+        bottomSafeGlow: true,
+        child: SafeArea(
+          top: false,
+          child: ListView(
+            padding: const EdgeInsets.only(bottom: 152),
+            children: [
+              SizedBox(
+                height: AppHeights.imageHeader,
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    Hero(
+                      tag: 'product-image-${product.id}',
+                      child: LocalAssetImage(
+                        assetPath: product.imageAsset,
+                        width: double.infinity,
+                      ),
+                    ),
+                    DecoratedBox(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.black.withValues(alpha: 0.04),
+                            Colors.black.withValues(alpha: 0.50),
+                          ],
+                        ),
+                      ),
+                    ),
+                    PositionedDirectional(
+                      start: AppSpacing.lg,
+                      end: AppSpacing.lg,
+                      bottom: AppSpacing.lg,
+                      child: Row(
                         children: [
                           Expanded(
                             child: Text(
                               product.name,
-                              maxLines: 3,
+                              maxLines: 2,
                               overflow: TextOverflow.ellipsis,
-                              style: theme.textTheme.headlineSmall?.copyWith(
-                                fontWeight: FontWeight.w800,
-                                height: 1.08,
+                              style: theme.textTheme.headlineMedium?.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w900,
+                                height: 1.02,
                               ),
                             ),
                           ),
@@ -129,13 +144,29 @@ class _ProductDetailsContentState
                           _AvailabilityChip(isAvailable: product.isAvailable),
                         ],
                       ),
-                      const SizedBox(height: AppSpacing.md),
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  AppSpacing.lg,
+                  AppSpacing.lg,
+                  AppSpacing.lg,
+                  AppSpacing.lg,
+                ),
+                child: AuroraCard(
+                  padding: const EdgeInsets.all(AppSpacing.xl),
+                  useGradientBorder: true,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
                       _ProductDetailsPrice(
                         price: product.price,
                         oldPrice: product.oldPrice,
                         currencyCode: business.currencyCode,
                       ),
-                      const SizedBox(height: AppSpacing.lg),
+                      const SizedBox(height: AppSpacing.xl),
                       Text(
                         product.description,
                         style: theme.textTheme.bodyLarge?.copyWith(
@@ -150,10 +181,7 @@ class _ProductDetailsContentState
                           runSpacing: AppSpacing.sm,
                           children: [
                             for (final tag in product.tags)
-                              Chip(
-                                label: Text(tag),
-                                visualDensity: VisualDensity.compact,
-                              ),
+                              _TagPill(label: tag),
                           ],
                         ),
                       ],
@@ -161,8 +189,8 @@ class _ProductDetailsContentState
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: SafeArea(
@@ -174,13 +202,14 @@ class _ProductDetailsContentState
         ),
         child: DecoratedBox(
           decoration: BoxDecoration(
-            color: theme.colorScheme.surface,
-            borderRadius: BorderRadius.circular(8),
+            color: theme.colorScheme.surface.withValues(alpha: 0.96),
+            borderRadius: BorderRadius.circular(AppRadii.xxl),
+            border: Border.all(color: theme.colorScheme.outlineVariant),
             boxShadow: [
               BoxShadow(
-                color: theme.colorScheme.shadow.withValues(alpha: 0.10),
-                blurRadius: 18,
-                offset: const Offset(0, -4),
+                color: theme.colorScheme.shadow.withValues(alpha: 0.18),
+                blurRadius: 28,
+                offset: const Offset(0, -8),
               ),
             ],
           ),
@@ -205,7 +234,7 @@ class _ProductDetailsContentState
                     ),
                     const SizedBox(width: AppSpacing.md),
                     Expanded(
-                      child: FilledButton.icon(
+                      child: AuroraGradientFilledButton(
                         onPressed: product.isAvailable ? _addToCart : null,
                         icon: const Icon(Icons.add_shopping_cart),
                         label: Text(
@@ -250,18 +279,65 @@ class _AvailabilityChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
     final l10n = context.l10n;
+    final accent = isAvailable ? AuroraColors.success : AuroraColors.error;
 
-    return Chip(
-      avatar: Icon(
-        isAvailable ? Icons.check_circle_outline : Icons.do_not_disturb_on,
-        size: 18,
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: Colors.black.withValues(alpha: 0.44),
+        borderRadius: BorderRadius.circular(AppRadii.pill),
+        border: Border.all(color: accent.withValues(alpha: 0.50)),
       ),
-      label: Text(isAvailable ? l10n.available : l10n.unavailable),
-      backgroundColor: isAvailable
-          ? colorScheme.secondaryContainer
-          : colorScheme.errorContainer,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              isAvailable ? Icons.check_circle_rounded : Icons.block_rounded,
+              size: 15,
+              color: accent,
+            ),
+            const SizedBox(width: 6),
+            Text(
+              isAvailable ? l10n.available : l10n.unavailable,
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                color: Colors.white,
+                fontWeight: FontWeight.w900,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _TagPill extends StatelessWidget {
+  const _TagPill({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainerLow,
+        borderRadius: BorderRadius.circular(AppRadii.pill),
+        border: Border.all(color: colorScheme.outlineVariant),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+        child: Text(
+          label,
+          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+            color: colorScheme.onSurfaceVariant,
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+      ),
     );
   }
 }
@@ -290,7 +366,7 @@ class _ProductDetailsPrice extends StatelessWidget {
           formatCurrency(price, currencyCode: currencyCode),
           style: theme.textTheme.headlineSmall?.copyWith(
             color: theme.colorScheme.primary,
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w900,
           ),
         ),
         if (oldPrice != null && oldPrice > price)

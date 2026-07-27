@@ -1,9 +1,11 @@
+import 'package:business_catalog_app/app/theme/aurora_tokens.dart';
 import 'package:business_catalog_app/core/constants/app_route_paths.dart';
 import 'package:business_catalog_app/core/constants/app_spacing.dart';
 import 'package:business_catalog_app/core/extensions/build_context_extensions.dart';
 import 'package:business_catalog_app/core/widgets/app_async_state.dart';
 import 'package:business_catalog_app/core/widgets/app_feedback.dart';
 import 'package:business_catalog_app/core/widgets/app_skeleton.dart';
+import 'package:business_catalog_app/core/widgets/aurora_background.dart';
 import 'package:business_catalog_app/core/widgets/local_asset_image.dart';
 import 'package:business_catalog_app/features/business_info/widgets/business_info_row.dart';
 import 'package:business_catalog_app/features/catalog/data/catalog_providers.dart';
@@ -33,14 +35,16 @@ class BusinessInfoScreen extends ConsumerWidget {
           ),
         ],
       ),
-      body: SafeArea(
-        child: catalogState.when(
-          loading: () => const AppSkeletonInfo(),
-          error: (error, stackTrace) => AppErrorState(
-            error: error,
-            onRetry: () => ref.invalidate(catalogDataProvider),
+      body: AuroraBackground(
+        child: SafeArea(
+          child: catalogState.when(
+            loading: () => const AppSkeletonInfo(),
+            error: (error, stackTrace) => AppErrorState(
+              error: error,
+              onRetry: () => ref.invalidate(catalogDataProvider),
+            ),
+            data: (catalog) => _BusinessInfoContent(business: catalog.business),
           ),
-          data: (catalog) => _BusinessInfoContent(business: catalog.business),
         ),
       ),
     );
@@ -62,7 +66,7 @@ class _BusinessInfoContent extends ConsumerWidget {
 
     return ListView(
       key: const ValueKey('business-info-scroll-view'),
-      padding: const EdgeInsets.only(bottom: AppSpacing.lg),
+      padding: const EdgeInsets.only(bottom: 118),
       children: [
         Padding(
           padding: AppSpacing.page,
@@ -123,6 +127,12 @@ class _BusinessInfoContent extends ConsumerWidget {
           value: business.facebookUrl,
           onTap: () => _launchParsed(context, ref, business.facebookUrl),
         ),
+        BusinessInfoRow(
+          icon: Icons.settings_outlined,
+          title: l10n.settingsTitle,
+          value: l10n.appearanceSection,
+          onTap: () => context.push(AppRoutePaths.settings),
+        ),
       ],
     );
   }
@@ -177,17 +187,33 @@ class _BusinessHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return Card(
-      color: theme.colorScheme.primary,
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        gradient: theme.brightness == Brightness.dark
+            ? AuroraGradients.heroDark
+            : AuroraGradients.heroLight,
+        borderRadius: BorderRadius.circular(AppRadii.xxl),
+        boxShadow: AuroraShadows.glow(theme.colorScheme.primary, opacity: 0.20),
+      ),
       child: Padding(
-        padding: AppSpacing.card,
+        padding: const EdgeInsets.all(AppSpacing.xl),
         child: Row(
           children: [
-            LocalAssetImage(
-              assetPath: business.logoAsset,
-              width: 72,
-              height: 72,
-              borderRadius: BorderRadius.circular(8),
+            DecoratedBox(
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.14),
+                borderRadius: BorderRadius.circular(AppRadii.xl),
+                border: Border.all(color: Colors.white.withValues(alpha: 0.22)),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(7),
+                child: LocalAssetImage(
+                  assetPath: business.logoAsset,
+                  width: 74,
+                  height: 74,
+                  borderRadius: BorderRadius.circular(AppRadii.lg),
+                ),
+              ),
             ),
             const SizedBox(width: AppSpacing.lg),
             Expanded(
@@ -199,8 +225,8 @@ class _BusinessHeader extends StatelessWidget {
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: theme.textTheme.headlineSmall?.copyWith(
-                      color: theme.colorScheme.onPrimary,
-                      fontWeight: FontWeight.w800,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w900,
                       height: 1.08,
                     ),
                   ),
@@ -211,9 +237,7 @@ class _BusinessHeader extends StatelessWidget {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onPrimary.withValues(
-                          alpha: 0.82,
-                        ),
+                        color: Colors.white.withValues(alpha: 0.82),
                         height: 1.25,
                       ),
                     ),

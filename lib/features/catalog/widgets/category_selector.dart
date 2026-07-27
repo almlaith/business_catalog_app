@@ -1,3 +1,4 @@
+import 'package:business_catalog_app/app/theme/aurora_tokens.dart';
 import 'package:business_catalog_app/core/constants/app_spacing.dart';
 import 'package:business_catalog_app/core/extensions/build_context_extensions.dart';
 import 'package:business_catalog_app/models/category.dart';
@@ -18,10 +19,9 @@ class CategorySelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final colorScheme = Theme.of(context).colorScheme;
 
     return SizedBox(
-      height: 52,
+      height: AppHeights.chip,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
@@ -30,37 +30,78 @@ class CategorySelector extends StatelessWidget {
             const SizedBox(width: AppSpacing.sm),
         itemBuilder: (context, index) {
           if (index == 0) {
-            return ChoiceChip(
-              label: Text(l10n.allCategories),
+            return _CategoryFilterChip(
+              label: l10n.allCategories,
               selected: selectedCategoryId == null,
-              showCheckmark: false,
-              selectedColor: colorScheme.primary,
-              labelStyle: TextStyle(
-                color: selectedCategoryId == null
-                    ? colorScheme.onPrimary
-                    : colorScheme.onSurface,
-                fontWeight: FontWeight.w700,
-              ),
-              onSelected: (_) => onSelected(null),
+              onTap: () => onSelected(null),
             );
           }
 
           final category = categories[index - 1];
 
-          return ChoiceChip(
-            label: Text(category.name),
+          return _CategoryFilterChip(
+            label: category.name,
             selected: selectedCategoryId == category.id,
-            showCheckmark: false,
-            selectedColor: colorScheme.primary,
-            labelStyle: TextStyle(
-              color: selectedCategoryId == category.id
-                  ? colorScheme.onPrimary
-                  : colorScheme.onSurface,
-              fontWeight: FontWeight.w700,
-            ),
-            onSelected: (_) => onSelected(category.id),
+            onTap: () => onSelected(category.id),
           );
         },
+      ),
+    );
+  }
+}
+
+class _CategoryFilterChip extends StatelessWidget {
+  const _CategoryFilterChip({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return AnimatedContainer(
+      duration: AppDurations.medium,
+      curve: AuroraMotion.curve,
+      decoration: BoxDecoration(
+        gradient: selected ? AuroraGradients.primary : null,
+        color: selected ? null : colorScheme.surface,
+        borderRadius: BorderRadius.circular(AppRadii.pill),
+        border: Border.all(
+          color: selected
+              ? Colors.white.withValues(alpha: 0.20)
+              : colorScheme.outlineVariant,
+        ),
+        boxShadow: selected
+            ? AuroraShadows.glow(colorScheme.primary, opacity: 0.18, blur: 18)
+            : null,
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(AppRadii.pill),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.lg,
+              vertical: AppSpacing.sm,
+            ),
+            child: AnimatedDefaultTextStyle(
+              duration: AppDurations.fast,
+              style: theme.textTheme.labelLarge!.copyWith(
+                color: selected ? Colors.white : colorScheme.onSurfaceVariant,
+                fontWeight: FontWeight.w900,
+              ),
+              child: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis),
+            ),
+          ),
+        ),
       ),
     );
   }

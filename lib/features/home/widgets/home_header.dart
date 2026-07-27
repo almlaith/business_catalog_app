@@ -1,5 +1,7 @@
+import 'package:business_catalog_app/app/theme/aurora_tokens.dart';
 import 'package:business_catalog_app/core/constants/app_spacing.dart';
 import 'package:business_catalog_app/core/extensions/build_context_extensions.dart';
+import 'package:business_catalog_app/core/widgets/aurora_components.dart';
 import 'package:business_catalog_app/core/widgets/local_asset_image.dart';
 import 'package:business_catalog_app/models/business_config.dart';
 import 'package:flutter/material.dart';
@@ -13,39 +15,83 @@ class HomeHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colorScheme = Theme.of(context).colorScheme;
+    final colorScheme = theme.colorScheme;
     final textDirection = Directionality.of(context);
 
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: colorScheme.primary,
-        borderRadius: BorderRadius.circular(8),
-        boxShadow: [
-          BoxShadow(
-            color: colorScheme.primary.withValues(alpha: 0.24),
-            blurRadius: 24,
-            offset: const Offset(0, 12),
-          ),
-        ],
+        gradient: theme.brightness == Brightness.dark
+            ? AuroraGradients.heroDark
+            : AuroraGradients.heroLight,
+        borderRadius: BorderRadius.circular(AppRadii.xxl),
+        boxShadow: AuroraShadows.glow(colorScheme.primary, opacity: 0.24),
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(AppRadii.xxl),
         child: Stack(
           children: [
             PositionedDirectional(
-              end: -42,
-              top: 0,
-              bottom: 0,
-              child: Transform.rotate(
-                angle: textDirection == TextDirection.rtl ? -0.16 : 0.16,
-                child: Container(
-                  width: 120,
-                  color: colorScheme.secondary.withValues(alpha: 0.28),
+              end: -72,
+              top: -58,
+              child: _HeroLightBand(
+                color: AuroraColors.cyanHighlight,
+                width: 220,
+                height: 74,
+                angle: 0.52,
+                opacity: 0.20,
+              ),
+            ),
+            PositionedDirectional(
+              start: textDirection == TextDirection.rtl ? null : -70,
+              end: textDirection == TextDirection.rtl ? -70 : null,
+              bottom: -92,
+              child: _HeroLightBand(
+                color: AuroraColors.coral,
+                width: 240,
+                height: 86,
+                angle: -0.42,
+                opacity: 0.14,
+              ),
+            ),
+            PositionedDirectional(
+              end: AppSpacing.lg,
+              top: AppSpacing.lg,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.14),
+                  borderRadius: BorderRadius.circular(AppRadii.pill),
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.18),
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.md,
+                    vertical: AppSpacing.sm,
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(
+                        Icons.bolt_rounded,
+                        color: AuroraColors.success,
+                        size: 15,
+                      ),
+                      const SizedBox(width: 5),
+                      Text(
+                        context.l10n.available,
+                        style: theme.textTheme.labelSmall?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
             Padding(
-              padding: AppSpacing.card,
+              padding: const EdgeInsets.all(AppSpacing.xl),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -54,21 +100,19 @@ class HomeHeader extends StatelessWidget {
                     children: [
                       DecoratedBox(
                         decoration: BoxDecoration(
-                          color: colorScheme.onPrimary.withValues(alpha: 0.12),
-                          borderRadius: BorderRadius.circular(8),
+                          color: Colors.white.withValues(alpha: 0.14),
+                          borderRadius: BorderRadius.circular(AppRadii.xl),
                           border: Border.all(
-                            color: colorScheme.onPrimary.withValues(
-                              alpha: 0.20,
-                            ),
+                            color: Colors.white.withValues(alpha: 0.22),
                           ),
                         ),
                         child: Padding(
-                          padding: const EdgeInsets.all(6),
+                          padding: const EdgeInsets.all(7),
                           child: LocalAssetImage(
                             assetPath: business.logoAsset,
-                            width: 60,
-                            height: 60,
-                            borderRadius: BorderRadius.circular(8),
+                            width: 68,
+                            height: 68,
+                            borderRadius: BorderRadius.circular(AppRadii.lg),
                           ),
                         ),
                       ),
@@ -76,12 +120,12 @@ class HomeHeader extends StatelessWidget {
                       Expanded(
                         child: Text(
                           business.businessName,
-                          maxLines: 2,
+                          maxLines: 3,
                           overflow: TextOverflow.ellipsis,
                           style: theme.textTheme.headlineSmall?.copyWith(
-                            color: colorScheme.onPrimary,
-                            fontWeight: FontWeight.w800,
-                            height: 1.05,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w900,
+                            height: 1.02,
                           ),
                         ),
                       ),
@@ -90,30 +134,69 @@ class HomeHeader extends StatelessWidget {
                   const SizedBox(height: AppSpacing.lg),
                   Text(
                     business.shortDescription,
-                    maxLines: 2,
+                    maxLines: 3,
                     overflow: TextOverflow.ellipsis,
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      color: colorScheme.onPrimary.withValues(alpha: 0.86),
-                      height: 1.35,
+                      color: Colors.white.withValues(alpha: 0.84),
+                      height: 1.38,
                     ),
                   ),
                   const SizedBox(height: AppSpacing.xl),
                   Align(
                     alignment: AlignmentDirectional.centerStart,
-                    child: FilledButton.tonalIcon(
+                    child: AuroraGradientButton(
                       onPressed: onBrowse,
-                      icon: const Icon(Icons.arrow_forward),
-                      label: Text(context.l10n.viewCatalog),
-                      style: FilledButton.styleFrom(
-                        backgroundColor: colorScheme.onPrimary,
-                        foregroundColor: colorScheme.primary,
+                      icon: Icon(
+                        textDirection == TextDirection.rtl
+                            ? Icons.arrow_back_rounded
+                            : Icons.arrow_forward_rounded,
                       ),
+                      label: Text(context.l10n.viewCatalog),
                     ),
                   ),
                 ],
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _HeroLightBand extends StatelessWidget {
+  const _HeroLightBand({
+    required this.color,
+    required this.width,
+    required this.height,
+    required this.angle,
+    required this.opacity,
+  });
+
+  final Color color;
+  final double width;
+  final double height;
+  final double angle;
+  final double opacity;
+
+  @override
+  Widget build(BuildContext context) {
+    return IgnorePointer(
+      child: Transform.rotate(
+        angle: angle,
+        child: Container(
+          width: width,
+          height: height,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(AppRadii.pill),
+            gradient: LinearGradient(
+              colors: [
+                color.withValues(alpha: 0),
+                color.withValues(alpha: opacity),
+                color.withValues(alpha: 0),
+              ],
+            ),
+          ),
         ),
       ),
     );
