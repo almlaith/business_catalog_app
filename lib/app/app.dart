@@ -5,6 +5,7 @@ import 'package:business_catalog_app/core/extensions/build_context_extensions.da
 import 'package:business_catalog_app/core/utils/hex_color_parser.dart';
 import 'package:business_catalog_app/core/utils/locale_resolver.dart';
 import 'package:business_catalog_app/features/catalog/data/catalog_providers.dart';
+import 'package:business_catalog_app/features/launch/presentation/animated_launch_screen.dart';
 import 'package:business_catalog_app/services/local_settings_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,6 +18,7 @@ class BusinessCatalogApp extends ConsumerWidget {
     final router = ref.watch(appRouterProvider);
     final settings = ref.watch(appSettingsProvider);
     final catalog = ref.watch(catalogDataProvider).asData?.value;
+    final launchAnimationEnabled = ref.watch(launchAnimationEnabledProvider);
     final business = catalog?.business;
     final primaryColor = HexColorParser.parse(
       business?.primaryColorHex,
@@ -45,6 +47,10 @@ class BusinessCatalogApp extends ConsumerWidget {
       ),
       themeMode: _themeModeFromSetting(settings.themeMode),
       routerConfig: router,
+      builder: (context, child) => LaunchOverlay(
+        enabled: launchAnimationEnabled,
+        child: child ?? const SizedBox.shrink(),
+      ),
       locale: resolveSupportedLocale(
         Locale(localeCode),
         AppLocales.supportedLocales,

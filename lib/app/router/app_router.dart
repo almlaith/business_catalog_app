@@ -108,18 +108,31 @@ final appRouterProvider = Provider<GoRouter>(
 CustomTransitionPage<void> _nestedPage(GoRouterState state, Widget child) {
   return CustomTransitionPage<void>(
     key: state.pageKey,
-    transitionDuration: const Duration(milliseconds: 240),
-    reverseTransitionDuration: const Duration(milliseconds: 180),
+    transitionDuration: const Duration(milliseconds: 260),
+    reverseTransitionDuration: const Duration(milliseconds: 220),
     child: child,
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      final reduceMotion =
+          MediaQuery.disableAnimationsOf(context) ||
+          MediaQuery.accessibleNavigationOf(context);
+      final isRtl = Directionality.of(context) == TextDirection.rtl;
+      final background = Theme.of(context).colorScheme.surfaceContainerLowest;
+      if (reduceMotion) {
+        return ColoredBox(color: background, child: child);
+      }
+
       final offset = Tween<Offset>(
-        begin: const Offset(0.08, 0),
+        begin: Offset(isRtl ? -0.10 : 0.10, 0),
         end: Offset.zero,
       ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOutCubic));
+      final fade = CurvedAnimation(parent: animation, curve: Curves.easeOut);
 
-      return FadeTransition(
-        opacity: animation,
-        child: SlideTransition(position: offset, child: child),
+      return ColoredBox(
+        color: background,
+        child: FadeTransition(
+          opacity: fade,
+          child: SlideTransition(position: offset, child: child),
+        ),
       );
     },
   );

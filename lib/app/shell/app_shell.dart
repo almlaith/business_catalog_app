@@ -17,19 +17,25 @@ class AppShell extends ConsumerWidget {
       cartControllerProvider.select((cart) => cart.totalItemQuantity),
     );
     final l10n = context.l10n;
+    final reduceMotion =
+        MediaQuery.disableAnimationsOf(context) ||
+        MediaQuery.accessibleNavigationOf(context);
 
     return Scaffold(
       body: TweenAnimationBuilder<double>(
         key: ValueKey(navigationShell.currentIndex),
         tween: Tween(begin: 0, end: 1),
-        duration: AppDurations.fast,
-        curve: Curves.easeOutCubic,
+        duration: reduceMotion ? Duration.zero : AppDurations.medium,
+        curve: AuroraMotion.curve,
         builder: (context, value, child) {
-          return Opacity(
-            opacity: value,
-            child: Transform.translate(
-              offset: Offset(0, 6 * (1 - value)),
-              child: child,
+          return ColoredBox(
+            color: Theme.of(context).colorScheme.surfaceContainerLowest,
+            child: Opacity(
+              opacity: value,
+              child: Transform.translate(
+                offset: Offset(0, 8 * (1 - value)),
+                child: child,
+              ),
             ),
           );
         },
@@ -59,7 +65,7 @@ class AppShell extends ConsumerWidget {
           _AuroraNavItem(
             icon: Icons.info_rounded,
             inactiveIcon: Icons.info_outline_rounded,
-            label: l10n.businessInfoTitle,
+            label: l10n.businessInfoNavLabel,
           ),
         ],
       ),
@@ -91,51 +97,73 @@ class _AuroraBottomNavigation extends StatelessWidget {
     final colorScheme = theme.colorScheme;
     final isDark = theme.brightness == Brightness.dark;
 
-    return SafeArea(
-      minimum: const EdgeInsets.fromLTRB(14, 0, 14, 12),
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: colorScheme.surfaceContainerLow.withValues(
-            alpha: isDark ? 0.92 : 0.88,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final horizontalMargin = constraints.maxWidth < 340 ? 8.0 : 14.0;
+        final itemSpacing = constraints.maxWidth < 340 ? 3.0 : 5.0;
+        final horizontalPadding = constraints.maxWidth < 340 ? 3.0 : 6.0;
+
+        return SafeArea(
+          minimum: EdgeInsets.fromLTRB(
+            horizontalMargin,
+            0,
+            horizontalMargin,
+            12,
           ),
-          borderRadius: BorderRadius.circular(AppRadii.xxl),
-          border: Border.all(
-            color: colorScheme.outlineVariant.withValues(alpha: 0.88),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: colorScheme.shadow.withValues(alpha: isDark ? 0.35 : 0.12),
-              blurRadius: 34,
-              offset: const Offset(0, 18),
-            ),
-            BoxShadow(
-              color: colorScheme.primary.withValues(
-                alpha: isDark ? 0.18 : 0.10,
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              color: colorScheme.surfaceContainerLow.withValues(
+                alpha: isDark ? 0.92 : 0.88,
               ),
-              blurRadius: 28,
-              offset: const Offset(0, 8),
-            ),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(AppRadii.xxl),
-          child: SizedBox(
-            height: AppHeights.navDock,
-            child: Row(
-              children: [
-                for (var index = 0; index < items.length; index++)
-                  Expanded(
-                    child: _AuroraNavDestination(
-                      item: items[index],
-                      selected: selectedIndex == index,
-                      onTap: () => onDestinationSelected(index),
-                    ),
+              borderRadius: BorderRadius.circular(AppRadii.xxl),
+              border: Border.all(
+                color: colorScheme.outlineVariant.withValues(alpha: 0.88),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: colorScheme.shadow.withValues(
+                    alpha: isDark ? 0.35 : 0.12,
                   ),
+                  blurRadius: 34,
+                  offset: const Offset(0, 18),
+                ),
+                BoxShadow(
+                  color: colorScheme.primary.withValues(
+                    alpha: isDark ? 0.18 : 0.10,
+                  ),
+                  blurRadius: 28,
+                  offset: const Offset(0, 8),
+                ),
               ],
             ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(AppRadii.xxl),
+              child: SizedBox(
+                height: AppHeights.navDock,
+                child: Row(
+                  children: [
+                    for (var index = 0; index < items.length; index++)
+                      Expanded(
+                        child: _AuroraNavDestination(
+                          item: items[index],
+                          selected: selectedIndex == index,
+                          onTap: () => onDestinationSelected(index),
+                          margin: EdgeInsets.symmetric(
+                            horizontal: itemSpacing,
+                            vertical: 9,
+                          ),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: horizontalPadding,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
@@ -145,11 +173,15 @@ class _AuroraNavDestination extends StatelessWidget {
     required this.item,
     required this.selected,
     required this.onTap,
+    required this.margin,
+    required this.padding,
   });
 
   final _AuroraNavItem item;
   final bool selected;
   final VoidCallback onTap;
+  final EdgeInsetsGeometry margin;
+  final EdgeInsetsGeometry padding;
 
   @override
   Widget build(BuildContext context) {
@@ -168,8 +200,8 @@ class _AuroraNavDestination extends StatelessWidget {
         child: AnimatedContainer(
           duration: AppDurations.medium,
           curve: AuroraMotion.curve,
-          margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 9),
-          padding: const EdgeInsets.symmetric(horizontal: 6),
+          margin: margin,
+          padding: padding,
           decoration: BoxDecoration(
             gradient: selected ? AuroraGradients.primary : null,
             color: selected ? null : Colors.transparent,
@@ -192,9 +224,15 @@ class _AuroraNavDestination extends StatelessWidget {
                   color: selected
                       ? Colors.white
                       : colorScheme.onSurfaceVariant.withValues(alpha: 0.88),
+                  fontSize: 10.5,
                   fontWeight: selected ? FontWeight.w900 : FontWeight.w700,
                 ),
-                child: Text(item.label, textAlign: TextAlign.center),
+                child: Text(
+                  item.label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
+                ),
               ),
             ],
           ),

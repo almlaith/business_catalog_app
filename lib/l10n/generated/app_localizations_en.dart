@@ -27,6 +27,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get businessInfoTitle => 'Business Information';
 
   @override
+  String get businessInfoNavLabel => 'Info';
+
+  @override
   String get placeholderLabel => 'Placeholder screen';
 
   @override
@@ -215,7 +218,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get themeSettingDescription =>
-      'Control how the app follows your device appearance.';
+      'Choose Dark, Light, or System appearance. Dark is the template default.';
 
   @override
   String get systemTheme => 'System default';

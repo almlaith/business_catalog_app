@@ -27,6 +27,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get businessInfoTitle => 'معلومات النشاط';
 
   @override
+  String get businessInfoNavLabel => 'المعلومات';
+
+  @override
   String get placeholderLabel => 'شاشة مؤقتة';
 
   @override
@@ -212,7 +215,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get themeSettingDescription =>
-      'تحكم بكيفية اتباع التطبيق لمظهر الجهاز.';
+      'اختر الوضع الداكن أو الفاتح أو حسب النظام. الوضع الداكن هو الافتراضي.';
 
   @override
   String get systemTheme => 'حسب النظام';

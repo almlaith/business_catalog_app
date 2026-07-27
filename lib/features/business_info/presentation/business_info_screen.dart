@@ -62,6 +62,13 @@ class _BusinessInfoContent extends ConsumerWidget {
         .where((entry) => entry.value.trim().isNotEmpty)
         .map((entry) => '${entry.key}: ${entry.value}')
         .join('\n');
+    String? openingSummary;
+    for (final entry in business.openingHours.entries) {
+      if (entry.value.trim().isNotEmpty) {
+        openingSummary = entry.value;
+        break;
+      }
+    }
     final l10n = context.l10n;
 
     return ListView(
@@ -70,7 +77,10 @@ class _BusinessInfoContent extends ConsumerWidget {
       children: [
         Padding(
           padding: AppSpacing.page,
-          child: _BusinessHeader(business: business),
+          child: _BusinessHeader(
+            business: business,
+            openingSummary: openingSummary,
+          ),
         ),
         BusinessInfoRow(
           icon: Icons.description_outlined,
@@ -168,7 +178,6 @@ class _BusinessInfoContent extends ConsumerWidget {
   }
 
   void _showError(BuildContext context) {
-    ScaffoldMessenger.of(context).hideCurrentSnackBar();
     showAppFeedback(
       context,
       type: AppFeedbackType.error,
@@ -179,13 +188,16 @@ class _BusinessInfoContent extends ConsumerWidget {
 }
 
 class _BusinessHeader extends StatelessWidget {
-  const _BusinessHeader({required this.business});
+  const _BusinessHeader({required this.business, required this.openingSummary});
 
   final BusinessConfig business;
+  final String? openingSummary;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+
+    final openingSummary = this.openingSummary;
 
     return DecoratedBox(
       decoration: BoxDecoration(
@@ -230,15 +242,40 @@ class _BusinessHeader extends StatelessWidget {
                       height: 1.08,
                     ),
                   ),
-                  if (business.address.trim().isNotEmpty) ...[
+                  const SizedBox(height: AppSpacing.sm),
+                  Text(
+                    business.shortDescription,
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: Colors.white.withValues(alpha: 0.84),
+                      height: 1.28,
+                    ),
+                  ),
+                  if (openingSummary != null) ...[
                     const SizedBox(height: AppSpacing.sm),
-                    Text(
-                      business.address,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: Colors.white.withValues(alpha: 0.82),
-                        height: 1.25,
+                    DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(AppRadii.pill),
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.18),
+                        ),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.sm,
+                          vertical: AppSpacing.xs,
+                        ),
+                        child: Text(
+                          openingSummary,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.labelSmall?.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
                       ),
                     ),
                   ],

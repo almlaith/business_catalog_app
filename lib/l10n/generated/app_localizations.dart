@@ -134,6 +134,12 @@ abstract class AppLocalizations {
   /// **'Business Information'**
   String get businessInfoTitle;
 
+  /// No description provided for @businessInfoNavLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Info'**
+  String get businessInfoNavLabel;
+
   /// No description provided for @placeholderLabel.
   ///
   /// In en, this message translates to:
@@ -503,7 +509,7 @@ abstract class AppLocalizations {
   /// No description provided for @themeSettingDescription.
   ///
   /// In en, this message translates to:
-  /// **'Control how the app follows your device appearance.'**
+  /// **'Choose Dark, Light, or System appearance. Dark is the template default.'**
   String get themeSettingDescription;
 
   /// No description provided for @systemTheme.

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:business_catalog_app/app/app.dart';
+import 'package:business_catalog_app/app/app_bootstrap.dart';
 import 'package:business_catalog_app/app/theme/aurora_tokens.dart';
 import 'package:business_catalog_app/core/constants/app_assets.dart';
 import 'package:business_catalog_app/l10n/generated/app_localizations_en.dart';
@@ -10,6 +11,7 @@ import 'package:business_catalog_app/core/widgets/local_asset_image.dart';
 import 'package:business_catalog_app/features/catalog/data/catalog_providers.dart';
 import 'package:business_catalog_app/features/catalog/widgets/category_card.dart';
 import 'package:business_catalog_app/features/catalog/widgets/product_card.dart';
+import 'package:business_catalog_app/features/launch/presentation/animated_launch_screen.dart';
 import 'package:business_catalog_app/models/app_settings.dart';
 import 'package:business_catalog_app/models/catalog_data.dart';
 import 'package:business_catalog_app/core/widgets/app_feedback.dart';
@@ -18,6 +20,7 @@ import 'package:business_catalog_app/services/external_link_launcher.dart';
 import 'package:business_catalog_app/services/local_settings_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -33,6 +36,55 @@ void main() {
     sampleCatalog = CatalogData.fromJson(
       jsonDecode(rawJson) as Map<String, Object?>,
     );
+  });
+
+  testWidgets('portrait orientation initialization is configured', (
+    WidgetTester tester,
+  ) async {
+    final calls = <MethodCall>[];
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+      SystemChannels.platform,
+      (call) async {
+        calls.add(call);
+        return null;
+      },
+    );
+    addTearDown(
+      () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        SystemChannels.platform,
+        null,
+      ),
+    );
+
+    await configurePortraitOrientation();
+
+    expect(calls.single.method, 'SystemChrome.setPreferredOrientations');
+    expect(calls.single.arguments, ['DeviceOrientation.portraitUp']);
+  });
+
+  testWidgets('animated launch screen completes before app interaction', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          appSettingsProvider.overrideWithValue(const AppSettings()),
+          catalogDataProvider.overrideWithValue(AsyncData(sampleCatalog)),
+        ],
+        child: const BusinessCatalogApp(),
+      ),
+    );
+
+    expect(
+      find.byKey(const ValueKey('animated-launch-screen')),
+      findsOneWidget,
+    );
+
+    await tester.pump(const Duration(milliseconds: 1200));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const ValueKey('animated-launch-screen')), findsNothing);
+    expect(find.text(l10n.homeTitle), findsWidgets);
   });
 
   testWidgets('home shows a loading state', (WidgetTester tester) async {
@@ -86,7 +138,7 @@ void main() {
     expect(find.text(l10n.cartTitle), findsWidgets);
     expect(find.byTooltip('Back'), findsNothing);
 
-    await tester.tapNavLabel(l10n.businessInfoTitle);
+    await tester.tapNavLabel(l10n.businessInfoNavLabel);
     await tester.pumpAndSettle();
     expect(find.text(l10n.businessInfoTitle), findsWidgets);
     expect(find.text('Catalogly Kitchen'), findsOneWidget);
@@ -102,19 +154,93 @@ void main() {
     expect(find.text(l10n.homeTitle), findsWidgets);
     expect(find.text(l10n.catalogTitle), findsWidgets);
     expect(find.text(l10n.cartTitle), findsWidgets);
-    expect(find.text(l10n.businessInfoTitle), findsWidgets);
+    expect(find.text(l10n.businessInfoNavLabel), findsWidgets);
   });
 
-  testWidgets('light theme uses tinted Midnight Aurora background', (
+  testWidgets('bottom navigation labels stay single-line at 320dp', (
+    WidgetTester tester,
+  ) async {
+    addTearDown(() => tester.view.resetPhysicalSize());
+    tester.view.physicalSize = const Size(320, 720);
+    tester.view.devicePixelRatio = 1;
+
+    await tester.pumpCatalogApp(catalogState: AsyncData(sampleCatalog));
+    await tester.pumpAndSettle();
+
+    for (final label in [
+      l10n.homeTitle,
+      l10n.catalogTitle,
+      l10n.cartTitle,
+      l10n.businessInfoNavLabel,
+    ]) {
+      final text = tester.widget<Text>(find.text(label).last);
+      expect(text.maxLines, 1);
+      expect(tester.getSize(find.text(label).last).height, lessThan(18));
+    }
+  });
+
+  testWidgets('arabic bottom navigation labels stay single-line at 320dp', (
+    WidgetTester tester,
+  ) async {
+    addTearDown(() => tester.view.resetPhysicalSize());
+    tester.view.physicalSize = const Size(320, 720);
+    tester.view.devicePixelRatio = 1;
+
+    await tester.pumpCatalogApp(
+      catalogState: AsyncData(sampleCatalog),
+      appSettings: const AppSettings(localeCode: 'ar'),
+    );
+    await tester.pumpAndSettle();
+
+    for (final label in [
+      arL10n.homeTitle,
+      arL10n.catalogTitle,
+      arL10n.cartTitle,
+      arL10n.businessInfoNavLabel,
+    ]) {
+      final text = tester.widget<Text>(find.text(label).last);
+      expect(text.maxLines, 1);
+      expect(tester.getSize(find.text(label).last).height, lessThan(18));
+    }
+  });
+
+  testWidgets('fresh install defaults to dark theme', (
     WidgetTester tester,
   ) async {
     await tester.pumpCatalogApp(catalogState: AsyncData(sampleCatalog));
 
     final theme = Theme.of(tester.element(find.byType(Scaffold).first));
 
+    expect(theme.brightness, Brightness.dark);
+    expect(theme.scaffoldBackgroundColor, AuroraColors.darkBackground);
+  });
+
+  testWidgets('stored light preference remains light', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpCatalogApp(
+      catalogState: AsyncData(sampleCatalog),
+      appSettings: const AppSettings(themeMode: 'light'),
+    );
+
+    final theme = Theme.of(tester.element(find.byType(Scaffold).first));
+
+    expect(theme.brightness, Brightness.light);
     expect(theme.scaffoldBackgroundColor, isNot(Colors.white));
     expect(theme.scaffoldBackgroundColor, AuroraColors.lightBackground);
     expect(theme.colorScheme.surface, AuroraColors.lightCard);
+  });
+
+  testWidgets('stored system preference remains system', (
+    WidgetTester tester,
+  ) async {
+    final service = _FakeSettingsStore(const AppSettings(themeMode: 'system'));
+    await tester.pumpCatalogAppWithSettingsController(
+      catalogState: AsyncData(sampleCatalog),
+      localSettingsService: service,
+    );
+
+    expect(service.readSettings().themeMode, 'system');
   });
 
   testWidgets('dark theme uses layered ink surfaces', (
@@ -480,7 +606,7 @@ void main() {
     );
     await tester.pumpCatalogApp(catalogState: AsyncData(catalog));
 
-    await tester.tapNavLabel(l10n.businessInfoTitle);
+    await tester.tapNavLabel(l10n.businessInfoNavLabel);
     await tester.pumpAndSettle();
 
     expect(find.text(l10n.phone), findsOneWidget);
@@ -504,7 +630,7 @@ void main() {
   ) async {
     await tester.pumpCatalogApp(catalogState: AsyncData(sampleCatalog));
 
-    await tester.tapNavLabel(l10n.businessInfoTitle);
+    await tester.tapNavLabel(l10n.businessInfoNavLabel);
     await tester.pumpAndSettle();
     await tester.tap(find.byTooltip(l10n.settingsTooltip));
     await tester.pumpAndSettle();
@@ -544,8 +670,8 @@ void main() {
     );
 
     await tester.openSettings();
-    expect(find.byIcon(Icons.light_mode_rounded), findsOneWidget);
-    expect(find.byIcon(Icons.dark_mode_rounded), findsOneWidget);
+    expect(find.byIcon(Icons.light_mode_rounded), findsWidgets);
+    expect(find.byIcon(Icons.dark_mode_rounded), findsWidgets);
     await tester.drag(find.byType(ListView).last, const Offset(0, -220));
     await tester.pumpAndSettle();
     await tester.tapInkForText(l10n.darkTheme);
@@ -599,7 +725,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(service.readSettings().localeCode, isNull);
-    expect(service.readSettings().themeMode, 'system');
+    expect(service.readSettings().themeMode, 'dark');
     expect(find.text(l10n.settingsTitle), findsWidgets);
   });
 
@@ -609,6 +735,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
+          appBar: AppBar(title: const Text('Host')),
           body: Builder(
             builder: (context) => FilledButton(
               onPressed: () => showAppFeedback(
@@ -625,10 +752,61 @@ void main() {
     );
 
     await tester.tap(find.text('Show'));
-    await tester.pumpAndSettle();
+    await tester.pump();
 
     expect(find.text('Saved'), findsOneWidget);
     expect(find.text('Preference applied'), findsOneWidget);
+    expect(tester.getTopLeft(find.text('Saved')).dy, lessThan(140));
+
+    await tester.pump(const Duration(milliseconds: 3100));
+    await tester.pumpAndSettle();
+  });
+
+  testWidgets('top feedback notification automatically dismisses', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          appBar: AppBar(title: const Text('Host')),
+          body: Builder(
+            builder: (context) => FilledButton(
+              onPressed: () => showAppFeedback(
+                context,
+                type: AppFeedbackType.success,
+                title: 'Done',
+                message: 'Dismiss soon',
+              ),
+              child: const Text('Show'),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('Show'));
+    await tester.pump();
+
+    expect(find.text('Done'), findsOneWidget);
+
+    await tester.pump(const Duration(milliseconds: 3100));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Done'), findsNothing);
+  });
+
+  testWidgets('feedback View Cart action navigates to cart', (
+    WidgetTester tester,
+  ) async {
+    await tester.openFirstProduct(sampleCatalog);
+
+    await tester.tap(find.widgetWithText(FilledButton, l10n.addToCart));
+    await tester.pump();
+    await tester.tap(find.text(l10n.viewCart));
+    await tester.pumpAndSettle();
+
+    expect(find.text(l10n.cartTitle), findsWidgets);
+    expect(find.text('Crispy Halloumi Bites'), findsWidgets);
   });
 
   testWidgets('feedback component renders all variants', (
@@ -658,6 +836,9 @@ void main() {
 
       expect(find.text(type.name), findsOneWidget);
       expect(find.text('variant'), findsOneWidget);
+
+      await tester.pump(const Duration(milliseconds: 3100));
+      await tester.pumpAndSettle();
     }
   });
 
@@ -701,6 +882,69 @@ void main() {
     expect(find.text(longTextCatalog.business.businessName), findsOneWidget);
   });
 
+  testWidgets('primary screens fit tested mobile widths', (
+    WidgetTester tester,
+  ) async {
+    const widths = [320.0, 360.0, 430.0, 600.0];
+    addTearDown(() => tester.view.resetPhysicalSize());
+
+    for (final width in widths) {
+      tester.view.physicalSize = Size(width, 820);
+      tester.view.devicePixelRatio = 1;
+
+      await tester.pumpCatalogApp(catalogState: AsyncData(sampleCatalog));
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull, reason: 'Home width $width');
+
+      await tester.tapNavLabel(l10n.catalogTitle);
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull, reason: 'Catalog width $width');
+
+      await tester.tapProductCard('Crispy Halloumi Bites');
+      await tester.pumpAndSettle();
+      expect(
+        tester.takeException(),
+        isNull,
+        reason: 'Product details width $width',
+      );
+
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+      await tester.tapNavLabel(l10n.cartTitle);
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull, reason: 'Cart width $width');
+
+      await tester.tapNavLabel(l10n.businessInfoNavLabel);
+      await tester.pumpAndSettle();
+      expect(
+        tester.takeException(),
+        isNull,
+        reason: 'Business info width $width',
+      );
+    }
+  });
+
+  testWidgets('layout tolerates larger text scaling', (
+    WidgetTester tester,
+  ) async {
+    addTearDown(() {
+      tester.view.resetPhysicalSize();
+      tester.platformDispatcher.clearTextScaleFactorTestValue();
+    });
+    tester.view.physicalSize = const Size(360, 820);
+    tester.view.devicePixelRatio = 1;
+    tester.platformDispatcher.textScaleFactorTestValue = 1.35;
+
+    await tester.pumpCatalogApp(catalogState: AsyncData(sampleCatalog));
+    await tester.pumpAndSettle();
+    await tester.tapNavLabel(l10n.catalogTitle);
+    await tester.pumpAndSettle();
+    await tester.tapProductCard('Crispy Halloumi Bites');
+    await tester.pumpAndSettle();
+
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('local asset image shows fallback for a missing image', (
     WidgetTester tester,
   ) async {
@@ -733,6 +977,7 @@ extension on WidgetTester {
     return pumpWidget(
       ProviderScope(
         overrides: [
+          launchAnimationEnabledProvider.overrideWithValue(false),
           appSettingsProvider.overrideWithValue(appSettings),
           catalogDataProvider.overrideWithValue(catalogState),
           if (externalLinkLauncher != null)
@@ -753,6 +998,7 @@ extension on WidgetTester {
     return pumpWidget(
       ProviderScope(
         overrides: [
+          launchAnimationEnabledProvider.overrideWithValue(false),
           localSettingsServiceProvider.overrideWithValue(localSettingsService),
           catalogDataProvider.overrideWithValue(catalogState),
           if (externalLinkLauncher != null)
@@ -766,7 +1012,10 @@ extension on WidgetTester {
   }
 
   Future<void> openSettings() async {
-    await tapNavLabelAny([l10n.businessInfoTitle, arL10n.businessInfoTitle]);
+    await tapNavLabelAny([
+      l10n.businessInfoNavLabel,
+      arL10n.businessInfoNavLabel,
+    ]);
     await pumpAndSettle();
     final settingsTooltip =
         find.byTooltip(l10n.settingsTooltip).evaluate().isNotEmpty

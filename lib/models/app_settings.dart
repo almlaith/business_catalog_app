@@ -7,7 +7,7 @@ part 'app_settings.g.dart';
 abstract class AppSettings with _$AppSettings {
   const factory AppSettings({
     String? localeCode,
-    @Default('system') String themeMode,
+    @Default('dark') String themeMode,
   }) = _AppSettings;
 
   factory AppSettings.fromJson(Map<String, Object?> json) =>

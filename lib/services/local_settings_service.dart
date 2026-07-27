@@ -38,7 +38,7 @@ class LocalSettingsService implements AppSettingsStore {
   AppSettings readSettings() {
     return AppSettings(
       localeCode: _preferences.getString(_localeCodeKey),
-      themeMode: _preferences.getString(_themeModeKey) ?? 'system',
+      themeMode: _preferences.getString(_themeModeKey) ?? 'dark',
     );
   }
 

@@ -95,40 +95,51 @@ class ProductCard extends StatelessWidget {
                 ),
               ),
               Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(AppSpacing.md),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        product.name,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w900,
-                          height: 1.08,
-                        ),
-                      ),
-                      if (!compact) ...[
-                        const SizedBox(height: AppSpacing.xs),
-                        Text(
-                          product.description,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: colorScheme.onSurfaceVariant,
-                            height: 1.28,
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final textScale = MediaQuery.textScalerOf(context).scale(1);
+                    final roomy =
+                        constraints.maxHeight > 116 && textScale < 1.25;
+                    final showDescription = !compact && roomy;
+
+                    return Padding(
+                      padding: EdgeInsets.all(roomy ? AppSpacing.md : 10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            product.name,
+                            maxLines: roomy ? 2 : 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.w900,
+                              height: 1.08,
+                            ),
                           ),
-                        ),
-                      ],
-                      const Spacer(),
-                      _ProductPrice(
-                        price: product.price,
-                        oldPrice: product.oldPrice,
-                        currencyCode: currencyCode,
+                          if (showDescription) ...[
+                            const SizedBox(height: AppSpacing.xs),
+                            Flexible(
+                              child: Text(
+                                product.description,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: colorScheme.onSurfaceVariant,
+                                  height: 1.28,
+                                ),
+                              ),
+                            ),
+                          ],
+                          const Spacer(),
+                          _ProductPrice(
+                            price: product.price,
+                            oldPrice: product.oldPrice,
+                            currencyCode: currencyCode,
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    );
+                  },
                 ),
               ),
             ],

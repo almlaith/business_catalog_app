@@ -93,6 +93,7 @@ flutter:
   assets:
     - assets/data/catalog.json
     - assets/images/
+    - assets/branding/
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 

@@ -210,7 +210,7 @@ return $default(_that.localeCode,_that.themeMode);case _:
 @JsonSerializable()
 
 class _AppSettings implements AppSettings {
-  const _AppSettings({this.localeCode, this.themeMode = 'system'});
+  const _AppSettings({this.localeCode, this.themeMode = 'dark'});
   factory _AppSettings.fromJson(Map<String, dynamic> json) => _$AppSettingsFromJson(json);
 
 @override final  String? localeCode;

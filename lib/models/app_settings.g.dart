@@ -8,7 +8,7 @@ part of 'app_settings.dart';
 
 _AppSettings _$AppSettingsFromJson(Map<String, dynamic> json) => _AppSettings(
   localeCode: json['localeCode'] as String?,
-  themeMode: json['themeMode'] as String? ?? 'system',
+  themeMode: json['themeMode'] as String? ?? 'dark',
 );
 
 Map<String, dynamic> _$AppSettingsToJson(_AppSettings instance) =>

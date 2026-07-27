@@ -35,15 +35,21 @@ class SettingsScreen extends ConsumerWidget {
               _SettingsHeader(),
               const SizedBox(height: AppSpacing.lg),
               _SettingsSection(
-                icon: Icons.tune_rounded,
-                title: l10n.appearanceSection,
+                icon: Icons.translate_rounded,
+                title: l10n.languageSetting,
                 children: [
                   _LanguagePicker(
                     value:
                         settings.localeCode ?? AppLocales.english.languageCode,
                     onChanged: (value) => _saveLanguage(context, ref, value),
                   ),
-                  const SizedBox(height: AppSpacing.xl),
+                ],
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              _SettingsSection(
+                icon: Icons.dark_mode_rounded,
+                title: l10n.appearanceSection,
+                children: [
                   _ThemeModePicker(
                     value: settings.themeMode,
                     onChanged: (value) => _saveTheme(context, ref, value),
@@ -59,6 +65,8 @@ class SettingsScreen extends ConsumerWidget {
                 icon: Icons.info_rounded,
                 title: l10n.aboutSection,
                 children: [
+                  _AboutRow(icon: Icons.apps_rounded, title: l10n.appTitle),
+                  const SizedBox(height: AppSpacing.md),
                   _AboutRow(
                     icon: Icons.workspace_premium_outlined,
                     title: l10n.aboutAppDescription,
