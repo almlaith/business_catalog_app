@@ -32,6 +32,34 @@ abstract final class AppStrings {
   static const cancel = 'Cancel';
   static const clear = 'Clear';
   static const continueAction = 'Continue';
+  static const checkoutTitle = 'Checkout';
   static const checkoutNotImplemented =
-      'Checkout and WhatsApp ordering are not implemented yet.';
+      'Payment and order history are not implemented yet.';
+  static const customerDetails = 'Customer Details';
+  static const orderSummary = 'Order Summary';
+  static const customerName = 'Customer name';
+  static const phoneNumber = 'Phone number';
+  static const orderNotes = 'Order notes';
+  static const orderType = 'Order type';
+  static const pickup = 'Pickup';
+  static const delivery = 'Delivery';
+  static const deliveryAddress = 'Delivery address';
+  static const sendOrderViaWhatsapp = 'Send Order via WhatsApp';
+  static const requiredField = 'This field is required.';
+  static const whatsappUnavailable = 'Unable to open WhatsApp.';
+  static const invalidWhatsappNumber =
+      'The business WhatsApp number is missing or invalid.';
+  static const orderSent = 'Order opened in WhatsApp.';
+  static const clearCartAfterOrderQuestion = 'Clear cart?';
+  static const clearCartAfterOrderMessage =
+      'Would you like to clear the cart now?';
+  static const keepCart = 'Keep cart';
+  static const businessDescription = 'Description';
+  static const phone = 'Phone';
+  static const email = 'Email';
+  static const address = 'Address';
+  static const openingHours = 'Opening hours';
+  static const instagram = 'Instagram';
+  static const facebook = 'Facebook';
+  static const unableToOpenLink = 'Unable to open this link.';
 }

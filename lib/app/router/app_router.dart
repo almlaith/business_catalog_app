@@ -3,6 +3,7 @@ import 'package:business_catalog_app/core/constants/app_route_paths.dart';
 import 'package:business_catalog_app/features/business_info/presentation/business_info_screen.dart';
 import 'package:business_catalog_app/features/cart/presentation/cart_screen.dart';
 import 'package:business_catalog_app/features/catalog/presentation/catalog_screen.dart';
+import 'package:business_catalog_app/features/checkout/presentation/checkout_screen.dart';
 import 'package:business_catalog_app/features/home/presentation/home_screen.dart';
 import 'package:business_catalog_app/features/product_details/presentation/product_details_screen.dart';
 import 'package:flutter/widgets.dart';
@@ -64,6 +65,13 @@ final appRouterProvider = Provider<GoRouter>(
                 path: AppRoutePaths.cart,
                 name: AppRouteNames.cart,
                 builder: (context, state) => const CartScreen(),
+                routes: [
+                  GoRoute(
+                    path: AppRoutePaths.checkoutSegment,
+                    name: AppRouteNames.checkout,
+                    builder: (context, state) => const CheckoutScreen(),
+                  ),
+                ],
               ),
             ],
           ),

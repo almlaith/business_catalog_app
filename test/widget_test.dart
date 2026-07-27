@@ -8,11 +8,13 @@ import 'package:business_catalog_app/core/widgets/local_asset_image.dart';
 import 'package:business_catalog_app/features/catalog/data/catalog_providers.dart';
 import 'package:business_catalog_app/models/app_settings.dart';
 import 'package:business_catalog_app/models/catalog_data.dart';
+import 'package:business_catalog_app/services/external_link_launcher.dart';
 import 'package:business_catalog_app/services/local_settings_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 void main() {
   late CatalogData sampleCatalog;
@@ -269,6 +271,167 @@ void main() {
     expect(find.byType(Badge), findsNothing);
   });
 
+  testWidgets('continue button is disabled when cart is empty', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpCatalogApp(catalogState: AsyncData(sampleCatalog));
+
+    await tester.tap(find.byIcon(Icons.shopping_bag_outlined));
+    await tester.pumpAndSettle();
+
+    final button = tester.widget<FilledButton>(
+      find.widgetWithText(FilledButton, AppStrings.continueAction),
+    );
+    expect(button.onPressed, isNull);
+  });
+
+  testWidgets('navigates from cart to checkout', (WidgetTester tester) async {
+    await tester.addFirstProductAndOpenCart(sampleCatalog);
+
+    await tester.tap(
+      find.widgetWithText(FilledButton, AppStrings.continueAction),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text(AppStrings.checkoutTitle), findsOneWidget);
+    expect(find.byTooltip('Back'), findsOneWidget);
+  });
+
+  testWidgets('checkout validates required fields', (
+    WidgetTester tester,
+  ) async {
+    await tester.openCheckoutWithProduct(sampleCatalog);
+
+    await tester.tapSendOrder();
+
+    expect(find.text(AppStrings.requiredField), findsAtLeastNWidgets(2));
+  });
+
+  testWidgets('delivery address is conditional and validated', (
+    WidgetTester tester,
+  ) async {
+    await tester.openCheckoutWithProduct(sampleCatalog);
+
+    expect(
+      find.byKey(const ValueKey('checkout-delivery-address-field')),
+      findsNothing,
+    );
+
+    await tester.tap(find.text(AppStrings.delivery));
+    await tester.pumpAndSettle();
+    expect(
+      find.byKey(const ValueKey('checkout-delivery-address-field')),
+      findsOneWidget,
+    );
+
+    await tester.enterText(
+      find.byKey(const ValueKey('checkout-name-field')),
+      'John Smith',
+    );
+    await tester.enterText(
+      find.byKey(const ValueKey('checkout-phone-field')),
+      '+1 555 123 4567',
+    );
+    await tester.tapSendOrder();
+
+    expect(find.text(AppStrings.requiredField), findsOneWidget);
+  });
+
+  testWidgets('pickup checkout flow opens WhatsApp and asks to clear cart', (
+    WidgetTester tester,
+  ) async {
+    final launcher = _FakeExternalLinkLauncher(canLaunchResult: true);
+    await tester.openCheckoutWithProduct(
+      sampleCatalog,
+      externalLinkLauncher: launcher,
+    );
+
+    await tester.fillPickupCheckoutFields();
+    await tester.tapSendOrder();
+
+    expect(launcher.launchedUris, hasLength(1));
+    expect(find.text(AppStrings.clearCartAfterOrderQuestion), findsOneWidget);
+
+    await tester.tap(find.text(AppStrings.keepCart));
+    await tester.pumpAndSettle();
+    expect(find.byType(Badge), findsWidgets);
+  });
+
+  testWidgets('checkout shows launch failure feedback', (
+    WidgetTester tester,
+  ) async {
+    await tester.openCheckoutWithProduct(
+      sampleCatalog,
+      externalLinkLauncher: _FakeExternalLinkLauncher(canLaunchResult: false),
+    );
+
+    await tester.fillPickupCheckoutFields();
+    await tester.tapSendOrder();
+
+    expect(find.text(AppStrings.whatsappUnavailable), findsOneWidget);
+    expect(find.text(AppStrings.clearCartAfterOrderQuestion), findsNothing);
+  });
+
+  testWidgets('successful checkout clears cart only when confirmed', (
+    WidgetTester tester,
+  ) async {
+    await tester.openCheckoutWithProduct(
+      sampleCatalog,
+      externalLinkLauncher: _FakeExternalLinkLauncher(canLaunchResult: true),
+    );
+
+    await tester.fillPickupCheckoutFields();
+    await tester.tapSendOrder();
+    await tester.tap(find.text(AppStrings.clear));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(Badge), findsNothing);
+    final button = tester.widget<FilledButton>(
+      find.widgetWithText(FilledButton, AppStrings.sendOrderViaWhatsapp),
+    );
+    expect(button.onPressed, isNull);
+  });
+
+  testWidgets('checkout supports system back navigation', (
+    WidgetTester tester,
+  ) async {
+    await tester.openCheckoutWithProduct(sampleCatalog);
+
+    final didPop = await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+
+    expect(didPop, isTrue);
+    expect(find.text(AppStrings.cartTitle), findsWidgets);
+    expect(find.byTooltip('Back'), findsNothing);
+  });
+
+  testWidgets('business information hides empty optional rows', (
+    WidgetTester tester,
+  ) async {
+    final catalog = sampleCatalog.copyWith(
+      business: sampleCatalog.business.copyWith(facebookUrl: ''),
+    );
+    await tester.pumpCatalogApp(catalogState: AsyncData(catalog));
+
+    await tester.tap(find.byIcon(Icons.info_outline));
+    await tester.pumpAndSettle();
+
+    expect(find.text(AppStrings.phone), findsOneWidget);
+    expect(find.text(AppStrings.email), findsOneWidget);
+    await tester.scrollUntilVisible(
+      find.text(AppStrings.instagram),
+      160,
+      scrollable: find
+          .descendant(
+            of: find.byKey(const ValueKey('business-info-scroll-view')),
+            matching: find.byType(Scrollable),
+          )
+          .first,
+    );
+    expect(find.text(AppStrings.instagram), findsOneWidget);
+    expect(find.text(AppStrings.facebook), findsNothing);
+  });
+
   testWidgets('local asset image shows fallback for a missing image', (
     WidgetTester tester,
   ) async {
@@ -293,20 +456,33 @@ void main() {
 }
 
 extension on WidgetTester {
-  Future<void> pumpCatalogApp({required AsyncValue<CatalogData> catalogState}) {
+  Future<void> pumpCatalogApp({
+    required AsyncValue<CatalogData> catalogState,
+    ExternalLinkLauncher? externalLinkLauncher,
+  }) {
     return pumpWidget(
       ProviderScope(
         overrides: [
           appSettingsProvider.overrideWithValue(const AppSettings()),
           catalogDataProvider.overrideWithValue(catalogState),
+          if (externalLinkLauncher != null)
+            externalLinkLauncherProvider.overrideWithValue(
+              externalLinkLauncher,
+            ),
         ],
         child: const BusinessCatalogApp(),
       ),
     );
   }
 
-  Future<void> openFirstProduct(CatalogData catalog) async {
-    await pumpCatalogApp(catalogState: AsyncData(catalog));
+  Future<void> openFirstProduct(
+    CatalogData catalog, {
+    ExternalLinkLauncher? externalLinkLauncher,
+  }) async {
+    await pumpCatalogApp(
+      catalogState: AsyncData(catalog),
+      externalLinkLauncher: externalLinkLauncher,
+    );
     await tap(find.byIcon(Icons.storefront_outlined));
     await pumpAndSettle();
     await tap(find.text('Crispy Halloumi Bites'));
@@ -320,11 +496,53 @@ extension on WidgetTester {
     await pumpAndSettle();
   }
 
-  Future<void> addFirstProductAndOpenCart(CatalogData catalog) async {
-    await openFirstProduct(catalog);
+  Future<void> addFirstProductAndOpenCart(
+    CatalogData catalog, {
+    ExternalLinkLauncher? externalLinkLauncher,
+  }) async {
+    await openFirstProduct(catalog, externalLinkLauncher: externalLinkLauncher);
     await tap(find.widgetWithText(FilledButton, AppStrings.addToCart));
     await pumpAndSettle();
     await tap(find.text(AppStrings.viewCart));
+    await pumpAndSettle();
+  }
+
+  Future<void> openCheckoutWithProduct(
+    CatalogData catalog, {
+    ExternalLinkLauncher? externalLinkLauncher,
+  }) async {
+    await addFirstProductAndOpenCart(
+      catalog,
+      externalLinkLauncher: externalLinkLauncher,
+    );
+    await tap(find.widgetWithText(FilledButton, AppStrings.continueAction));
+    await pumpAndSettle();
+  }
+
+  Future<void> fillPickupCheckoutFields() async {
+    await enterText(
+      find.byKey(const ValueKey('checkout-name-field')),
+      'John Smith',
+    );
+    await enterText(
+      find.byKey(const ValueKey('checkout-phone-field')),
+      '+1 555 123 4567',
+    );
+    await pumpAndSettle();
+  }
+
+  Future<void> tapSendOrder() async {
+    await scrollUntilVisible(
+      find.text(AppStrings.sendOrderViaWhatsapp),
+      180,
+      scrollable: find
+          .descendant(
+            of: find.byKey(const ValueKey('checkout-scroll-view')),
+            matching: find.byType(Scrollable),
+          )
+          .first,
+    );
+    await tap(find.text(AppStrings.sendOrderViaWhatsapp));
     await pumpAndSettle();
   }
 
@@ -337,5 +555,24 @@ extension on WidgetTester {
         matching: find.byType(Scrollable),
       ),
     );
+  }
+}
+
+class _FakeExternalLinkLauncher implements ExternalLinkLauncher {
+  _FakeExternalLinkLauncher({required this.canLaunchResult});
+
+  final bool canLaunchResult;
+  final launchedUris = <Uri>[];
+
+  @override
+  Future<bool> canLaunch(Uri uri) async => canLaunchResult;
+
+  @override
+  Future<bool> launch(
+    Uri uri, {
+    LaunchMode mode = LaunchMode.platformDefault,
+  }) async {
+    launchedUris.add(uri);
+    return canLaunchResult;
   }
 }

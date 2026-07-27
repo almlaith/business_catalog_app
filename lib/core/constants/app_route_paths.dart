@@ -3,6 +3,7 @@ abstract final class AppRouteNames {
   static const catalog = 'catalog';
   static const productDetails = 'productDetails';
   static const cart = 'cart';
+  static const checkout = 'checkout';
   static const businessInfo = 'businessInfo';
 }
 
@@ -17,6 +18,8 @@ abstract final class AppRoutePaths {
   static const productDetailsSegment = ':${AppRouteParams.productId}';
   static const productDetails = '/catalog/$productDetailsSegment';
   static const cart = '/cart';
+  static const checkoutSegment = 'checkout';
+  static const checkout = '/cart/$checkoutSegment';
   static const businessInfo = '/business-info';
 
   static String productDetailsPath(String productId) => '/catalog/$productId';

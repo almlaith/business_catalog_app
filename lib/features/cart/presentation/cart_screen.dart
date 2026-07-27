@@ -107,6 +107,11 @@ class _EmptyCart extends StatelessWidget {
               icon: const Icon(Icons.storefront_outlined),
               label: const Text(AppStrings.browseCatalog),
             ),
+            const SizedBox(height: 12),
+            const FilledButton(
+              onPressed: null,
+              child: Text(AppStrings.continueAction),
+            ),
           ],
         ),
       ),
@@ -197,9 +202,9 @@ class _CartSummary extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 12),
-              const FilledButton(
-                onPressed: null,
-                child: Text(AppStrings.continueAction),
+              FilledButton(
+                onPressed: () => context.push(AppRoutePaths.checkout),
+                child: const Text(AppStrings.continueAction),
               ),
             ],
           ),
