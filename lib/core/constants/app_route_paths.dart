@@ -6,6 +6,7 @@ abstract final class AppRouteNames {
   static const checkout = 'checkout';
   static const businessInfo = 'businessInfo';
   static const settings = 'settings';
+  static const helpSupport = 'helpSupport';
 }
 
 abstract final class AppRouteParams {
@@ -24,6 +25,8 @@ abstract final class AppRoutePaths {
   static const businessInfo = '/business-info';
   static const settingsSegment = 'settings';
   static const settings = '/business-info/$settingsSegment';
+  static const helpSupportSegment = 'help-support';
+  static const helpSupport = '$settings/$helpSupportSegment';
 
   static String productDetailsPath(String productId) => '/catalog/$productId';
 

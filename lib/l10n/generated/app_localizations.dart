@@ -470,11 +470,23 @@ abstract class AppLocalizations {
   /// **'Open settings'**
   String get settingsTooltip;
 
+  /// No description provided for @settingsHeaderDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Tune the look, language, and support options for this reusable catalog app.'**
+  String get settingsHeaderDescription;
+
   /// No description provided for @appearanceSection.
   ///
   /// In en, this message translates to:
   /// **'Appearance'**
   String get appearanceSection;
+
+  /// No description provided for @appearanceSectionDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose how the Aurora interface should feel on this device.'**
+  String get appearanceSectionDescription;
 
   /// No description provided for @languageSetting.
   ///
@@ -494,11 +506,23 @@ abstract class AppLocalizations {
   /// **'English'**
   String get englishLanguage;
 
+  /// No description provided for @englishNativeLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get englishNativeLanguage;
+
   /// No description provided for @arabicLanguage.
   ///
   /// In en, this message translates to:
   /// **'Arabic'**
   String get arabicLanguage;
+
+  /// No description provided for @arabicNativeLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'العربية'**
+  String get arabicNativeLanguage;
 
   /// No description provided for @themeSetting.
   ///
@@ -518,17 +542,59 @@ abstract class AppLocalizations {
   /// **'System default'**
   String get systemTheme;
 
+  /// No description provided for @systemThemeDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow the device setting when the client prefers automatic switching.'**
+  String get systemThemeDescription;
+
   /// No description provided for @lightTheme.
   ///
   /// In en, this message translates to:
   /// **'Light'**
   String get lightTheme;
 
+  /// No description provided for @lightThemeDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Use the mist and lavender Aurora surfaces.'**
+  String get lightThemeDescription;
+
   /// No description provided for @darkTheme.
   ///
   /// In en, this message translates to:
   /// **'Dark'**
   String get darkTheme;
+
+  /// No description provided for @darkThemeDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Use the premium ink and navy Aurora surfaces.'**
+  String get darkThemeDescription;
+
+  /// No description provided for @preferencesSummaryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Current setup'**
+  String get preferencesSummaryTitle;
+
+  /// No description provided for @preferencesSummaryDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'A quick snapshot of the active appearance preferences.'**
+  String get preferencesSummaryDescription;
+
+  /// No description provided for @applicationSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Application'**
+  String get applicationSection;
+
+  /// No description provided for @applicationSectionDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Template information, support, and reset actions.'**
+  String get applicationSectionDescription;
 
   /// No description provided for @aboutSection.
   ///
@@ -547,6 +613,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'App version'**
   String get appVersion;
+
+  /// No description provided for @appVersionDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Installed template build information.'**
+  String get appVersionDescription;
 
   /// No description provided for @resetAppearance.
   ///
@@ -601,6 +673,270 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Appearance settings were reset.'**
   String get settingsResetMessage;
+
+  /// No description provided for @helpSupportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Help and Support'**
+  String get helpSupportTitle;
+
+  /// No description provided for @helpSupportDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Find ordering help and contact options.'**
+  String get helpSupportDescription;
+
+  /// No description provided for @helpSupportHeaderDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Answers, contact actions, and ordering guidance for this business catalog.'**
+  String get helpSupportHeaderDescription;
+
+  /// No description provided for @quickSupportActions.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick support actions'**
+  String get quickSupportActions;
+
+  /// No description provided for @quickSupportActionsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Use the available channels configured for this business.'**
+  String get quickSupportActionsDescription;
+
+  /// No description provided for @callBusiness.
+  ///
+  /// In en, this message translates to:
+  /// **'Call business'**
+  String get callBusiness;
+
+  /// No description provided for @sendEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Send email'**
+  String get sendEmail;
+
+  /// No description provided for @openWhatsapp.
+  ///
+  /// In en, this message translates to:
+  /// **'Open WhatsApp'**
+  String get openWhatsapp;
+
+  /// No description provided for @openWhatsappDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Start a WhatsApp conversation with the business.'**
+  String get openWhatsappDescription;
+
+  /// No description provided for @visitBusinessInformation.
+  ///
+  /// In en, this message translates to:
+  /// **'Visit business information'**
+  String get visitBusinessInformation;
+
+  /// No description provided for @visitBusinessInformationDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'View address, opening hours, and social links.'**
+  String get visitBusinessInformationDescription;
+
+  /// No description provided for @supportWhatsappMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Hello {businessName}, I need help with the catalog app.'**
+  String supportWhatsappMessage(Object businessName);
+
+  /// No description provided for @faqTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Frequently asked questions'**
+  String get faqTitle;
+
+  /// No description provided for @faqDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Generic answers that keep the template reusable.'**
+  String get faqDescription;
+
+  /// No description provided for @faqPlaceOrderQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'How do I place an order?'**
+  String get faqPlaceOrderQuestion;
+
+  /// No description provided for @faqPlaceOrderAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse the catalog, add items to the cart, enter your details, then send the prepared order through WhatsApp.'**
+  String get faqPlaceOrderAnswer;
+
+  /// No description provided for @faqWhatsappQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'How does WhatsApp ordering work?'**
+  String get faqWhatsappQuestion;
+
+  /// No description provided for @faqWhatsappAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'The app prepares a readable message with your cart and customer details, then opens WhatsApp so you can review and send it.'**
+  String get faqWhatsappAnswer;
+
+  /// No description provided for @faqChangeOrderQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Can I change my order after opening WhatsApp?'**
+  String get faqChangeOrderQuestion;
+
+  /// No description provided for @faqChangeOrderAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes. You can edit the message in WhatsApp before sending or contact the business directly for changes.'**
+  String get faqChangeOrderAnswer;
+
+  /// No description provided for @faqPaymentQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Is payment completed inside the application?'**
+  String get faqPaymentQuestion;
+
+  /// No description provided for @faqPaymentAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'No. This template does not process payments inside the app.'**
+  String get faqPaymentAnswer;
+
+  /// No description provided for @faqUnavailableQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Why are some products unavailable?'**
+  String get faqUnavailableQuestion;
+
+  /// No description provided for @faqUnavailableAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'Availability is controlled by the local catalog data. Unavailable items are shown clearly and cannot be added to the cart.'**
+  String get faqUnavailableAnswer;
+
+  /// No description provided for @aboutOrderingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'About ordering'**
+  String get aboutOrderingTitle;
+
+  /// No description provided for @aboutOrderingDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'The checkout flow stays simple and WhatsApp-based.'**
+  String get aboutOrderingDescription;
+
+  /// No description provided for @orderFlowBrowse.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse products'**
+  String get orderFlowBrowse;
+
+  /// No description provided for @orderFlowBrowseDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Review categories, products, services, and details from the local catalog.'**
+  String get orderFlowBrowseDescription;
+
+  /// No description provided for @orderFlowCart.
+  ///
+  /// In en, this message translates to:
+  /// **'Add items to cart'**
+  String get orderFlowCart;
+
+  /// No description provided for @orderFlowCartDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose quantities and review the subtotal before continuing.'**
+  String get orderFlowCartDescription;
+
+  /// No description provided for @orderFlowDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter order details'**
+  String get orderFlowDetails;
+
+  /// No description provided for @orderFlowDetailsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Provide customer details, order type, notes, and delivery address when needed.'**
+  String get orderFlowDetailsDescription;
+
+  /// No description provided for @orderFlowWhatsapp.
+  ///
+  /// In en, this message translates to:
+  /// **'Send through WhatsApp'**
+  String get orderFlowWhatsapp;
+
+  /// No description provided for @orderFlowWhatsappDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'The app opens WhatsApp with a prepared message for the business.'**
+  String get orderFlowWhatsappDescription;
+
+  /// No description provided for @troubleshootingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Troubleshooting'**
+  String get troubleshootingTitle;
+
+  /// No description provided for @troubleshootingDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick checks for common local-template issues.'**
+  String get troubleshootingDescription;
+
+  /// No description provided for @troubleshootWhatsapp.
+  ///
+  /// In en, this message translates to:
+  /// **'If WhatsApp does not open, check that WhatsApp or a compatible browser is available on the device.'**
+  String get troubleshootWhatsapp;
+
+  /// No description provided for @troubleshootContactLink.
+  ///
+  /// In en, this message translates to:
+  /// **'If a contact link does not work, verify the phone, email, or URL in catalog.json.'**
+  String get troubleshootContactLink;
+
+  /// No description provided for @troubleshootImages.
+  ///
+  /// In en, this message translates to:
+  /// **'If images are not visible, confirm the asset path exists and is registered in pubspec.yaml.'**
+  String get troubleshootImages;
+
+  /// No description provided for @troubleshootSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'If settings do not update immediately, reopen the screen and confirm preferences are saved.'**
+  String get troubleshootSettings;
+
+  /// No description provided for @troubleshootRetryContact.
+  ///
+  /// In en, this message translates to:
+  /// **'You can retry the action or contact the business using another available channel.'**
+  String get troubleshootRetryContact;
+
+  /// No description provided for @applicationInformation.
+  ///
+  /// In en, this message translates to:
+  /// **'Application information'**
+  String get applicationInformation;
+
+  /// No description provided for @refreshFailedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh failed'**
+  String get refreshFailedTitle;
+
+  /// No description provided for @refreshFailedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'The local catalog could not be reloaded. Existing content was kept.'**
+  String get refreshFailedMessage;
 
   /// No description provided for @successTitle.
   ///

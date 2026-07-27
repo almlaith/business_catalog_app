@@ -198,7 +198,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsTooltip => 'Open settings';
 
   @override
+  String get settingsHeaderDescription =>
+      'Tune the look, language, and support options for this reusable catalog app.';
+
+  @override
   String get appearanceSection => 'Appearance';
+
+  @override
+  String get appearanceSectionDescription =>
+      'Choose how the Aurora interface should feel on this device.';
 
   @override
   String get languageSetting => 'Language';
@@ -211,7 +219,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get englishLanguage => 'English';
 
   @override
+  String get englishNativeLanguage => 'English';
+
+  @override
   String get arabicLanguage => 'Arabic';
+
+  @override
+  String get arabicNativeLanguage => 'العربية';
 
   @override
   String get themeSetting => 'Theme';
@@ -224,10 +238,36 @@ class AppLocalizationsEn extends AppLocalizations {
   String get systemTheme => 'System default';
 
   @override
+  String get systemThemeDescription =>
+      'Follow the device setting when the client prefers automatic switching.';
+
+  @override
   String get lightTheme => 'Light';
 
   @override
+  String get lightThemeDescription =>
+      'Use the mist and lavender Aurora surfaces.';
+
+  @override
   String get darkTheme => 'Dark';
+
+  @override
+  String get darkThemeDescription =>
+      'Use the premium ink and navy Aurora surfaces.';
+
+  @override
+  String get preferencesSummaryTitle => 'Current setup';
+
+  @override
+  String get preferencesSummaryDescription =>
+      'A quick snapshot of the active appearance preferences.';
+
+  @override
+  String get applicationSection => 'Application';
+
+  @override
+  String get applicationSectionDescription =>
+      'Template information, support, and reset actions.';
 
   @override
   String get aboutSection => 'About';
@@ -238,6 +278,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get appVersion => 'App version';
+
+  @override
+  String get appVersionDescription => 'Installed template build information.';
 
   @override
   String get resetAppearance => 'Reset appearance settings';
@@ -267,6 +310,165 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsResetMessage => 'Appearance settings were reset.';
+
+  @override
+  String get helpSupportTitle => 'Help and Support';
+
+  @override
+  String get helpSupportDescription =>
+      'Find ordering help and contact options.';
+
+  @override
+  String get helpSupportHeaderDescription =>
+      'Answers, contact actions, and ordering guidance for this business catalog.';
+
+  @override
+  String get quickSupportActions => 'Quick support actions';
+
+  @override
+  String get quickSupportActionsDescription =>
+      'Use the available channels configured for this business.';
+
+  @override
+  String get callBusiness => 'Call business';
+
+  @override
+  String get sendEmail => 'Send email';
+
+  @override
+  String get openWhatsapp => 'Open WhatsApp';
+
+  @override
+  String get openWhatsappDescription =>
+      'Start a WhatsApp conversation with the business.';
+
+  @override
+  String get visitBusinessInformation => 'Visit business information';
+
+  @override
+  String get visitBusinessInformationDescription =>
+      'View address, opening hours, and social links.';
+
+  @override
+  String supportWhatsappMessage(Object businessName) {
+    return 'Hello $businessName, I need help with the catalog app.';
+  }
+
+  @override
+  String get faqTitle => 'Frequently asked questions';
+
+  @override
+  String get faqDescription =>
+      'Generic answers that keep the template reusable.';
+
+  @override
+  String get faqPlaceOrderQuestion => 'How do I place an order?';
+
+  @override
+  String get faqPlaceOrderAnswer =>
+      'Browse the catalog, add items to the cart, enter your details, then send the prepared order through WhatsApp.';
+
+  @override
+  String get faqWhatsappQuestion => 'How does WhatsApp ordering work?';
+
+  @override
+  String get faqWhatsappAnswer =>
+      'The app prepares a readable message with your cart and customer details, then opens WhatsApp so you can review and send it.';
+
+  @override
+  String get faqChangeOrderQuestion =>
+      'Can I change my order after opening WhatsApp?';
+
+  @override
+  String get faqChangeOrderAnswer =>
+      'Yes. You can edit the message in WhatsApp before sending or contact the business directly for changes.';
+
+  @override
+  String get faqPaymentQuestion =>
+      'Is payment completed inside the application?';
+
+  @override
+  String get faqPaymentAnswer =>
+      'No. This template does not process payments inside the app.';
+
+  @override
+  String get faqUnavailableQuestion => 'Why are some products unavailable?';
+
+  @override
+  String get faqUnavailableAnswer =>
+      'Availability is controlled by the local catalog data. Unavailable items are shown clearly and cannot be added to the cart.';
+
+  @override
+  String get aboutOrderingTitle => 'About ordering';
+
+  @override
+  String get aboutOrderingDescription =>
+      'The checkout flow stays simple and WhatsApp-based.';
+
+  @override
+  String get orderFlowBrowse => 'Browse products';
+
+  @override
+  String get orderFlowBrowseDescription =>
+      'Review categories, products, services, and details from the local catalog.';
+
+  @override
+  String get orderFlowCart => 'Add items to cart';
+
+  @override
+  String get orderFlowCartDescription =>
+      'Choose quantities and review the subtotal before continuing.';
+
+  @override
+  String get orderFlowDetails => 'Enter order details';
+
+  @override
+  String get orderFlowDetailsDescription =>
+      'Provide customer details, order type, notes, and delivery address when needed.';
+
+  @override
+  String get orderFlowWhatsapp => 'Send through WhatsApp';
+
+  @override
+  String get orderFlowWhatsappDescription =>
+      'The app opens WhatsApp with a prepared message for the business.';
+
+  @override
+  String get troubleshootingTitle => 'Troubleshooting';
+
+  @override
+  String get troubleshootingDescription =>
+      'Quick checks for common local-template issues.';
+
+  @override
+  String get troubleshootWhatsapp =>
+      'If WhatsApp does not open, check that WhatsApp or a compatible browser is available on the device.';
+
+  @override
+  String get troubleshootContactLink =>
+      'If a contact link does not work, verify the phone, email, or URL in catalog.json.';
+
+  @override
+  String get troubleshootImages =>
+      'If images are not visible, confirm the asset path exists and is registered in pubspec.yaml.';
+
+  @override
+  String get troubleshootSettings =>
+      'If settings do not update immediately, reopen the screen and confirm preferences are saved.';
+
+  @override
+  String get troubleshootRetryContact =>
+      'You can retry the action or contact the business using another available channel.';
+
+  @override
+  String get applicationInformation => 'Application information';
+
+  @override
+  String get refreshFailedTitle => 'Refresh failed';
+
+  @override
+  String get refreshFailedMessage =>
+      'The local catalog could not be reloaded. Existing content was kept.';
 
   @override
   String get successTitle => 'Success';

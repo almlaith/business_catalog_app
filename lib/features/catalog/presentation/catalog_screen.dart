@@ -5,6 +5,7 @@ import 'package:business_catalog_app/core/widgets/app_async_state.dart';
 import 'package:business_catalog_app/core/widgets/app_skeleton.dart';
 import 'package:business_catalog_app/core/widgets/aurora_background.dart';
 import 'package:business_catalog_app/core/widgets/aurora_components.dart';
+import 'package:business_catalog_app/core/widgets/aurora_refresh.dart';
 import 'package:business_catalog_app/features/catalog/data/catalog_providers.dart';
 import 'package:business_catalog_app/features/catalog/utils/catalog_view_data.dart';
 import 'package:business_catalog_app/features/catalog/widgets/category_selector.dart';
@@ -53,17 +54,22 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
       body: AuroraBackground(
         child: SafeArea(
           child: catalogState.when(
+            skipLoadingOnRefresh: true,
+            skipError: true,
             loading: () => const AppSkeletonCatalog(),
             error: (error, stackTrace) => AppErrorState(
               error: error,
               onRetry: () => ref.invalidate(catalogDataProvider),
             ),
-            data: (catalog) => _CatalogContent(
-              catalog: catalog,
-              selectedCategoryId: _validSelectedCategoryId(catalog),
-              onCategorySelected: (categoryId) {
-                setState(() => _selectedCategoryId = categoryId);
-              },
+            data: (catalog) => AuroraRefreshWrapper(
+              onRefresh: () => ref.refresh(catalogDataProvider.future),
+              child: _CatalogContent(
+                catalog: catalog,
+                selectedCategoryId: _validSelectedCategoryId(catalog),
+                onCategorySelected: (categoryId) {
+                  setState(() => _selectedCategoryId = categoryId);
+                },
+              ),
             ),
           ),
         ),
@@ -108,81 +114,87 @@ class _CatalogContent extends StatelessWidget {
         ? null
         : catalog.categoryById(selectedId);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(
-            AppSpacing.lg,
-            AppSpacing.lg,
-            AppSpacing.lg,
-            AppSpacing.md,
-          ),
-          child: AuroraCard(
-            padding: const EdgeInsets.all(AppSpacing.lg),
-            child: AuroraSectionHeader(
-              title: selectedCategory?.name ?? l10n.catalogTitle,
-              subtitle:
-                  selectedCategory?.description ??
-                  catalog.business.shortDescription,
-            ),
-          ),
-        ),
-        CategorySelector(
-          categories: categories,
-          selectedCategoryId: selectedCategoryId,
-          onSelected: onCategorySelected,
-        ),
-        const SizedBox(height: AppSpacing.md),
-        Expanded(
-          child: AnimatedSwitcher(
-            duration: AppDurations.medium,
-            switchInCurve: Curves.easeOutCubic,
-            switchOutCurve: Curves.easeInCubic,
-            child: products.isEmpty
-                ? AppEmptyState(
+    return AnimatedSwitcher(
+      duration: AppDurations.medium,
+      switchInCurve: Curves.easeOutCubic,
+      switchOutCurve: Curves.easeInCubic,
+      child: LayoutBuilder(
+        key: ValueKey('catalog-${selectedCategoryId ?? 'all'}'),
+        builder: (context, constraints) {
+          final columns = constraints.maxWidth < 360 ? 1 : 2;
+
+          return CustomScrollView(
+            key: const ValueKey('catalog-scroll-view'),
+            physics: const AlwaysScrollableScrollPhysics(),
+            slivers: [
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(
+                  AppSpacing.lg,
+                  AppSpacing.lg,
+                  AppSpacing.lg,
+                  AppSpacing.md,
+                ),
+                sliver: SliverToBoxAdapter(
+                  child: AuroraCard(
+                    padding: const EdgeInsets.all(AppSpacing.lg),
+                    child: AuroraSectionHeader(
+                      title: selectedCategory?.name ?? l10n.catalogTitle,
+                      subtitle:
+                          selectedCategory?.description ??
+                          catalog.business.shortDescription,
+                    ),
+                  ),
+                ),
+              ),
+              SliverToBoxAdapter(
+                child: CategorySelector(
+                  categories: categories,
+                  selectedCategoryId: selectedCategoryId,
+                  onSelected: onCategorySelected,
+                ),
+              ),
+              const SliverToBoxAdapter(child: SizedBox(height: AppSpacing.md)),
+              if (products.isEmpty)
+                SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: AppEmptyState(
                     key: ValueKey('empty-$selectedCategoryId'),
                     message: l10n.noProducts,
-                  )
-                : LayoutBuilder(
-                    key: ValueKey(
-                      products.map((product) => product.id).join(','),
-                    ),
-                    builder: (context, constraints) {
-                      final columns = constraints.maxWidth < 360 ? 1 : 2;
-
-                      return GridView.builder(
-                        padding: const EdgeInsets.fromLTRB(
-                          AppSpacing.lg,
-                          0,
-                          AppSpacing.lg,
-                          118,
-                        ),
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: columns,
-                          mainAxisSpacing: AppSpacing.md,
-                          crossAxisSpacing: AppSpacing.md,
-                          childAspectRatio: columns == 1 ? 1.72 : 0.62,
-                        ),
-                        itemCount: products.length,
-                        itemBuilder: (context, index) {
-                          final product = products[index];
-
-                          return ProductCard(
-                            product: product,
-                            currencyCode: catalog.business.currencyCode,
-                            compact: columns == 1,
-                            onTap: () => context.push(
-                              AppRoutePaths.productDetailsPath(product.id),
-                            ),
-                          );
-                        },
-                      );
-                    },
                   ),
-          ),
-        ),
-      ],
+                )
+              else
+                SliverPadding(
+                  padding: const EdgeInsets.fromLTRB(
+                    AppSpacing.lg,
+                    0,
+                    AppSpacing.lg,
+                    118,
+                  ),
+                  sliver: SliverGrid(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: columns,
+                      mainAxisSpacing: AppSpacing.md,
+                      crossAxisSpacing: AppSpacing.md,
+                      childAspectRatio: columns == 1 ? 1.72 : 0.62,
+                    ),
+                    delegate: SliverChildBuilderDelegate((context, index) {
+                      final product = products[index];
+
+                      return ProductCard(
+                        product: product,
+                        currencyCode: catalog.business.currencyCode,
+                        compact: columns == 1,
+                        onTap: () => context.push(
+                          AppRoutePaths.productDetailsPath(product.id),
+                        ),
+                      );
+                    }, childCount: products.length),
+                  ),
+                ),
+            ],
+          );
+        },
+      ),
     );
   }
 }

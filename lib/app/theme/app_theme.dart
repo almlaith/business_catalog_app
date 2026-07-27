@@ -88,6 +88,7 @@ abstract final class AppTheme {
   static ThemeData _baseTheme(ColorScheme colorScheme) {
     return ThemeData(
       useMaterial3: true,
+      brightness: colorScheme.brightness,
       colorScheme: colorScheme,
       scaffoldBackgroundColor: colorScheme.surfaceContainerLowest,
       fontFamilyFallback: const ['Roboto', 'Arial', 'sans-serif'],

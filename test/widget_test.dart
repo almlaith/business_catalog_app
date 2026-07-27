@@ -1,16 +1,23 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
 import 'package:business_catalog_app/app/app.dart';
 import 'package:business_catalog_app/app/app_bootstrap.dart';
+import 'package:business_catalog_app/app/theme/app_theme.dart';
 import 'package:business_catalog_app/app/theme/aurora_tokens.dart';
 import 'package:business_catalog_app/core/constants/app_assets.dart';
+import 'package:business_catalog_app/core/constants/app_locales.dart';
+import 'package:business_catalog_app/core/constants/app_route_paths.dart';
+import 'package:business_catalog_app/core/widgets/app_skeleton.dart';
 import 'package:business_catalog_app/l10n/generated/app_localizations_en.dart';
 import 'package:business_catalog_app/l10n/generated/app_localizations_ar.dart';
 import 'package:business_catalog_app/core/widgets/local_asset_image.dart';
 import 'package:business_catalog_app/features/catalog/data/catalog_providers.dart';
+import 'package:business_catalog_app/features/catalog/data/catalog_repository.dart';
 import 'package:business_catalog_app/features/catalog/widgets/category_card.dart';
 import 'package:business_catalog_app/features/catalog/widgets/product_card.dart';
+import 'package:business_catalog_app/features/help_support/presentation/help_support_screen.dart';
 import 'package:business_catalog_app/features/launch/presentation/animated_launch_screen.dart';
 import 'package:business_catalog_app/models/app_settings.dart';
 import 'package:business_catalog_app/models/catalog_data.dart';
@@ -639,6 +646,120 @@ void main() {
     expect(find.byTooltip('Back'), findsOneWidget);
   });
 
+  testWidgets('settings screen fits at 320dp', (WidgetTester tester) async {
+    addTearDown(() => tester.view.resetPhysicalSize());
+    tester.view.physicalSize = const Size(320, 760);
+    tester.view.devicePixelRatio = 1;
+
+    await tester.pumpCatalogApp(catalogState: AsyncData(sampleCatalog));
+    await tester.openSettings();
+
+    expect(find.text(l10n.preferencesSummaryTitle), findsOneWidget);
+    expect(find.byKey(const ValueKey('theme-preview-dark')), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('settings screen supports Arabic RTL layout', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpCatalogApp(
+      catalogState: AsyncData(sampleCatalog),
+      appSettings: const AppSettings(localeCode: 'ar'),
+    );
+
+    await tester.openSettings();
+
+    expect(find.text(arL10n.preferencesSummaryTitle), findsOneWidget);
+    expect(
+      Directionality.of(
+        tester.element(find.text(arL10n.preferencesSummaryTitle)),
+      ),
+      TextDirection.rtl,
+    );
+    expect(find.byKey(const ValueKey('language-card-ar')), findsOneWidget);
+  });
+
+  testWidgets('help screen opens from settings and supports back', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpCatalogApp(catalogState: AsyncData(sampleCatalog));
+
+    await tester.openSettings();
+    await tester.tapInkForText(l10n.helpSupportTitle);
+
+    expect(find.byType(HelpSupportScreen), findsOneWidget);
+    expect(find.text(l10n.quickSupportActions), findsOneWidget);
+    expect(find.byTooltip('Back'), findsOneWidget);
+
+    final didPop = await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+
+    expect(didPop, isTrue);
+    expect(find.text(l10n.settingsTitle), findsWidgets);
+  });
+
+  testWidgets('help screen hides unavailable support actions', (
+    WidgetTester tester,
+  ) async {
+    final catalog = sampleCatalog.copyWith(
+      business: sampleCatalog.business.copyWith(
+        phoneNumber: '',
+        email: '',
+        whatsappNumber: '',
+        instagramUrl: '',
+        facebookUrl: '',
+      ),
+    );
+    await tester.pumpCatalogApp(catalogState: AsyncData(catalog));
+
+    await tester.openHelpSupportDirectly();
+
+    expect(find.byKey(const ValueKey('support-action-call')), findsNothing);
+    expect(find.byKey(const ValueKey('support-action-email')), findsNothing);
+    expect(find.byKey(const ValueKey('support-action-whatsapp')), findsNothing);
+    expect(
+      find.byKey(const ValueKey('support-action-business-info')),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('FAQ accordion expands one answer at a time', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpCatalogApp(catalogState: AsyncData(sampleCatalog));
+    await tester.openHelpSupportDirectly();
+    await tester.scrollHelpUntil(find.text(l10n.faqPlaceOrderQuestion));
+
+    await tester.tapInkForText(l10n.faqPlaceOrderQuestion);
+    expect(find.text(l10n.faqPlaceOrderAnswer), findsOneWidget);
+
+    await tester.tapInkForText(l10n.faqWhatsappQuestion);
+    expect(find.text(l10n.faqWhatsappAnswer), findsOneWidget);
+    expect(find.text(l10n.faqPlaceOrderAnswer), findsNothing);
+  });
+
+  testWidgets('support-link failure shows top feedback', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpCatalogApp(
+      catalogState: AsyncData(sampleCatalog),
+      externalLinkLauncher: _FakeExternalLinkLauncher(canLaunchResult: false),
+    );
+
+    await tester.openHelpSupportDirectly();
+    await tester.tapInkForText(l10n.callBusiness);
+    await tester.pump();
+
+    expect(find.text(l10n.unableToOpenLink), findsOneWidget);
+    expect(
+      tester.getTopLeft(find.text(l10n.unableToOpenLink)).dy,
+      lessThan(170),
+    );
+
+    await tester.pump(const Duration(milliseconds: 3100));
+    await tester.pumpAndSettle();
+  });
+
   testWidgets('switching to Arabic applies RTL immediately', (
     WidgetTester tester,
   ) async {
@@ -842,6 +963,152 @@ void main() {
     }
   });
 
+  testWidgets('pull-to-refresh triggers provider refresh', (
+    WidgetTester tester,
+  ) async {
+    final repository = _FakeCatalogRepository(sampleCatalog);
+    await tester.pumpCatalogAppWithRepository(repository: repository);
+    await tester.pumpAndSettle();
+
+    expect(repository.loadCount, 1);
+
+    await tester.pullToRefresh(find.byKey(const ValueKey('home-scroll-view')));
+    await tester.pumpAndSettle();
+
+    expect(repository.loadCount, 2);
+  });
+
+  testWidgets('refresh keeps loaded content visible', (
+    WidgetTester tester,
+  ) async {
+    final repository = _FakeCatalogRepository(sampleCatalog);
+    await tester.pumpCatalogAppWithRepository(repository: repository);
+    await tester.pumpAndSettle();
+
+    final pendingRefresh = Completer<CatalogData>();
+    repository.nextResult = pendingRefresh.future;
+
+    await tester.pullToRefresh(find.byKey(const ValueKey('home-scroll-view')));
+    await tester.pump();
+
+    expect(repository.loadCount, 2);
+    expect(find.text('Catalogly Kitchen'), findsOneWidget);
+    expect(find.byType(AppSkeletonHome), findsNothing);
+
+    pendingRefresh.complete(sampleCatalog);
+    await tester.pumpAndSettle();
+  });
+
+  testWidgets('initial loading shows screen-specific skeletons', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpCatalogApp(
+      catalogState: const AsyncLoading<CatalogData>(),
+    );
+
+    expect(find.byType(AppSkeletonHome), findsOneWidget);
+
+    final context = tester.element(find.byType(Scaffold).first);
+    GoRouter.of(context).go(AppRoutePaths.helpSupport);
+    await tester.pump(const Duration(milliseconds: 500));
+
+    expect(find.byType(AppSkeletonHelpSupport), findsOneWidget);
+  });
+
+  testWidgets('refresh failure keeps content and shows top feedback', (
+    WidgetTester tester,
+  ) async {
+    final repository = _FakeCatalogRepository(sampleCatalog);
+    await tester.pumpCatalogAppWithRepository(repository: repository);
+    await tester.pumpAndSettle();
+
+    final failedRefresh = Completer<CatalogData>();
+    repository.nextResult = failedRefresh.future;
+
+    await tester.pullToRefresh(find.byKey(const ValueKey('home-scroll-view')));
+    failedRefresh.completeError(StateError('bad json'));
+    await tester.pump();
+
+    expect(find.text('Catalogly Kitchen'), findsOneWidget);
+    expect(find.byType(AppSkeletonHome), findsNothing);
+    expect(find.text(l10n.refreshFailedTitle), findsOneWidget);
+
+    await tester.pump(const Duration(milliseconds: 3100));
+    await tester.pumpAndSettle();
+  });
+
+  testWidgets('pull-to-refresh works with short content', (
+    WidgetTester tester,
+  ) async {
+    final shortCatalog = sampleCatalog.copyWith(
+      categories: const [],
+      products: const [],
+    );
+    final repository = _FakeCatalogRepository(shortCatalog);
+    await tester.pumpCatalogAppWithRepository(repository: repository);
+    await tester.pumpAndSettle();
+
+    await tester.pullToRefresh(find.byKey(const ValueKey('home-scroll-view')));
+    await tester.pumpAndSettle();
+
+    expect(repository.loadCount, 2);
+    expect(find.text(l10n.noProducts), findsOneWidget);
+  });
+
+  testWidgets('light and dark skeletons use themed surfaces', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        supportedLocales: AppLocales.supportedLocales,
+        localizationsDelegates: AppLocales.localizationsDelegates,
+        theme: AppTheme.light(
+          primaryColor: AuroraColors.primaryViolet,
+          secondaryColor: AuroraColors.electricCyan,
+        ),
+        home: const Scaffold(body: AppSkeletonHome()),
+      ),
+    );
+    final lightBox = tester.widget<DecoratedBox>(
+      find
+          .descendant(
+            of: find.byType(AppSkeletonHome),
+            matching: find.byType(DecoratedBox),
+          )
+          .last,
+    );
+    expect(lightBox.decoration, isA<BoxDecoration>());
+
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump();
+
+    await tester.pumpWidget(
+      MaterialApp(
+        supportedLocales: AppLocales.supportedLocales,
+        localizationsDelegates: AppLocales.localizationsDelegates,
+        theme: AppTheme.light(
+          primaryColor: AuroraColors.primaryViolet,
+          secondaryColor: AuroraColors.electricCyan,
+        ),
+        darkTheme: AppTheme.dark(
+          primaryColor: AuroraColors.primaryViolet,
+          secondaryColor: AuroraColors.electricCyan,
+        ),
+        themeMode: ThemeMode.dark,
+        home: const Scaffold(body: AppSkeletonHome()),
+      ),
+    );
+    await tester.pump();
+    final darkTheme = Theme.of(
+      tester.element(find.byType(AppSkeletonHome).last),
+    );
+
+    expect(
+      darkTheme.colorScheme.surfaceContainerLowest,
+      AuroraColors.darkBackground,
+    );
+  });
+
   testWidgets('arabic localization uses RTL layout', (
     WidgetTester tester,
   ) async {
@@ -1011,6 +1278,30 @@ extension on WidgetTester {
     );
   }
 
+  Future<void> pumpCatalogAppWithRepository({
+    required CatalogRepository repository,
+    ExternalLinkLauncher? externalLinkLauncher,
+    AppSettingsStore? localSettingsService,
+  }) {
+    return pumpWidget(
+      ProviderScope(
+        overrides: [
+          launchAnimationEnabledProvider.overrideWithValue(false),
+          catalogRepositoryProvider.overrideWithValue(repository),
+          if (localSettingsService != null)
+            localSettingsServiceProvider.overrideWithValue(localSettingsService)
+          else
+            appSettingsProvider.overrideWithValue(const AppSettings()),
+          if (externalLinkLauncher != null)
+            externalLinkLauncherProvider.overrideWithValue(
+              externalLinkLauncher,
+            ),
+        ],
+        child: const BusinessCatalogApp(),
+      ),
+    );
+  }
+
   Future<void> openSettings() async {
     await tapNavLabelAny([
       l10n.businessInfoNavLabel,
@@ -1023,6 +1314,35 @@ extension on WidgetTester {
         : find.byTooltip(arL10n.settingsTooltip);
     await tap(settingsTooltip);
     await pumpAndSettle();
+  }
+
+  Future<void> openHelpSupportDirectly() async {
+    final context = element(find.byType(Scaffold).first);
+    GoRouter.of(context).go(AppRoutePaths.helpSupport);
+    await pumpAndSettle();
+  }
+
+  Future<void> scrollHelpUntil(Finder finder) async {
+    await scrollUntilVisible(
+      finder,
+      180,
+      scrollable: find
+          .descendant(
+            of: find.byKey(const ValueKey('help-support-scroll-view')),
+            matching: find.byType(Scrollable),
+          )
+          .first,
+    );
+  }
+
+  Future<void> pullToRefresh(Finder scrollable) async {
+    final start = getTopLeft(scrollable) + const Offset(24, 48);
+    await timedDragFrom(
+      start,
+      const Offset(0, 520),
+      const Duration(milliseconds: 600),
+    );
+    await pump(const Duration(milliseconds: 800));
   }
 
   Future<void> openFirstProduct(
@@ -1166,6 +1486,26 @@ class _FakeSettingsStore implements AppSettingsStore {
   @override
   Future<void> resetAppearanceSettings() async {
     _settings = const AppSettings();
+  }
+}
+
+class _FakeCatalogRepository implements CatalogRepository {
+  _FakeCatalogRepository(this.catalog);
+
+  final CatalogData catalog;
+  Future<CatalogData>? nextResult;
+  var loadCount = 0;
+
+  @override
+  Future<CatalogData> loadCatalog() {
+    loadCount += 1;
+    final result = nextResult;
+    if (result != null) {
+      nextResult = null;
+      return result;
+    }
+
+    return Future<CatalogData>.value(catalog);
   }
 }
 

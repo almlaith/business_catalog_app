@@ -6,6 +6,7 @@ import 'package:business_catalog_app/core/widgets/app_async_state.dart';
 import 'package:business_catalog_app/core/widgets/app_feedback.dart';
 import 'package:business_catalog_app/core/widgets/app_skeleton.dart';
 import 'package:business_catalog_app/core/widgets/aurora_background.dart';
+import 'package:business_catalog_app/core/widgets/aurora_refresh.dart';
 import 'package:business_catalog_app/core/widgets/local_asset_image.dart';
 import 'package:business_catalog_app/features/business_info/widgets/business_info_row.dart';
 import 'package:business_catalog_app/features/catalog/data/catalog_providers.dart';
@@ -38,12 +39,17 @@ class BusinessInfoScreen extends ConsumerWidget {
       body: AuroraBackground(
         child: SafeArea(
           child: catalogState.when(
+            skipLoadingOnRefresh: true,
+            skipError: true,
             loading: () => const AppSkeletonInfo(),
             error: (error, stackTrace) => AppErrorState(
               error: error,
               onRetry: () => ref.invalidate(catalogDataProvider),
             ),
-            data: (catalog) => _BusinessInfoContent(business: catalog.business),
+            data: (catalog) => AuroraRefreshWrapper(
+              onRefresh: () => ref.refresh(catalogDataProvider.future),
+              child: _BusinessInfoContent(business: catalog.business),
+            ),
           ),
         ),
       ),
@@ -73,6 +79,7 @@ class _BusinessInfoContent extends ConsumerWidget {
 
     return ListView(
       key: const ValueKey('business-info-scroll-view'),
+      physics: const AlwaysScrollableScrollPhysics(),
       padding: const EdgeInsets.only(bottom: 118),
       children: [
         Padding(
@@ -142,6 +149,12 @@ class _BusinessInfoContent extends ConsumerWidget {
           title: l10n.settingsTitle,
           value: l10n.appearanceSection,
           onTap: () => context.push(AppRoutePaths.settings),
+        ),
+        BusinessInfoRow(
+          icon: Icons.help_outline_rounded,
+          title: l10n.helpSupportTitle,
+          value: l10n.helpSupportDescription,
+          onTap: () => context.push(AppRoutePaths.helpSupport),
         ),
       ],
     );

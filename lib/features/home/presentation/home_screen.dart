@@ -4,6 +4,7 @@ import 'package:business_catalog_app/core/extensions/build_context_extensions.da
 import 'package:business_catalog_app/core/widgets/app_async_state.dart';
 import 'package:business_catalog_app/core/widgets/app_skeleton.dart';
 import 'package:business_catalog_app/core/widgets/aurora_background.dart';
+import 'package:business_catalog_app/core/widgets/aurora_refresh.dart';
 import 'package:business_catalog_app/features/catalog/data/catalog_providers.dart';
 import 'package:business_catalog_app/features/catalog/utils/catalog_view_data.dart';
 import 'package:business_catalog_app/features/catalog/widgets/category_card.dart';
@@ -30,12 +31,17 @@ class HomeScreen extends ConsumerWidget {
       body: AuroraBackground(
         child: SafeArea(
           child: catalogState.when(
-            loading: () => const AppSkeletonCatalog(),
+            skipLoadingOnRefresh: true,
+            skipError: true,
+            loading: () => const AppSkeletonHome(),
             error: (error, stackTrace) => AppErrorState(
               error: error,
               onRetry: () => ref.invalidate(catalogDataProvider),
             ),
-            data: (catalog) => _HomeContent(catalog: catalog),
+            data: (catalog) => AuroraRefreshWrapper(
+              onRefresh: () => ref.refresh(catalogDataProvider.future),
+              child: _HomeContent(catalog: catalog),
+            ),
           ),
         ),
       ),
@@ -55,10 +61,22 @@ class _HomeContent extends StatelessWidget {
     final l10n = context.l10n;
 
     if (categories.isEmpty && featuredProducts.isEmpty) {
-      return AppEmptyState(message: l10n.noProducts);
+      return ListView(
+        key: const ValueKey('home-scroll-view'),
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.only(bottom: 118),
+        children: [
+          SizedBox(
+            height: MediaQuery.sizeOf(context).height * 0.62,
+            child: AppEmptyState(message: l10n.noProducts),
+          ),
+        ],
+      );
     }
 
     return ListView(
+      key: const ValueKey('home-scroll-view'),
+      physics: const AlwaysScrollableScrollPhysics(),
       padding: const EdgeInsets.fromLTRB(
         AppSpacing.lg,
         AppSpacing.lg,

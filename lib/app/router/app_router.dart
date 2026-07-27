@@ -4,6 +4,7 @@ import 'package:business_catalog_app/features/business_info/presentation/busines
 import 'package:business_catalog_app/features/cart/presentation/cart_screen.dart';
 import 'package:business_catalog_app/features/catalog/presentation/catalog_screen.dart';
 import 'package:business_catalog_app/features/checkout/presentation/checkout_screen.dart';
+import 'package:business_catalog_app/features/help_support/presentation/help_support_screen.dart';
 import 'package:business_catalog_app/features/home/presentation/home_screen.dart';
 import 'package:business_catalog_app/features/product_details/presentation/product_details_screen.dart';
 import 'package:business_catalog_app/features/settings/presentation/settings_screen.dart';
@@ -94,6 +95,14 @@ final appRouterProvider = Provider<GoRouter>(
                     name: AppRouteNames.settings,
                     pageBuilder: (context, state) =>
                         _nestedPage(state, const SettingsScreen()),
+                    routes: [
+                      GoRoute(
+                        path: AppRoutePaths.helpSupportSegment,
+                        name: AppRouteNames.helpSupport,
+                        pageBuilder: (context, state) =>
+                            _nestedPage(state, const HelpSupportScreen()),
+                      ),
+                    ],
                   ),
                 ],
               ),
