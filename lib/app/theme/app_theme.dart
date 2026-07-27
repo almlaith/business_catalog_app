@@ -23,8 +23,19 @@ abstract final class AppTheme {
         foregroundColor: colorScheme.onSurface,
         elevation: 0,
       ),
+      cardTheme: CardThemeData(
+        elevation: 1,
+        margin: EdgeInsets.zero,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+      ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(48)),
+      ),
+      navigationBarTheme: const NavigationBarThemeData(
+        labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
       ),
       listTileTheme: const ListTileThemeData(
         contentPadding: EdgeInsets.symmetric(horizontal: 16),

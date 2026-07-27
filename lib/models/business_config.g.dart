@@ -10,19 +10,23 @@ _BusinessConfig _$BusinessConfigFromJson(Map<String, dynamic> json) =>
     _BusinessConfig(
       id: json['id'] as String,
       businessName: json['businessName'] as String,
-      shortDescription: json['shortDescription'] as String,
-      logoAsset: json['logoAsset'] as String,
-      phoneNumber: json['phoneNumber'] as String,
-      whatsappNumber: json['whatsappNumber'] as String,
-      email: json['email'] as String,
-      address: json['address'] as String,
-      currencyCode: json['currencyCode'] as String,
-      defaultLocale: json['defaultLocale'] as String,
-      primaryColorHex: json['primaryColorHex'] as String,
-      secondaryColorHex: json['secondaryColorHex'] as String,
-      instagramUrl: json['instagramUrl'] as String,
-      facebookUrl: json['facebookUrl'] as String,
-      openingHours: Map<String, String>.from(json['openingHours'] as Map),
+      shortDescription: json['shortDescription'] as String? ?? '',
+      logoAsset: json['logoAsset'] as String? ?? '',
+      phoneNumber: json['phoneNumber'] as String? ?? '',
+      whatsappNumber: json['whatsappNumber'] as String? ?? '',
+      email: json['email'] as String? ?? '',
+      address: json['address'] as String? ?? '',
+      currencyCode: json['currencyCode'] as String? ?? 'USD',
+      defaultLocale: json['defaultLocale'] as String? ?? 'en',
+      primaryColorHex: json['primaryColorHex'] as String? ?? '',
+      secondaryColorHex: json['secondaryColorHex'] as String? ?? '',
+      instagramUrl: json['instagramUrl'] as String? ?? '',
+      facebookUrl: json['facebookUrl'] as String? ?? '',
+      openingHours:
+          (json['openingHours'] as Map<String, dynamic>?)?.map(
+            (k, e) => MapEntry(k, e as String),
+          ) ??
+          const <String, String>{},
     );
 
 Map<String, dynamic> _$BusinessConfigToJson(_BusinessConfig instance) =>

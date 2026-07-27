@@ -1,5 +1,5 @@
 import 'package:business_catalog_app/core/constants/app_route_paths.dart';
-import 'package:business_catalog_app/core/constants/app_strings.dart';
+import 'package:business_catalog_app/core/extensions/build_context_extensions.dart';
 import 'package:business_catalog_app/core/widgets/app_async_state.dart';
 import 'package:business_catalog_app/features/catalog/data/catalog_providers.dart';
 import 'package:business_catalog_app/features/catalog/utils/catalog_view_data.dart';
@@ -43,7 +43,7 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(AppStrings.catalogTitle),
+        title: Text(context.l10n.catalogTitle),
         automaticallyImplyLeading: false,
       ),
       body: SafeArea(
@@ -96,6 +96,7 @@ class _CatalogContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final categories = catalog.activeCategoriesSorted;
     final products = catalog.availableProductsForCategory(selectedCategoryId);
+    final l10n = context.l10n;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -109,7 +110,7 @@ class _CatalogContent extends StatelessWidget {
         const SizedBox(height: 12),
         Expanded(
           child: products.isEmpty
-              ? const AppEmptyState(message: AppStrings.noProducts)
+              ? AppEmptyState(message: l10n.noProducts)
               : LayoutBuilder(
                   builder: (context, constraints) {
                     final columns = constraints.maxWidth < 360 ? 1 : 2;

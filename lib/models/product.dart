@@ -9,14 +9,14 @@ abstract class Product with _$Product {
     required String id,
     required String categoryId,
     required String name,
-    required String description,
-    required String imageAsset,
+    @Default('') String description,
+    @Default('') String imageAsset,
     required double price,
-    required double? oldPrice,
-    required bool isFeatured,
-    required bool isAvailable,
-    required int displayOrder,
-    required List<String> tags,
+    double? oldPrice,
+    @Default(false) bool isFeatured,
+    @Default(true) bool isAvailable,
+    @Default(0) int displayOrder,
+    @Default(<String>[]) List<String> tags,
   }) = _Product;
 
   factory Product.fromJson(Map<String, Object?> json) =>

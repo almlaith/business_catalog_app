@@ -33,6 +33,8 @@ class HomeHeader extends StatelessWidget {
               children: [
                 Text(
                   business.businessName,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                     color: colorScheme.onPrimaryContainer,
                     fontWeight: FontWeight.w700,
@@ -41,6 +43,8 @@ class HomeHeader extends StatelessWidget {
                 const SizedBox(height: 8),
                 Text(
                   business.shortDescription,
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: colorScheme.onPrimaryContainer,
                   ),

@@ -1,4 +1,4 @@
-import 'package:business_catalog_app/core/constants/app_strings.dart';
+import 'package:business_catalog_app/core/extensions/build_context_extensions.dart';
 import 'package:business_catalog_app/core/widgets/app_async_state.dart';
 import 'package:business_catalog_app/features/business_info/widgets/business_info_row.dart';
 import 'package:business_catalog_app/features/catalog/data/catalog_providers.dart';
@@ -17,7 +17,7 @@ class BusinessInfoScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(AppStrings.businessInfoTitle),
+        title: Text(context.l10n.businessInfoTitle),
         automaticallyImplyLeading: false,
       ),
       body: SafeArea(
@@ -45,6 +45,7 @@ class _BusinessInfoContent extends ConsumerWidget {
         .where((entry) => entry.value.trim().isNotEmpty)
         .map((entry) => '${entry.key}: ${entry.value}')
         .join('\n');
+    final l10n = context.l10n;
 
     return ListView(
       key: const ValueKey('business-info-scroll-view'),
@@ -61,12 +62,12 @@ class _BusinessInfoContent extends ConsumerWidget {
         ),
         BusinessInfoRow(
           icon: Icons.description_outlined,
-          title: AppStrings.businessDescription,
+          title: l10n.businessDescription,
           value: business.shortDescription,
         ),
         BusinessInfoRow(
           icon: Icons.phone_outlined,
-          title: AppStrings.phone,
+          title: l10n.phone,
           value: business.phoneNumber,
           onTap: () => _launch(
             context,
@@ -76,7 +77,7 @@ class _BusinessInfoContent extends ConsumerWidget {
         ),
         BusinessInfoRow(
           icon: Icons.email_outlined,
-          title: AppStrings.email,
+          title: l10n.email,
           value: business.email,
           onTap: () => _launch(
             context,
@@ -86,7 +87,7 @@ class _BusinessInfoContent extends ConsumerWidget {
         ),
         BusinessInfoRow(
           icon: Icons.place_outlined,
-          title: AppStrings.address,
+          title: l10n.address,
           value: business.address,
           onTap: () => _launch(
             context,
@@ -99,18 +100,18 @@ class _BusinessInfoContent extends ConsumerWidget {
         ),
         BusinessInfoRow(
           icon: Icons.schedule_outlined,
-          title: AppStrings.openingHours,
+          title: l10n.openingHours,
           value: openingHours,
         ),
         BusinessInfoRow(
           icon: Icons.camera_alt_outlined,
-          title: AppStrings.instagram,
+          title: l10n.instagram,
           value: business.instagramUrl,
           onTap: () => _launchParsed(context, ref, business.instagramUrl),
         ),
         BusinessInfoRow(
           icon: Icons.facebook_outlined,
-          title: AppStrings.facebook,
+          title: l10n.facebook,
           value: business.facebookUrl,
           onTap: () => _launchParsed(context, ref, business.facebookUrl),
         ),
@@ -151,6 +152,6 @@ class _BusinessInfoContent extends ConsumerWidget {
   void _showError(BuildContext context) {
     ScaffoldMessenger.of(
       context,
-    ).showSnackBar(const SnackBar(content: Text(AppStrings.unableToOpenLink)));
+    ).showSnackBar(SnackBar(content: Text(context.l10n.unableToOpenLink)));
   }
 }

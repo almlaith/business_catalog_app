@@ -19,11 +19,7 @@ class LocalSettingsService {
   final SharedPreferencesWithCache _preferences;
 
   AppSettings readSettings() {
-    return AppSettings(
-      localeCode:
-          _preferences.getString(_localeCodeKey) ??
-          const AppSettings().localeCode,
-    );
+    return AppSettings(localeCode: _preferences.getString(_localeCodeKey));
   }
 
   Future<void> saveLocaleCode(String localeCode) {

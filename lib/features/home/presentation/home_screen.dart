@@ -1,5 +1,5 @@
 import 'package:business_catalog_app/core/constants/app_route_paths.dart';
-import 'package:business_catalog_app/core/constants/app_strings.dart';
+import 'package:business_catalog_app/core/extensions/build_context_extensions.dart';
 import 'package:business_catalog_app/core/widgets/app_async_state.dart';
 import 'package:business_catalog_app/features/catalog/data/catalog_providers.dart';
 import 'package:business_catalog_app/features/catalog/utils/catalog_view_data.dart';
@@ -21,7 +21,7 @@ class HomeScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(AppStrings.homeTitle),
+        title: Text(context.l10n.homeTitle),
         automaticallyImplyLeading: false,
       ),
       body: SafeArea(
@@ -47,9 +47,10 @@ class _HomeContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final categories = catalog.activeCategoriesSorted;
     final featuredProducts = catalog.featuredAvailableProductsSorted;
+    final l10n = context.l10n;
 
     if (categories.isEmpty && featuredProducts.isEmpty) {
-      return const AppEmptyState(message: AppStrings.noProducts);
+      return AppEmptyState(message: l10n.noProducts);
     }
 
     return ListView(
@@ -58,17 +59,17 @@ class _HomeContent extends StatelessWidget {
         HomeHeader(business: catalog.business),
         const SizedBox(height: 24),
         HomeSectionHeader(
-          title: AppStrings.categoriesSection,
+          title: l10n.categoriesSection,
           action: TextButton(
             onPressed: () => context.go(AppRoutePaths.catalog),
-            child: const Text(AppStrings.viewCatalog),
+            child: Text(l10n.viewCatalog),
           ),
         ),
         const SizedBox(height: 12),
         if (categories.isEmpty)
-          const SizedBox(
+          SizedBox(
             height: 120,
-            child: AppEmptyState(message: AppStrings.noCategories),
+            child: AppEmptyState(message: l10n.noCategories),
           )
         else
           SizedBox(
@@ -90,17 +91,17 @@ class _HomeContent extends StatelessWidget {
           ),
         const SizedBox(height: 24),
         HomeSectionHeader(
-          title: AppStrings.featuredSection,
+          title: l10n.featuredSection,
           action: TextButton(
             onPressed: () => context.go(AppRoutePaths.catalog),
-            child: const Text(AppStrings.viewCatalog),
+            child: Text(l10n.viewCatalog),
           ),
         ),
         const SizedBox(height: 12),
         if (featuredProducts.isEmpty)
-          const SizedBox(
+          SizedBox(
             height: 120,
-            child: AppEmptyState(message: AppStrings.noFeaturedProducts),
+            child: AppEmptyState(message: l10n.noFeaturedProducts),
           )
         else
           SizedBox(

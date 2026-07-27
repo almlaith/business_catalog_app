@@ -1,0 +1,566 @@
+import 'dart:async';
+
+import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:intl/intl.dart' as intl;
+
+import 'app_localizations_ar.dart';
+import 'app_localizations_en.dart';
+
+// ignore_for_file: type=lint
+
+/// Callers can lookup localized strings with an instance of AppLocalizations
+/// returned by `AppLocalizations.of(context)`.
+///
+/// Applications need to include `AppLocalizations.delegate()` in their app's
+/// `localizationDelegates` list, and the locales they support in the app's
+/// `supportedLocales` list. For example:
+///
+/// ```dart
+/// import 'generated/app_localizations.dart';
+///
+/// return MaterialApp(
+///   localizationsDelegates: AppLocalizations.localizationsDelegates,
+///   supportedLocales: AppLocalizations.supportedLocales,
+///   home: MyApplicationHome(),
+/// );
+/// ```
+///
+/// ## Update pubspec.yaml
+///
+/// Please make sure to update your pubspec.yaml to include the following
+/// packages:
+///
+/// ```yaml
+/// dependencies:
+///   # Internationalization support.
+///   flutter_localizations:
+///     sdk: flutter
+///   intl: any # Use the pinned version from flutter_localizations
+///
+///   # Rest of dependencies
+/// ```
+///
+/// ## iOS Applications
+///
+/// iOS applications define key application metadata, including supported
+/// locales, in an Info.plist file that is built into the application bundle.
+/// To configure the locales supported by your app, you’ll need to edit this
+/// file.
+///
+/// First, open your project’s ios/Runner.xcworkspace Xcode workspace file.
+/// Then, in the Project Navigator, open the Info.plist file under the Runner
+/// project’s Runner folder.
+///
+/// Next, select the Information Property List item, select Add Item from the
+/// Editor menu, then select Localizations from the pop-up menu.
+///
+/// Select and expand the newly-created Localizations item then, for each
+/// locale your application supports, add a new item and select the locale
+/// you wish to add from the pop-up menu in the Value field. This list should
+/// be consistent with the languages listed in the AppLocalizations.supportedLocales
+/// property.
+abstract class AppLocalizations {
+  AppLocalizations(String locale)
+    : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+
+  final String localeName;
+
+  static AppLocalizations of(BuildContext context) {
+    return Localizations.of<AppLocalizations>(context, AppLocalizations)!;
+  }
+
+  static const LocalizationsDelegate<AppLocalizations> delegate =
+      _AppLocalizationsDelegate();
+
+  /// A list of this localizations delegate along with the default localizations
+  /// delegates.
+  ///
+  /// Returns a list of localizations delegates containing this delegate along with
+  /// GlobalMaterialLocalizations.delegate, GlobalCupertinoLocalizations.delegate,
+  /// and GlobalWidgetsLocalizations.delegate.
+  ///
+  /// Additional delegates can be added by appending to this list in
+  /// MaterialApp. This list does not have to be used at all if a custom list
+  /// of delegates is preferred or required.
+  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
+      <LocalizationsDelegate<dynamic>>[
+        delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ];
+
+  /// A list of this localizations delegate's supported locales.
+  static const List<Locale> supportedLocales = <Locale>[
+    Locale('ar'),
+    Locale('en'),
+  ];
+
+  /// No description provided for @appTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Business Catalog'**
+  String get appTitle;
+
+  /// No description provided for @homeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get homeTitle;
+
+  /// No description provided for @catalogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Catalog'**
+  String get catalogTitle;
+
+  /// No description provided for @productDetailsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Product Details'**
+  String get productDetailsTitle;
+
+  /// No description provided for @cartTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Cart'**
+  String get cartTitle;
+
+  /// No description provided for @businessInfoTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Business Information'**
+  String get businessInfoTitle;
+
+  /// No description provided for @placeholderLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Placeholder screen'**
+  String get placeholderLabel;
+
+  /// No description provided for @loadingCatalog.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading catalog...'**
+  String get loadingCatalog;
+
+  /// No description provided for @unableToLoadCatalog.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to load catalog data.'**
+  String get unableToLoadCatalog;
+
+  /// No description provided for @productNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Product not found.'**
+  String get productNotFound;
+
+  /// No description provided for @retry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get retry;
+
+  /// No description provided for @allCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get allCategories;
+
+  /// No description provided for @categoriesSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Categories'**
+  String get categoriesSection;
+
+  /// No description provided for @featuredSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Featured'**
+  String get featuredSection;
+
+  /// No description provided for @viewCatalog.
+  ///
+  /// In en, this message translates to:
+  /// **'View Catalog'**
+  String get viewCatalog;
+
+  /// No description provided for @noCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'No active categories are available yet.'**
+  String get noCategories;
+
+  /// No description provided for @noFeaturedProducts.
+  ///
+  /// In en, this message translates to:
+  /// **'No featured products are available yet.'**
+  String get noFeaturedProducts;
+
+  /// No description provided for @noProducts.
+  ///
+  /// In en, this message translates to:
+  /// **'No products are available for this category.'**
+  String get noProducts;
+
+  /// No description provided for @available.
+  ///
+  /// In en, this message translates to:
+  /// **'Available'**
+  String get available;
+
+  /// No description provided for @unavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Unavailable'**
+  String get unavailable;
+
+  /// No description provided for @addToCart.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to Cart'**
+  String get addToCart;
+
+  /// No description provided for @addedToCart.
+  ///
+  /// In en, this message translates to:
+  /// **'Added to cart'**
+  String get addedToCart;
+
+  /// No description provided for @viewCart.
+  ///
+  /// In en, this message translates to:
+  /// **'View Cart'**
+  String get viewCart;
+
+  /// No description provided for @cartEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Your cart is empty.'**
+  String get cartEmpty;
+
+  /// No description provided for @browseCatalog.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse Catalog'**
+  String get browseCatalog;
+
+  /// No description provided for @subtotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Subtotal'**
+  String get subtotal;
+
+  /// No description provided for @clearCart.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear cart'**
+  String get clearCart;
+
+  /// No description provided for @clearCartQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear cart?'**
+  String get clearCartQuestion;
+
+  /// No description provided for @clearCartMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This will remove all items from your cart.'**
+  String get clearCartMessage;
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// No description provided for @clear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get clear;
+
+  /// No description provided for @continueAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get continueAction;
+
+  /// No description provided for @checkoutTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Checkout'**
+  String get checkoutTitle;
+
+  /// No description provided for @checkoutNotImplemented.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment and order history are not implemented yet.'**
+  String get checkoutNotImplemented;
+
+  /// No description provided for @customerDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer Details'**
+  String get customerDetails;
+
+  /// No description provided for @orderSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Order Summary'**
+  String get orderSummary;
+
+  /// No description provided for @customerName.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer name'**
+  String get customerName;
+
+  /// No description provided for @phoneNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone number'**
+  String get phoneNumber;
+
+  /// No description provided for @orderNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Order notes'**
+  String get orderNotes;
+
+  /// No description provided for @orderType.
+  ///
+  /// In en, this message translates to:
+  /// **'Order type'**
+  String get orderType;
+
+  /// No description provided for @pickup.
+  ///
+  /// In en, this message translates to:
+  /// **'Pickup'**
+  String get pickup;
+
+  /// No description provided for @delivery.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivery'**
+  String get delivery;
+
+  /// No description provided for @deliveryAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivery address'**
+  String get deliveryAddress;
+
+  /// No description provided for @sendOrderViaWhatsapp.
+  ///
+  /// In en, this message translates to:
+  /// **'Send Order via WhatsApp'**
+  String get sendOrderViaWhatsapp;
+
+  /// No description provided for @requiredField.
+  ///
+  /// In en, this message translates to:
+  /// **'This field is required.'**
+  String get requiredField;
+
+  /// No description provided for @whatsappUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to open WhatsApp.'**
+  String get whatsappUnavailable;
+
+  /// No description provided for @invalidWhatsappNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'The business WhatsApp number is missing or invalid.'**
+  String get invalidWhatsappNumber;
+
+  /// No description provided for @orderSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Order opened in WhatsApp.'**
+  String get orderSent;
+
+  /// No description provided for @clearCartAfterOrderQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear cart?'**
+  String get clearCartAfterOrderQuestion;
+
+  /// No description provided for @clearCartAfterOrderMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Would you like to clear the cart now?'**
+  String get clearCartAfterOrderMessage;
+
+  /// No description provided for @keepCart.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep cart'**
+  String get keepCart;
+
+  /// No description provided for @businessDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get businessDescription;
+
+  /// No description provided for @phone.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone'**
+  String get phone;
+
+  /// No description provided for @email.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get email;
+
+  /// No description provided for @address.
+  ///
+  /// In en, this message translates to:
+  /// **'Address'**
+  String get address;
+
+  /// No description provided for @openingHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Opening hours'**
+  String get openingHours;
+
+  /// No description provided for @instagram.
+  ///
+  /// In en, this message translates to:
+  /// **'Instagram'**
+  String get instagram;
+
+  /// No description provided for @facebook.
+  ///
+  /// In en, this message translates to:
+  /// **'Facebook'**
+  String get facebook;
+
+  /// No description provided for @unableToOpenLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to open this link.'**
+  String get unableToOpenLink;
+
+  /// No description provided for @removeItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove item'**
+  String get removeItem;
+
+  /// No description provided for @decreaseQuantity.
+  ///
+  /// In en, this message translates to:
+  /// **'Decrease quantity'**
+  String get decreaseQuantity;
+
+  /// No description provided for @increaseQuantity.
+  ///
+  /// In en, this message translates to:
+  /// **'Increase quantity'**
+  String get increaseQuantity;
+
+  /// No description provided for @missingImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Image unavailable'**
+  String get missingImage;
+
+  /// No description provided for @orderMessageGreeting.
+  ///
+  /// In en, this message translates to:
+  /// **'Hello {businessName},'**
+  String orderMessageGreeting(Object businessName);
+
+  /// No description provided for @orderMessageIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'I would like to place an order.'**
+  String get orderMessageIntro;
+
+  /// No description provided for @orderMessageCustomerSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer:'**
+  String get orderMessageCustomerSection;
+
+  /// No description provided for @orderMessageName.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get orderMessageName;
+
+  /// No description provided for @orderMessagePhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone'**
+  String get orderMessagePhone;
+
+  /// No description provided for @orderMessageOrderType.
+  ///
+  /// In en, this message translates to:
+  /// **'Order type'**
+  String get orderMessageOrderType;
+
+  /// No description provided for @orderMessageDeliveryAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivery address'**
+  String get orderMessageDeliveryAddress;
+
+  /// No description provided for @orderMessageItems.
+  ///
+  /// In en, this message translates to:
+  /// **'Items:'**
+  String get orderMessageItems;
+
+  /// No description provided for @orderMessageNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes:'**
+  String get orderMessageNotes;
+}
+
+class _AppLocalizationsDelegate
+    extends LocalizationsDelegate<AppLocalizations> {
+  const _AppLocalizationsDelegate();
+
+  @override
+  Future<AppLocalizations> load(Locale locale) {
+    return SynchronousFuture<AppLocalizations>(lookupAppLocalizations(locale));
+  }
+
+  @override
+  bool isSupported(Locale locale) =>
+      <String>['ar', 'en'].contains(locale.languageCode);
+
+  @override
+  bool shouldReload(_AppLocalizationsDelegate old) => false;
+}
+
+AppLocalizations lookupAppLocalizations(Locale locale) {
+  // Lookup logic when only language code is specified.
+  switch (locale.languageCode) {
+    case 'ar':
+      return AppLocalizationsAr();
+    case 'en':
+      return AppLocalizationsEn();
+  }
+
+  throw FlutterError(
+    'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
+    'an issue with the localizations generation tool. Please file an issue '
+    'on GitHub with a reproducible sample app and the gen-l10n configuration '
+    'that was used.',
+  );
+}

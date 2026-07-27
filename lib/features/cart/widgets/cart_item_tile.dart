@@ -1,3 +1,4 @@
+import 'package:business_catalog_app/core/extensions/build_context_extensions.dart';
 import 'package:business_catalog_app/core/utils/currency_formatter.dart';
 import 'package:business_catalog_app/core/widgets/local_asset_image.dart';
 import 'package:business_catalog_app/features/cart/domain/cart_item.dart';
@@ -53,7 +54,7 @@ class CartItemTile extends StatelessWidget {
                         ),
                       ),
                       IconButton(
-                        tooltip: 'Remove item',
+                        tooltip: context.l10n.removeItem,
                         onPressed: onRemove,
                         icon: const Icon(Icons.delete_outline),
                       ),

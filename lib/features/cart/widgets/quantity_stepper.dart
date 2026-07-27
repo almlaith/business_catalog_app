@@ -1,3 +1,4 @@
+import 'package:business_catalog_app/core/extensions/build_context_extensions.dart';
 import 'package:flutter/material.dart';
 
 class QuantityStepper extends StatelessWidget {
@@ -25,7 +26,7 @@ class QuantityStepper extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           IconButton(
-            tooltip: 'Decrease quantity',
+            tooltip: context.l10n.decreaseQuantity,
             visualDensity: VisualDensity.compact,
             onPressed: canDecrement ? onDecrement : null,
             icon: const Icon(Icons.remove),
@@ -39,7 +40,7 @@ class QuantityStepper extends StatelessWidget {
             ),
           ),
           IconButton(
-            tooltip: 'Increase quantity',
+            tooltip: context.l10n.increaseQuantity,
             visualDensity: VisualDensity.compact,
             onPressed: onIncrement,
             icon: const Icon(Icons.add),

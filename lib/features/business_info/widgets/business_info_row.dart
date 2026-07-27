@@ -22,7 +22,7 @@ class BusinessInfoRow extends StatelessWidget {
 
     return ListTile(
       leading: Icon(icon),
-      title: Text(title),
+      title: Text(title, maxLines: 1, overflow: TextOverflow.ellipsis),
       subtitle: Text(value),
       trailing: onTap == null ? null : const Icon(Icons.open_in_new),
       onTap: onTap,

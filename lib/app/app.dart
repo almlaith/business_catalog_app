@@ -1,7 +1,7 @@
 import 'package:business_catalog_app/app/router/app_router.dart';
 import 'package:business_catalog_app/app/theme/app_theme.dart';
 import 'package:business_catalog_app/core/constants/app_locales.dart';
-import 'package:business_catalog_app/core/constants/app_strings.dart';
+import 'package:business_catalog_app/core/extensions/build_context_extensions.dart';
 import 'package:business_catalog_app/core/utils/hex_color_parser.dart';
 import 'package:business_catalog_app/core/utils/locale_resolver.dart';
 import 'package:business_catalog_app/features/catalog/data/catalog_providers.dart';
@@ -26,9 +26,14 @@ class BusinessCatalogApp extends ConsumerWidget {
       business?.secondaryColorHex,
       fallback: AppTheme.fallbackSecondary,
     );
+    final localeCode =
+        settings.localeCode ??
+        business?.defaultLocale ??
+        AppLocales.english.languageCode;
 
     return MaterialApp.router(
-      title: business?.businessName ?? AppStrings.appTitle,
+      onGenerateTitle: (context) =>
+          business?.businessName ?? context.l10n.appTitle,
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light(
         primaryColor: primaryColor,
@@ -36,7 +41,7 @@ class BusinessCatalogApp extends ConsumerWidget {
       ),
       routerConfig: router,
       locale: resolveSupportedLocale(
-        Locale(settings.localeCode),
+        Locale(localeCode),
         AppLocales.supportedLocales,
       ),
       supportedLocales: AppLocales.supportedLocales,

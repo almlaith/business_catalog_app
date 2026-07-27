@@ -7,7 +7,7 @@ part of 'app_settings.dart';
 // **************************************************************************
 
 _AppSettings _$AppSettingsFromJson(Map<String, dynamic> json) =>
-    _AppSettings(localeCode: json['localeCode'] as String? ?? 'en');
+    _AppSettings(localeCode: json['localeCode'] as String?);
 
 Map<String, dynamic> _$AppSettingsToJson(_AppSettings instance) =>
     <String, dynamic>{'localeCode': instance.localeCode};

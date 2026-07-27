@@ -214,15 +214,15 @@ return $default(_that.id,_that.name,_that.description,_that.imageAsset,_that.dis
 @JsonSerializable()
 
 class _Category implements Category {
-  const _Category({required this.id, required this.name, required this.description, required this.imageAsset, required this.displayOrder, required this.isActive});
+  const _Category({required this.id, required this.name, this.description = '', this.imageAsset = '', this.displayOrder = 0, this.isActive = true});
   factory _Category.fromJson(Map<String, dynamic> json) => _$CategoryFromJson(json);
 
 @override final  String id;
 @override final  String name;
-@override final  String description;
-@override final  String imageAsset;
-@override final  int displayOrder;
-@override final  bool isActive;
+@override@JsonKey() final  String description;
+@override@JsonKey() final  String imageAsset;
+@override@JsonKey() final  int displayOrder;
+@override@JsonKey() final  bool isActive;
 
 /// Create a copy of Category
 /// with the given fields replaced by the non-null parameter values.

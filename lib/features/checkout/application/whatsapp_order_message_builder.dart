@@ -1,7 +1,7 @@
-import 'package:business_catalog_app/core/constants/app_strings.dart';
 import 'package:business_catalog_app/core/utils/currency_formatter.dart';
 import 'package:business_catalog_app/features/cart/domain/cart_state.dart';
 import 'package:business_catalog_app/features/checkout/application/order_type.dart';
+import 'package:business_catalog_app/l10n/generated/app_localizations.dart';
 import 'package:business_catalog_app/models/business_config.dart';
 
 class WhatsAppOrderDetails {
@@ -27,28 +27,29 @@ class WhatsAppOrderMessageBuilder {
     required BusinessConfig business,
     required CartState cart,
     required WhatsAppOrderDetails details,
+    required AppLocalizations l10n,
   }) {
     final lines = <String>[
-      'Hello ${business.businessName},',
+      l10n.orderMessageGreeting(business.businessName),
       '',
-      'I would like to place an order.',
+      l10n.orderMessageIntro,
       '',
-      'Customer:',
-      'Name: ${details.customerName.trim()}',
-      'Phone: ${details.customerPhone.trim()}',
-      'Order type: ${details.orderType.label}',
+      l10n.orderMessageCustomerSection,
+      '${l10n.orderMessageName}: ${details.customerName.trim()}',
+      '${l10n.orderMessagePhone}: ${details.customerPhone.trim()}',
+      '${l10n.orderMessageOrderType}: ${details.orderType.label(l10n)}',
     ];
 
     final deliveryAddress = details.deliveryAddress?.trim();
     if (details.orderType == OrderType.delivery &&
         deliveryAddress != null &&
         deliveryAddress.isNotEmpty) {
-      lines.add('Delivery address: $deliveryAddress');
+      lines.add('${l10n.orderMessageDeliveryAddress}: $deliveryAddress');
     }
 
     lines
       ..add('')
-      ..add('Items:');
+      ..add(l10n.orderMessageItems);
 
     for (final indexedItem in cart.items.indexed) {
       final index = indexedItem.$1 + 1;
@@ -63,14 +64,14 @@ class WhatsAppOrderMessageBuilder {
     }
 
     lines.add(
-      '${AppStrings.subtotal}: ${formatCurrency(cart.subtotal, currencyCode: business.currencyCode)}',
+      '${l10n.subtotal}: ${formatCurrency(cart.subtotal, currencyCode: business.currencyCode)}',
     );
 
     final notes = details.notes?.trim();
     if (notes != null && notes.isNotEmpty) {
       lines
         ..add('')
-        ..add('Notes:')
+        ..add(l10n.orderMessageNotes)
         ..add(notes);
     }
 

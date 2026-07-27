@@ -223,25 +223,25 @@ return $default(_that.id,_that.businessName,_that.shortDescription,_that.logoAss
 @JsonSerializable()
 
 class _BusinessConfig implements BusinessConfig {
-  const _BusinessConfig({required this.id, required this.businessName, required this.shortDescription, required this.logoAsset, required this.phoneNumber, required this.whatsappNumber, required this.email, required this.address, required this.currencyCode, required this.defaultLocale, required this.primaryColorHex, required this.secondaryColorHex, required this.instagramUrl, required this.facebookUrl, required final  Map<String, String> openingHours}): _openingHours = openingHours;
+  const _BusinessConfig({required this.id, required this.businessName, this.shortDescription = '', this.logoAsset = '', this.phoneNumber = '', this.whatsappNumber = '', this.email = '', this.address = '', this.currencyCode = 'USD', this.defaultLocale = 'en', this.primaryColorHex = '', this.secondaryColorHex = '', this.instagramUrl = '', this.facebookUrl = '', final  Map<String, String> openingHours = const <String, String>{}}): _openingHours = openingHours;
   factory _BusinessConfig.fromJson(Map<String, dynamic> json) => _$BusinessConfigFromJson(json);
 
 @override final  String id;
 @override final  String businessName;
-@override final  String shortDescription;
-@override final  String logoAsset;
-@override final  String phoneNumber;
-@override final  String whatsappNumber;
-@override final  String email;
-@override final  String address;
-@override final  String currencyCode;
-@override final  String defaultLocale;
-@override final  String primaryColorHex;
-@override final  String secondaryColorHex;
-@override final  String instagramUrl;
-@override final  String facebookUrl;
+@override@JsonKey() final  String shortDescription;
+@override@JsonKey() final  String logoAsset;
+@override@JsonKey() final  String phoneNumber;
+@override@JsonKey() final  String whatsappNumber;
+@override@JsonKey() final  String email;
+@override@JsonKey() final  String address;
+@override@JsonKey() final  String currencyCode;
+@override@JsonKey() final  String defaultLocale;
+@override@JsonKey() final  String primaryColorHex;
+@override@JsonKey() final  String secondaryColorHex;
+@override@JsonKey() final  String instagramUrl;
+@override@JsonKey() final  String facebookUrl;
  final  Map<String, String> _openingHours;
-@override Map<String, String> get openingHours {
+@override@JsonKey() Map<String, String> get openingHours {
   if (_openingHours is EqualUnmodifiableMapView) return _openingHours;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableMapView(_openingHours);

@@ -1,4 +1,4 @@
-import 'package:business_catalog_app/core/constants/app_strings.dart';
+import 'package:business_catalog_app/core/extensions/build_context_extensions.dart';
 import 'package:business_catalog_app/core/utils/currency_formatter.dart';
 import 'package:business_catalog_app/features/cart/domain/cart_state.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +16,7 @@ class CheckoutOrderSummary extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = context.l10n;
 
     return Card(
       child: Padding(
@@ -23,7 +24,7 @@ class CheckoutOrderSummary extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(AppStrings.orderSummary, style: theme.textTheme.titleLarge),
+            Text(l10n.orderSummary, style: theme.textTheme.titleLarge),
             const SizedBox(height: 12),
             for (final item in cart.items) ...[
               Row(
@@ -51,7 +52,7 @@ class CheckoutOrderSummary extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    AppStrings.subtotal,
+                    l10n.subtotal,
                     style: theme.textTheme.titleMedium,
                   ),
                 ),

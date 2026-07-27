@@ -1,19 +1,25 @@
-import 'package:business_catalog_app/core/constants/app_strings.dart';
+import 'package:flutter/widgets.dart';
 
 abstract final class FormValidators {
-  static String? requiredText(String? value) {
-    if (value == null || value.trim().isEmpty) {
-      return AppStrings.requiredField;
-    }
+  static FormFieldValidator<String> requiredText(String message) {
+    return (value) {
+      if (value == null || value.trim().isEmpty) {
+        return message;
+      }
 
-    return null;
+      return null;
+    };
   }
 
-  static String? requiredWhen(String? value, {required bool condition}) {
+  static String? requiredWhen(
+    String? value, {
+    required bool condition,
+    required String message,
+  }) {
     if (!condition) {
       return null;
     }
 
-    return requiredText(value);
+    return requiredText(message)(value);
   }
 }

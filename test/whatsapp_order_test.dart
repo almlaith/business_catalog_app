@@ -7,6 +7,7 @@ import 'package:business_catalog_app/features/cart/domain/cart_state.dart';
 import 'package:business_catalog_app/features/checkout/application/order_type.dart';
 import 'package:business_catalog_app/features/checkout/application/whatsapp_order_launcher.dart';
 import 'package:business_catalog_app/features/checkout/application/whatsapp_order_message_builder.dart';
+import 'package:business_catalog_app/l10n/generated/app_localizations_en.dart';
 import 'package:business_catalog_app/models/business_config.dart';
 import 'package:business_catalog_app/models/catalog_data.dart';
 import 'package:business_catalog_app/services/external_link_launcher.dart';
@@ -16,6 +17,7 @@ import 'package:url_launcher/url_launcher.dart';
 void main() {
   late BusinessConfig business;
   late CartState cart;
+  final l10n = AppLocalizationsEn();
 
   setUpAll(() {
     final rawJson = File(AppAssets.catalogData).readAsStringSync();
@@ -51,6 +53,7 @@ void main() {
         customerPhone: '+1 555 123 4567',
         orderType: OrderType.pickup,
       ),
+      l10n: l10n,
     );
 
     expect(message, contains('Hello Catalogly Kitchen,'));
@@ -71,6 +74,7 @@ void main() {
         orderType: OrderType.delivery,
         deliveryAddress: '42 Example Street',
       ),
+      l10n: l10n,
     );
 
     expect(message, contains('Order type: Delivery'));
@@ -87,6 +91,7 @@ void main() {
         orderType: OrderType.pickup,
         notes: '   ',
       ),
+      l10n: l10n,
     );
 
     expect(message, isNot(contains('Notes:')));
@@ -102,6 +107,7 @@ void main() {
         orderType: OrderType.pickup,
         notes: 'Please call on arrival.',
       ),
+      l10n: l10n,
     );
 
     expect(message, contains('Notes:\nPlease call on arrival.'));

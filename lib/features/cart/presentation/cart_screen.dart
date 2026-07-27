@@ -1,5 +1,5 @@
 import 'package:business_catalog_app/core/constants/app_route_paths.dart';
-import 'package:business_catalog_app/core/constants/app_strings.dart';
+import 'package:business_catalog_app/core/extensions/build_context_extensions.dart';
 import 'package:business_catalog_app/core/utils/currency_formatter.dart';
 import 'package:business_catalog_app/core/widgets/app_async_state.dart';
 import 'package:business_catalog_app/features/cart/application/cart_controller.dart';
@@ -46,15 +46,16 @@ class _CartScaffold extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final cart = this.cart;
+    final l10n = context.l10n;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(AppStrings.cartTitle),
+        title: Text(l10n.cartTitle),
         automaticallyImplyLeading: false,
         actions: [
           if (cart != null && cart.isNotEmpty)
             IconButton(
-              tooltip: AppStrings.clearCart,
+              tooltip: l10n.clearCart,
               onPressed: () => _confirmClearCart(context, ref),
               icon: const Icon(Icons.delete_sweep_outlined),
             ),
@@ -68,16 +69,16 @@ class _CartScaffold extends ConsumerWidget {
     final shouldClear = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text(AppStrings.clearCartQuestion),
-        content: const Text(AppStrings.clearCartMessage),
+        title: Text(context.l10n.clearCartQuestion),
+        content: Text(context.l10n.clearCartMessage),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text(AppStrings.cancel),
+            child: Text(context.l10n.cancel),
           ),
           FilledButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text(AppStrings.clear),
+            child: Text(context.l10n.clear),
           ),
         ],
       ),
@@ -94,24 +95,23 @@ class _EmptyCart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const AppEmptyState(message: AppStrings.cartEmpty),
+            AppEmptyState(message: l10n.cartEmpty),
             const SizedBox(height: 16),
             FilledButton.icon(
               onPressed: () => context.go(AppRoutePaths.catalog),
               icon: const Icon(Icons.storefront_outlined),
-              label: const Text(AppStrings.browseCatalog),
+              label: Text(l10n.browseCatalog),
             ),
             const SizedBox(height: 12),
-            const FilledButton(
-              onPressed: null,
-              child: Text(AppStrings.continueAction),
-            ),
+            FilledButton(onPressed: null, child: Text(l10n.continueAction)),
           ],
         ),
       ),
@@ -164,6 +164,7 @@ class _CartSummary extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = context.l10n;
 
     return SafeArea(
       top: false,
@@ -183,7 +184,7 @@ class _CartSummary extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      AppStrings.subtotal,
+                      l10n.subtotal,
                       style: theme.textTheme.titleMedium,
                     ),
                   ),
@@ -197,14 +198,14 @@ class _CartSummary extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                AppStrings.checkoutNotImplemented,
+                l10n.checkoutNotImplemented,
                 style: theme.textTheme.bodySmall,
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 12),
               FilledButton(
                 onPressed: () => context.push(AppRoutePaths.checkout),
-                child: const Text(AppStrings.continueAction),
+                child: Text(l10n.continueAction),
               ),
             ],
           ),

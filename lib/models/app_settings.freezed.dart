@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$AppSettings {
 
- String get localeCode;
+ String? get localeCode;
 /// Create a copy of AppSettings
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -48,7 +48,7 @@ abstract mixin class $AppSettingsCopyWith<$Res>  {
   factory $AppSettingsCopyWith(AppSettings value, $Res Function(AppSettings) _then) = _$AppSettingsCopyWithImpl;
 @useResult
 $Res call({
- String localeCode
+ String? localeCode
 });
 
 
@@ -65,10 +65,10 @@ class _$AppSettingsCopyWithImpl<$Res>
 
 /// Create a copy of AppSettings
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? localeCode = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? localeCode = freezed,}) {
   return _then(_self.copyWith(
-localeCode: null == localeCode ? _self.localeCode : localeCode // ignore: cast_nullable_to_non_nullable
-as String,
+localeCode: freezed == localeCode ? _self.localeCode : localeCode // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 
@@ -153,7 +153,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String localeCode)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? localeCode)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _AppSettings() when $default != null:
 return $default(_that.localeCode);case _:
@@ -174,7 +174,7 @@ return $default(_that.localeCode);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String localeCode)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? localeCode)  $default,) {final _that = this;
 switch (_that) {
 case _AppSettings():
 return $default(_that.localeCode);case _:
@@ -194,7 +194,7 @@ return $default(_that.localeCode);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String localeCode)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? localeCode)?  $default,) {final _that = this;
 switch (_that) {
 case _AppSettings() when $default != null:
 return $default(_that.localeCode);case _:
@@ -209,10 +209,10 @@ return $default(_that.localeCode);case _:
 @JsonSerializable()
 
 class _AppSettings implements AppSettings {
-  const _AppSettings({this.localeCode = 'en'});
+  const _AppSettings({this.localeCode});
   factory _AppSettings.fromJson(Map<String, dynamic> json) => _$AppSettingsFromJson(json);
 
-@override@JsonKey() final  String localeCode;
+@override final  String? localeCode;
 
 /// Create a copy of AppSettings
 /// with the given fields replaced by the non-null parameter values.
@@ -247,7 +247,7 @@ abstract mixin class _$AppSettingsCopyWith<$Res> implements $AppSettingsCopyWith
   factory _$AppSettingsCopyWith(_AppSettings value, $Res Function(_AppSettings) _then) = __$AppSettingsCopyWithImpl;
 @override @useResult
 $Res call({
- String localeCode
+ String? localeCode
 });
 
 
@@ -264,10 +264,10 @@ class __$AppSettingsCopyWithImpl<$Res>
 
 /// Create a copy of AppSettings
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? localeCode = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? localeCode = freezed,}) {
   return _then(_AppSettings(
-localeCode: null == localeCode ? _self.localeCode : localeCode // ignore: cast_nullable_to_non_nullable
-as String,
+localeCode: freezed == localeCode ? _self.localeCode : localeCode // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 

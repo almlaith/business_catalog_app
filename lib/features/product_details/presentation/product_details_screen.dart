@@ -1,5 +1,5 @@
 import 'package:business_catalog_app/core/constants/app_route_paths.dart';
-import 'package:business_catalog_app/core/constants/app_strings.dart';
+import 'package:business_catalog_app/core/extensions/build_context_extensions.dart';
 import 'package:business_catalog_app/core/utils/currency_formatter.dart';
 import 'package:business_catalog_app/core/widgets/app_async_state.dart';
 import 'package:business_catalog_app/core/widgets/local_asset_image.dart';
@@ -32,7 +32,7 @@ class ProductDetailsScreen extends ConsumerWidget {
         if (product == null) {
           return _ProductDetailsScaffold(
             child: AppErrorState(
-              title: AppStrings.productNotFound,
+              title: context.l10n.productNotFound,
               error: productId,
             ),
           );
@@ -55,7 +55,7 @@ class _ProductDetailsScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text(AppStrings.productDetailsTitle)),
+      appBar: AppBar(title: Text(context.l10n.productDetailsTitle)),
       body: SafeArea(child: child),
     );
   }
@@ -81,9 +81,10 @@ class _ProductDetailsContentState
     final product = widget.product;
     final business = widget.business;
     final theme = Theme.of(context);
+    final l10n = context.l10n;
 
     return Scaffold(
-      appBar: AppBar(title: const Text(AppStrings.productDetailsTitle)),
+      appBar: AppBar(title: Text(context.l10n.productDetailsTitle)),
       body: SafeArea(
         top: false,
         child: ListView(
@@ -156,7 +157,7 @@ class _ProductDetailsContentState
         child: FilledButton.icon(
           onPressed: product.isAvailable ? _addToCart : null,
           icon: const Icon(Icons.add_shopping_cart),
-          label: const Text(AppStrings.addToCart),
+          label: Text(l10n.addToCart),
         ),
       ),
     );
@@ -169,9 +170,9 @@ class _ProductDetailsContentState
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: const Text(AppStrings.addedToCart),
+        content: Text(context.l10n.addedToCart),
         action: SnackBarAction(
-          label: AppStrings.viewCart,
+          label: context.l10n.viewCart,
           onPressed: () => context.go(AppRoutePaths.cart),
         ),
       ),
@@ -187,13 +188,14 @@ class _AvailabilityChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final l10n = context.l10n;
 
     return Chip(
       avatar: Icon(
         isAvailable ? Icons.check_circle_outline : Icons.do_not_disturb_on,
         size: 18,
       ),
-      label: Text(isAvailable ? AppStrings.available : AppStrings.unavailable),
+      label: Text(isAvailable ? l10n.available : l10n.unavailable),
       backgroundColor: isAvailable
           ? colorScheme.secondaryContainer
           : colorScheme.errorContainer,

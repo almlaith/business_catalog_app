@@ -1,4 +1,4 @@
-import 'package:business_catalog_app/core/constants/app_strings.dart';
+import 'package:business_catalog_app/core/extensions/build_context_extensions.dart';
 import 'package:business_catalog_app/models/category.dart';
 import 'package:flutter/material.dart';
 
@@ -16,6 +16,8 @@ class CategorySelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
     return SizedBox(
       height: 48,
       child: ListView.separated(
@@ -26,7 +28,7 @@ class CategorySelector extends StatelessWidget {
         itemBuilder: (context, index) {
           if (index == 0) {
             return ChoiceChip(
-              label: const Text(AppStrings.allCategories),
+              label: Text(l10n.allCategories),
               selected: selectedCategoryId == null,
               onSelected: (_) => onSelected(null),
             );

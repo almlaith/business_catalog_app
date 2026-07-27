@@ -219,21 +219,21 @@ return $default(_that.id,_that.categoryId,_that.name,_that.description,_that.ima
 @JsonSerializable()
 
 class _Product implements Product {
-  const _Product({required this.id, required this.categoryId, required this.name, required this.description, required this.imageAsset, required this.price, required this.oldPrice, required this.isFeatured, required this.isAvailable, required this.displayOrder, required final  List<String> tags}): _tags = tags;
+  const _Product({required this.id, required this.categoryId, required this.name, this.description = '', this.imageAsset = '', required this.price, this.oldPrice, this.isFeatured = false, this.isAvailable = true, this.displayOrder = 0, final  List<String> tags = const <String>[]}): _tags = tags;
   factory _Product.fromJson(Map<String, dynamic> json) => _$ProductFromJson(json);
 
 @override final  String id;
 @override final  String categoryId;
 @override final  String name;
-@override final  String description;
-@override final  String imageAsset;
+@override@JsonKey() final  String description;
+@override@JsonKey() final  String imageAsset;
 @override final  double price;
 @override final  double? oldPrice;
-@override final  bool isFeatured;
-@override final  bool isAvailable;
-@override final  int displayOrder;
+@override@JsonKey() final  bool isFeatured;
+@override@JsonKey() final  bool isAvailable;
+@override@JsonKey() final  int displayOrder;
  final  List<String> _tags;
-@override List<String> get tags {
+@override@JsonKey() List<String> get tags {
   if (_tags is EqualUnmodifiableListView) return _tags;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_tags);

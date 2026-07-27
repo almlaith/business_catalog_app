@@ -9,10 +9,10 @@ part of 'category.dart';
 _Category _$CategoryFromJson(Map<String, dynamic> json) => _Category(
   id: json['id'] as String,
   name: json['name'] as String,
-  description: json['description'] as String,
-  imageAsset: json['imageAsset'] as String,
-  displayOrder: (json['displayOrder'] as num).toInt(),
-  isActive: json['isActive'] as bool,
+  description: json['description'] as String? ?? '',
+  imageAsset: json['imageAsset'] as String? ?? '',
+  displayOrder: (json['displayOrder'] as num?)?.toInt() ?? 0,
+  isActive: json['isActive'] as bool? ?? true,
 );
 
 Map<String, dynamic> _$CategoryToJson(_Category instance) => <String, dynamic>{

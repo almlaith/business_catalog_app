@@ -1,4 +1,4 @@
-import 'package:business_catalog_app/core/constants/app_strings.dart';
+import 'package:business_catalog_app/core/extensions/build_context_extensions.dart';
 import 'package:business_catalog_app/core/validation/form_validators.dart';
 import 'package:business_catalog_app/core/widgets/app_async_state.dart';
 import 'package:business_catalog_app/features/cart/application/cart_controller.dart';
@@ -43,7 +43,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
     final catalogState = ref.watch(catalogDataProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text(AppStrings.checkoutTitle)),
+      appBar: AppBar(title: Text(context.l10n.checkoutTitle)),
       body: SafeArea(
         child: catalogState.when(
           loading: () => const AppLoadingState(),
@@ -94,6 +94,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
         business: business,
         cart: cart,
         details: details,
+        l10n: context.l10n,
       );
       final launched = await ref
           .read(whatsappOrderLauncherProvider)
@@ -107,16 +108,16 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
       }
 
       if (!launched) {
-        _showSnackBar(AppStrings.whatsappUnavailable);
+        _showSnackBar(context.l10n.whatsappUnavailable);
         return;
       }
 
       setState(() => _isSubmitting = false);
-      _showSnackBar(AppStrings.orderSent);
+      _showSnackBar(context.l10n.orderSent);
       await _confirmClearCart();
     } on FormatException {
       if (mounted) {
-        _showSnackBar(AppStrings.invalidWhatsappNumber);
+        _showSnackBar(context.l10n.invalidWhatsappNumber);
       }
     } finally {
       if (mounted && _isSubmitting) {
@@ -129,16 +130,16 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
     final shouldClear = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text(AppStrings.clearCartAfterOrderQuestion),
-        content: const Text(AppStrings.clearCartAfterOrderMessage),
+        title: Text(context.l10n.clearCartAfterOrderQuestion),
+        content: Text(context.l10n.clearCartAfterOrderMessage),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text(AppStrings.keepCart),
+            child: Text(context.l10n.keepCart),
           ),
           FilledButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text(AppStrings.clear),
+            child: Text(context.l10n.clear),
           ),
         ],
       ),
@@ -186,6 +187,7 @@ class _CheckoutContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = context.l10n;
 
     return Form(
       key: formKey,
@@ -201,20 +203,16 @@ class _CheckoutContent extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    AppStrings.customerDetails,
-                    style: theme.textTheme.titleLarge,
-                  ),
+                  Text(l10n.customerDetails, style: theme.textTheme.titleLarge),
                   const SizedBox(height: 16),
                   TextFormField(
                     key: const ValueKey('checkout-name-field'),
                     controller: nameController,
                     textInputAction: TextInputAction.next,
                     decoration: const InputDecoration(
-                      labelText: AppStrings.customerName,
                       border: OutlineInputBorder(),
-                    ),
-                    validator: FormValidators.requiredText,
+                    ).copyWith(labelText: l10n.customerName),
+                    validator: FormValidators.requiredText(l10n.requiredField),
                   ),
                   const SizedBox(height: 12),
                   TextFormField(
@@ -222,29 +220,26 @@ class _CheckoutContent extends StatelessWidget {
                     controller: phoneController,
                     keyboardType: TextInputType.phone,
                     textInputAction: TextInputAction.next,
-                    decoration: const InputDecoration(
-                      labelText: AppStrings.phoneNumber,
+                    decoration: InputDecoration(
+                      labelText: l10n.phoneNumber,
                       border: OutlineInputBorder(),
                     ),
-                    validator: FormValidators.requiredText,
+                    validator: FormValidators.requiredText(l10n.requiredField),
                   ),
                   const SizedBox(height: 16),
-                  Text(
-                    AppStrings.orderType,
-                    style: theme.textTheme.titleMedium,
-                  ),
+                  Text(l10n.orderType, style: theme.textTheme.titleMedium),
                   const SizedBox(height: 8),
                   SegmentedButton<OrderType>(
-                    segments: const [
+                    segments: [
                       ButtonSegment(
                         value: OrderType.pickup,
-                        label: Text(AppStrings.pickup),
-                        icon: Icon(Icons.shopping_bag_outlined),
+                        label: Text(l10n.pickup),
+                        icon: const Icon(Icons.shopping_bag_outlined),
                       ),
                       ButtonSegment(
                         value: OrderType.delivery,
-                        label: Text(AppStrings.delivery),
-                        icon: Icon(Icons.local_shipping_outlined),
+                        label: Text(l10n.delivery),
+                        icon: const Icon(Icons.local_shipping_outlined),
                       ),
                     ],
                     selected: {orderType},
@@ -258,13 +253,14 @@ class _CheckoutContent extends StatelessWidget {
                       key: const ValueKey('checkout-delivery-address-field'),
                       controller: deliveryAddressController,
                       textInputAction: TextInputAction.next,
-                      decoration: const InputDecoration(
-                        labelText: AppStrings.deliveryAddress,
+                      decoration: InputDecoration(
+                        labelText: l10n.deliveryAddress,
                         border: OutlineInputBorder(),
                       ),
                       validator: (value) => FormValidators.requiredWhen(
                         value,
                         condition: orderType == OrderType.delivery,
+                        message: l10n.requiredField,
                       ),
                     ),
                   ],
@@ -274,8 +270,8 @@ class _CheckoutContent extends StatelessWidget {
                     controller: notesController,
                     minLines: 2,
                     maxLines: 4,
-                    decoration: const InputDecoration(
-                      labelText: AppStrings.orderNotes,
+                    decoration: InputDecoration(
+                      labelText: l10n.orderNotes,
                       border: OutlineInputBorder(),
                     ),
                   ),
@@ -292,11 +288,11 @@ class _CheckoutContent extends StatelessWidget {
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
                 : const Icon(Icons.send_outlined),
-            label: const Text(AppStrings.sendOrderViaWhatsapp),
+            label: Text(l10n.sendOrderViaWhatsapp),
           ),
           const SizedBox(height: 8),
           Text(
-            AppStrings.checkoutNotImplemented,
+            l10n.checkoutNotImplemented,
             textAlign: TextAlign.center,
             style: theme.textTheme.bodySmall,
           ),

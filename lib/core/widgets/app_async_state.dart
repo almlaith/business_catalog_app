@@ -1,13 +1,15 @@
-import 'package:business_catalog_app/core/constants/app_strings.dart';
+import 'package:business_catalog_app/core/extensions/build_context_extensions.dart';
 import 'package:flutter/material.dart';
 
 class AppLoadingState extends StatelessWidget {
-  const AppLoadingState({this.message = AppStrings.loadingCatalog, super.key});
+  const AppLoadingState({this.message, super.key});
 
-  final String message;
+  final String? message;
 
   @override
   Widget build(BuildContext context) {
+    final text = message ?? context.l10n.loadingCatalog;
+
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24),
@@ -16,7 +18,7 @@ class AppLoadingState extends StatelessWidget {
           children: [
             const CircularProgressIndicator(),
             const SizedBox(height: 16),
-            Text(message, textAlign: TextAlign.center),
+            Text(text, textAlign: TextAlign.center),
           ],
         ),
       ),
@@ -28,16 +30,18 @@ class AppErrorState extends StatelessWidget {
   const AppErrorState({
     required this.error,
     this.onRetry,
-    this.title = AppStrings.unableToLoadCatalog,
+    this.title,
     super.key,
   });
 
   final Object error;
   final VoidCallback? onRetry;
-  final String title;
+  final String? title;
 
   @override
   Widget build(BuildContext context) {
+    final title = this.title ?? context.l10n.unableToLoadCatalog;
+
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24),
@@ -58,7 +62,7 @@ class AppErrorState extends StatelessWidget {
               FilledButton.icon(
                 onPressed: onRetry,
                 icon: const Icon(Icons.refresh),
-                label: const Text(AppStrings.retry),
+                label: Text(context.l10n.retry),
               ),
             ],
           ],

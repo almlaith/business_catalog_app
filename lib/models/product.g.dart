@@ -10,14 +10,16 @@ _Product _$ProductFromJson(Map<String, dynamic> json) => _Product(
   id: json['id'] as String,
   categoryId: json['categoryId'] as String,
   name: json['name'] as String,
-  description: json['description'] as String,
-  imageAsset: json['imageAsset'] as String,
+  description: json['description'] as String? ?? '',
+  imageAsset: json['imageAsset'] as String? ?? '',
   price: (json['price'] as num).toDouble(),
   oldPrice: (json['oldPrice'] as num?)?.toDouble(),
-  isFeatured: json['isFeatured'] as bool,
-  isAvailable: json['isAvailable'] as bool,
-  displayOrder: (json['displayOrder'] as num).toInt(),
-  tags: (json['tags'] as List<dynamic>).map((e) => e as String).toList(),
+  isFeatured: json['isFeatured'] as bool? ?? false,
+  isAvailable: json['isAvailable'] as bool? ?? true,
+  displayOrder: (json['displayOrder'] as num?)?.toInt() ?? 0,
+  tags:
+      (json['tags'] as List<dynamic>?)?.map((e) => e as String).toList() ??
+      const <String>[],
 );
 
 Map<String, dynamic> _$ProductToJson(_Product instance) => <String, dynamic>{

@@ -1,3 +1,4 @@
+import 'package:business_catalog_app/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class LocalAssetImage extends StatelessWidget {
@@ -41,16 +42,21 @@ class _MissingAssetImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final l10n = Localizations.of<AppLocalizations>(context, AppLocalizations);
 
-    return Container(
-      key: const ValueKey('missing-asset-image-placeholder'),
-      width: width,
-      height: height,
-      color: colorScheme.surfaceContainerHighest,
-      alignment: Alignment.center,
-      child: Icon(
-        Icons.image_not_supported_outlined,
-        color: colorScheme.onSurfaceVariant,
+    return Semantics(
+      label: l10n?.missingImage,
+      image: true,
+      child: Container(
+        key: const ValueKey('missing-asset-image-placeholder'),
+        width: width,
+        height: height,
+        color: colorScheme.surfaceContainerHighest,
+        alignment: Alignment.center,
+        child: Icon(
+          Icons.image_not_supported_outlined,
+          color: colorScheme.onSurfaceVariant,
+        ),
       ),
     );
   }
