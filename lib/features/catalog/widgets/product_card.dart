@@ -100,7 +100,7 @@ class _ProductPrice extends StatelessWidget {
             fontWeight: FontWeight.w700,
           ),
         ),
-        if (oldPrice != null)
+        if (oldPrice != null && oldPrice > price)
           Text(
             formatCurrency(oldPrice, currencyCode: currencyCode),
             style: theme.textTheme.bodySmall?.copyWith(

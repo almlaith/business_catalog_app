@@ -27,13 +27,13 @@ class AppLoadingState extends StatelessWidget {
 class AppErrorState extends StatelessWidget {
   const AppErrorState({
     required this.error,
-    required this.onRetry,
+    this.onRetry,
     this.title = AppStrings.unableToLoadCatalog,
     super.key,
   });
 
   final Object error;
-  final VoidCallback onRetry;
+  final VoidCallback? onRetry;
   final String title;
 
   @override
@@ -53,12 +53,14 @@ class AppErrorState extends StatelessWidget {
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodySmall,
             ),
-            const SizedBox(height: 16),
-            FilledButton.icon(
-              onPressed: onRetry,
-              icon: const Icon(Icons.refresh),
-              label: const Text(AppStrings.retry),
-            ),
+            if (onRetry != null) ...[
+              const SizedBox(height: 16),
+              FilledButton.icon(
+                onPressed: onRetry,
+                icon: const Icon(Icons.refresh),
+                label: const Text(AppStrings.retry),
+              ),
+            ],
           ],
         ),
       ),
