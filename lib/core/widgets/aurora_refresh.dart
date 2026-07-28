@@ -37,8 +37,7 @@ class _AuroraRefreshWrapperState extends State<AuroraRefreshWrapper> {
         }
 
         if (widget.showFailureFeedback) {
-          // The visible content is intentionally preserved; this only reports
-          // that the local catalog/configuration could not be re-read.
+          // Refresh failures do not discard previously loaded content.
           showAppFeedback(
             context,
             type: AppFeedbackType.error,

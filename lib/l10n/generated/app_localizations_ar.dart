@@ -30,9 +30,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get businessInfoNavLabel => 'المعلومات';
 
   @override
-  String get placeholderLabel => 'شاشة مؤقتة';
-
-  @override
   String get loadingCatalog => 'جار تحميل الكتالوج...';
 
   @override

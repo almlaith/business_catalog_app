@@ -7,7 +7,6 @@
   "cartTitle": "Cart",
   "businessInfoTitle": "Business Information",
   "businessInfoNavLabel": "Info",
-  "placeholderLabel": "Placeholder screen",
   "loadingCatalog": "Loading catalog...",
   "unableToLoadCatalog": "Unable to load catalog data.",
   "productNotFound": "Product not found.",

@@ -140,12 +140,6 @@ abstract class AppLocalizations {
   /// **'Info'**
   String get businessInfoNavLabel;
 
-  /// No description provided for @placeholderLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Placeholder screen'**
-  String get placeholderLabel;
-
   /// No description provided for @loadingCatalog.
   ///
   /// In en, this message translates to:

@@ -30,9 +30,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get businessInfoNavLabel => 'Info';
 
   @override
-  String get placeholderLabel => 'Placeholder screen';
-
-  @override
   String get loadingCatalog => 'Loading catalog...';
 
   @override
