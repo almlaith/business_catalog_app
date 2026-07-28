@@ -109,9 +109,9 @@ void main() {
   ) async {
     await tester.pumpCatalogApp(catalogState: AsyncData(sampleCatalog));
 
-    expect(find.text('Catalogly Kitchen'), findsOneWidget);
+    expect(find.text('Aura Atelier'), findsOneWidget);
     expect(find.text(l10n.categoriesSection), findsOneWidget);
-    expect(find.text('Starters'), findsOneWidget);
+    expect(find.text('Signature Scents'), findsOneWidget);
 
     await tester.scrollUntilVisible(
       find.text(l10n.featuredSection),
@@ -121,12 +121,12 @@ void main() {
     expect(find.text(l10n.featuredSection), findsOneWidget);
 
     await tester.scrollUntilVisible(
-      find.text('Crispy Halloumi Bites'),
+      find.text('Midnight Veil'),
       160,
       scrollable: find.byType(Scrollable).first,
     );
 
-    expect(find.text('Crispy Halloumi Bites'), findsOneWidget);
+    expect(find.text('Midnight Veil'), findsOneWidget);
     expect(find.byTooltip('Back'), findsNothing);
   });
 
@@ -148,7 +148,7 @@ void main() {
     await tester.tapNavLabel(l10n.businessInfoNavLabel);
     await tester.pumpAndSettle();
     expect(find.text(l10n.businessInfoTitle), findsWidgets);
-    expect(find.text('Catalogly Kitchen'), findsOneWidget);
+    expect(find.text('Aura Atelier'), findsOneWidget);
     expect(find.byTooltip('Back'), findsNothing);
   });
 
@@ -274,14 +274,17 @@ void main() {
 
     await tester.tap(
       find
-          .ancestor(of: find.text('Mains'), matching: find.byType(CategoryCard))
+          .ancestor(
+            of: find.text('Oud Collection'),
+            matching: find.byType(CategoryCard),
+          )
           .first,
     );
     await tester.pumpAndSettle();
 
     expect(find.text(l10n.catalogTitle), findsWidgets);
-    expect(find.text('Chargrilled Chicken Plate'), findsOneWidget);
-    expect(find.text('Crispy Halloumi Bites'), findsNothing);
+    expect(find.text('Imperial Oud'), findsOneWidget);
+    expect(find.text('Midnight Veil'), findsNothing);
   });
 
   testWidgets('catalog filters products by selected category', (
@@ -292,13 +295,13 @@ void main() {
     await tester.tapNavLabel(l10n.catalogTitle);
     await tester.pumpAndSettle();
 
-    expect(find.text('Crispy Halloumi Bites'), findsOneWidget);
+    expect(find.text('Midnight Veil'), findsOneWidget);
 
-    await tester.tap(find.text('Desserts'));
+    await tester.tap(find.text('Body Care'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Classic Cheesecake'), findsOneWidget);
-    expect(find.text('Crispy Halloumi Bites'), findsNothing);
+    expect(find.text('Silk Body Lotion'), findsOneWidget);
+    expect(find.text('Midnight Veil'), findsNothing);
   });
 
   testWidgets('product details opens with push navigation and supports back', (
@@ -308,12 +311,12 @@ void main() {
 
     await tester.tapNavLabel(l10n.catalogTitle);
     await tester.pumpAndSettle();
-    await tester.tapProductCard('Crispy Halloumi Bites');
+    await tester.tapProductCard('Midnight Veil');
     await tester.pumpAndSettle();
 
     expect(find.text(l10n.productDetailsTitle), findsWidgets);
-    await tester.scrollProductDetailsUntil(find.text('Crispy Halloumi Bites'));
-    expect(find.text('Crispy Halloumi Bites'), findsOneWidget);
+    await tester.scrollProductDetailsUntil(find.text('Midnight Veil'));
+    expect(find.text('Midnight Veil'), findsOneWidget);
     expect(find.byTooltip('Back'), findsOneWidget);
 
     final didPop = await tester.binding.handlePopRoute();
@@ -331,21 +334,21 @@ void main() {
     await tester.openFirstProduct(sampleCatalog);
 
     expect(find.text(l10n.productDetailsTitle), findsWidgets);
-    await tester.scrollProductDetailsUntil(find.text('Crispy Halloumi Bites'));
-    expect(find.text('Crispy Halloumi Bites'), findsOneWidget);
+    await tester.scrollProductDetailsUntil(find.text('Midnight Veil'));
+    expect(find.text('Midnight Veil'), findsOneWidget);
     await tester.scrollProductDetailsUntil(
-      find.text('Golden halloumi cubes served with lemon herb dip.'),
+      find.text('Dark violet woods softened by iris and clean musk.'),
     );
     expect(
-      find.text('Golden halloumi cubes served with lemon herb dip.'),
+      find.text('Dark violet woods softened by iris and clean musk.'),
       findsOneWidget,
     );
     await tester.scrollProductDetailsUntil(find.text(l10n.available));
     expect(find.text(l10n.available), findsOneWidget);
-    await tester.scrollProductDetailsUntil(find.text('vegetarian'));
-    expect(find.text('vegetarian'), findsOneWidget);
-    await tester.scrollProductDetailsUntil(find.text(r'$7.50'));
-    expect(find.text(r'$7.50'), findsOneWidget);
+    await tester.scrollProductDetailsUntil(find.text('woody'));
+    expect(find.text('woody'), findsOneWidget);
+    await tester.scrollProductDetailsUntil(find.text(r'$96.00'));
+    expect(find.text(r'$96.00'), findsOneWidget);
   });
 
   testWidgets('product details quantity controls never go below one', (
@@ -407,8 +410,8 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text(l10n.cartTitle), findsWidgets);
-    expect(find.text('Crispy Halloumi Bites'), findsOneWidget);
-    expect(find.text(r'$7.50'), findsWidgets);
+    expect(find.text('Midnight Veil'), findsOneWidget);
+    expect(find.text(r'$96.00'), findsWidgets);
   });
 
   testWidgets('cart item quantity changes update totals', (
@@ -420,13 +423,13 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('2'), findsWidgets);
-    expect(find.text(r'$15.00'), findsWidgets);
+    expect(find.text(r'$192.00'), findsWidgets);
 
     await tester.tap(find.byTooltip(l10n.decreaseQuantity));
     await tester.pumpAndSettle();
 
     expect(find.text('1'), findsWidgets);
-    expect(find.text(r'$7.50'), findsWidgets);
+    expect(find.text(r'$96.00'), findsWidgets);
   });
 
   testWidgets('cart shows empty state', (WidgetTester tester) async {
@@ -453,7 +456,7 @@ void main() {
 
     await tester.tap(find.text(l10n.cancel));
     await tester.pumpAndSettle();
-    expect(find.text('Crispy Halloumi Bites'), findsOneWidget);
+    expect(find.text('Midnight Veil'), findsOneWidget);
 
     await tester.tap(find.byTooltip(l10n.clearCart));
     await tester.pumpAndSettle();
@@ -927,7 +930,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text(l10n.cartTitle), findsWidgets);
-    expect(find.text('Crispy Halloumi Bites'), findsWidgets);
+    expect(find.text('Midnight Veil'), findsWidgets);
   });
 
   testWidgets('feedback component renders all variants', (
@@ -992,7 +995,7 @@ void main() {
     await tester.pump();
 
     expect(repository.loadCount, 2);
-    expect(find.text('Catalogly Kitchen'), findsOneWidget);
+    expect(find.text('Aura Atelier'), findsOneWidget);
     expect(find.byType(AppSkeletonHome), findsNothing);
 
     pendingRefresh.complete(sampleCatalog);
@@ -1029,7 +1032,7 @@ void main() {
     failedRefresh.completeError(StateError('bad json'));
     await tester.pump();
 
-    expect(find.text('Catalogly Kitchen'), findsOneWidget);
+    expect(find.text('Aura Atelier'), findsOneWidget);
     expect(find.byType(AppSkeletonHome), findsNothing);
     expect(find.text(l10n.refreshFailedTitle), findsOneWidget);
 
@@ -1167,7 +1170,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull, reason: 'Catalog width $width');
 
-      await tester.tapProductCard('Crispy Halloumi Bites');
+      await tester.tapProductCard('Midnight Veil');
       await tester.pumpAndSettle();
       expect(
         tester.takeException(),
@@ -1206,7 +1209,7 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tapNavLabel(l10n.catalogTitle);
     await tester.pumpAndSettle();
-    await tester.tapProductCard('Crispy Halloumi Bites');
+    await tester.tapProductCard('Midnight Veil');
     await tester.pumpAndSettle();
 
     expect(tester.takeException(), isNull);
@@ -1355,7 +1358,7 @@ extension on WidgetTester {
     );
     await tapNavLabel(l10n.catalogTitle);
     await pumpAndSettle();
-    await tapProductCard('Crispy Halloumi Bites');
+    await tapProductCard('Midnight Veil');
     await pumpAndSettle();
   }
 

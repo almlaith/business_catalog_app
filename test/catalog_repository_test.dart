@@ -16,14 +16,36 @@ void main() {
       final catalogJson = jsonDecode(rawJson) as Map<String, Object?>;
       final catalog = CatalogData.fromJson(catalogJson);
 
-      expect(catalog.business.businessName, 'Catalogly Kitchen');
+      expect(catalog.business.businessName, 'Aura Atelier');
       expect(catalog.business.currencyCode, 'USD');
       expect(catalog.categories, hasLength(4));
-      expect(catalog.products, hasLength(12));
+      expect(catalog.products, hasLength(16));
       expect(
         catalog.products.where((product) => product.isFeatured),
         isNotEmpty,
       );
+    });
+
+    test('bundles every catalog image asset', () async {
+      final rawJson = File(AppAssets.catalogData).readAsStringSync();
+      final catalog = CatalogData.fromJson(
+        jsonDecode(rawJson) as Map<String, Object?>,
+      );
+      final manifest = await AssetManifest.loadFromAssetBundle(rootBundle);
+      final bundledAssets = manifest.listAssets().toSet();
+      final catalogImages = <String>{
+        catalog.business.logoAsset,
+        ...catalog.categories.map((category) => category.imageAsset),
+        ...catalog.products.map((product) => product.imageAsset),
+      };
+
+      for (final imagePath in catalogImages) {
+        expect(
+          bundledAssets,
+          contains(imagePath),
+          reason: 'Catalog image is not bundled: $imagePath',
+        );
+      }
     });
   });
 
@@ -37,14 +59,19 @@ void main() {
 
       final catalog = await repository.loadCatalog();
 
-      expect(catalog.business.id, 'catalogly-kitchen');
+      expect(catalog.business.id, 'aura-atelier');
       expect(
         catalog.categories.map((category) => category.id),
-        contains('mains'),
+        contains('oud-collection'),
       );
       expect(
         catalog.products.map((product) => product.categoryId).toSet(),
-        containsAll(['starters', 'mains', 'desserts', 'drinks']),
+        containsAll([
+          'signature-scents',
+          'oud-collection',
+          'body-care',
+          'gift-sets',
+        ]),
       );
     });
 

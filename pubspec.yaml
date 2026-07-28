@@ -54,5 +54,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/data/catalog.json
-    - assets/images/
     - assets/branding/
+    - assets/images/aura_atelier/logo/
+    - assets/images/aura_atelier/categories/
+    - assets/images/aura_atelier/products/

@@ -56,11 +56,11 @@ void main() {
       l10n: l10n,
     );
 
-    expect(message, contains('Hello Catalogly Kitchen,'));
+    expect(message, contains('Hello Aura Atelier,'));
     expect(message, contains('Name: John Smith'));
     expect(message, contains('Order type: Pickup'));
-    expect(message, contains(r'2 x $7.50 = $15.00'));
-    expect(message, contains(r'Subtotal: $21.25'));
+    expect(message, contains(r'2 x $96.00 = $192.00'));
+    expect(message, contains(r'Subtotal: $280.00'));
     expect(message, isNot(contains('Delivery address:')));
   });
 
