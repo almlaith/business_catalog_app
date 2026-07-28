@@ -92,32 +92,58 @@ class _AnimatedLaunchScreen extends StatelessWidget {
           return Stack(
             fit: StackFit.expand,
             children: [
-              PositionedDirectional(
-                top: 72 - (18 * value),
-                start: -96 + (20 * value),
-                child: _LaunchLightWash(
-                  color: AuroraColors.primaryViolet,
-                  opacity: 0.28,
-                  angle: -0.24,
-                ),
-              ),
-              PositionedDirectional(
-                top: 178 + (18 * value),
-                end: -120 + (26 * value),
-                child: _LaunchLightWash(
-                  color: AuroraColors.electricCyan,
-                  opacity: 0.22,
-                  angle: 0.28,
+              Opacity(
+                opacity: value,
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    PositionedDirectional(
+                      top: 72 - (18 * value),
+                      start: -96 + (20 * value),
+                      child: _LaunchLightWash(
+                        color: AuroraColors.primaryViolet,
+                        opacity: 0.28,
+                        angle: -0.24,
+                      ),
+                    ),
+                    PositionedDirectional(
+                      top: 178 + (18 * value),
+                      end: -120 + (26 * value),
+                      child: _LaunchLightWash(
+                        color: AuroraColors.electricCyan,
+                        opacity: 0.22,
+                        angle: 0.28,
+                      ),
+                    ),
+                  ],
                 ),
               ),
               Center(
+                child: Transform.scale(scale: 1 + (0.08 * value), child: child),
+              ),
+              Align(
+                alignment: const Alignment(0, 0.46),
                 child: Opacity(
-                  opacity: value,
+                  opacity: Curves.easeOut.transform(
+                    ((value - 0.32) / 0.68).clamp(0.0, 1.0),
+                  ),
                   child: Transform.translate(
-                    offset: Offset(0, 18 * (1 - value)),
-                    child: Transform.scale(
-                      scale: 0.88 + (0.12 * value),
-                      child: child,
+                    offset: Offset(0, 12 * (1 - value)),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.xxl,
+                      ),
+                      child: Text(
+                        context.l10n.appTitle,
+                        textAlign: TextAlign.center,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context).textTheme.headlineSmall
+                            ?.copyWith(
+                              color: AuroraColors.darkText,
+                              fontWeight: FontWeight.w900,
+                            ),
+                      ),
                     ),
                   ),
                 ),
@@ -125,56 +151,12 @@ class _AnimatedLaunchScreen extends StatelessWidget {
             ],
           );
         },
-        child: _LaunchContent(title: context.l10n.appTitle),
-      ),
-    );
-  }
-}
-
-class _LaunchContent extends StatelessWidget {
-  const _LaunchContent({required this.title});
-
-  final String title;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(AppSpacing.xxl),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          DecoratedBox(
-            decoration: BoxDecoration(
-              gradient: AuroraGradients.primary,
-              borderRadius: BorderRadius.circular(AppRadii.xxl),
-              boxShadow: AuroraShadows.glow(
-                AuroraColors.primaryViolet,
-                opacity: 0.30,
-                blur: 42,
-              ),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(AppSpacing.md),
-              child: Image.asset(
-                'assets/branding/splash_logo.png',
-                width: 86,
-                height: 86,
-                fit: BoxFit.contain,
-              ),
-            ),
-          ),
-          const SizedBox(height: AppSpacing.xl),
-          Text(
-            title,
-            textAlign: TextAlign.center,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              color: AuroraColors.darkText,
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-        ],
+        child: Image.asset(
+          'assets/branding/splash_logo.png',
+          width: 313,
+          height: 313,
+          fit: BoxFit.contain,
+        ),
       ),
     );
   }
