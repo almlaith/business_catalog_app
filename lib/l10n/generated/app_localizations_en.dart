@@ -189,6 +189,44 @@ class AppLocalizationsEn extends AppLocalizations {
   String get unableToOpenLink => 'Unable to open this link.';
 
   @override
+  String get callAction => 'Call';
+
+  @override
+  String get sendEmailAction => 'Send email';
+
+  @override
+  String get openMapAction => 'Open map';
+
+  @override
+  String get openInstagramAction => 'Open Instagram';
+
+  @override
+  String get openFacebookAction => 'Open Facebook';
+
+  @override
+  String get noPhoneApp => 'No phone app is available on this device.';
+
+  @override
+  String get emailAddressCopied => 'Email address copied.';
+
+  @override
+  String get addressCopied => 'Address copied.';
+
+  @override
+  String get linkUnavailable => 'This link is unavailable.';
+
+  @override
+  String get socialLinkUnavailable => 'This social link is unavailable.';
+
+  @override
+  String get demoSocialNotConfigured =>
+      'This demo social link is not configured.';
+
+  @override
+  String get whatsappAppUnavailable =>
+      'WhatsApp is not available on this device.';
+
+  @override
   String get settingsTitle => 'Settings';
 
   @override

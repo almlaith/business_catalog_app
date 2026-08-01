@@ -12,10 +12,11 @@ import 'package:business_catalog_app/features/business_info/widgets/business_inf
 import 'package:business_catalog_app/features/catalog/data/catalog_providers.dart';
 import 'package:business_catalog_app/models/business_config.dart';
 import 'package:business_catalog_app/services/external_link_launcher.dart';
+import 'package:business_catalog_app/services/external_link_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class BusinessInfoScreen extends ConsumerWidget {
   const BusinessInfoScreen({super.key});
@@ -94,56 +95,59 @@ class _BusinessInfoContent extends ConsumerWidget {
           title: l10n.businessDescription,
           value: business.shortDescription,
         ),
-        BusinessInfoRow(
-          icon: Icons.phone_outlined,
-          title: l10n.phone,
-          value: business.phoneNumber,
-          onTap: () => _launch(
-            context,
-            ref,
-            Uri(scheme: 'tel', path: business.phoneNumber),
+        if (business.phoneNumber.trim().isNotEmpty)
+          BusinessInfoRow(
+            icon: Icons.phone_outlined,
+            title: l10n.phone,
+            value: formatPhoneNumber(business.phoneNumber),
+            actionLabel: l10n.callAction,
+            onTap: () => _launchPhone(context, ref),
           ),
-        ),
-        BusinessInfoRow(
-          icon: Icons.email_outlined,
-          title: l10n.email,
-          value: business.email,
-          onTap: () => _launch(
-            context,
-            ref,
-            Uri(scheme: 'mailto', path: business.email),
+        if (business.email.trim().isNotEmpty)
+          BusinessInfoRow(
+            icon: Icons.email_outlined,
+            title: l10n.email,
+            value: business.email.trim(),
+            actionLabel: l10n.sendEmailAction,
+            onTap: () => _launchEmail(context, ref),
           ),
-        ),
-        BusinessInfoRow(
-          icon: Icons.place_outlined,
-          title: l10n.address,
-          value: business.address,
-          onTap: () => _launch(
-            context,
-            ref,
-            Uri.https('www.google.com', '/maps/search/', {
-              'api': '1',
-              'query': business.address,
-            }),
+        if (business.address.trim().isNotEmpty)
+          BusinessInfoRow(
+            icon: Icons.place_outlined,
+            title: l10n.address,
+            value: business.address.trim(),
+            actionLabel: l10n.openMapAction,
+            onTap: () => _launchAddress(context, ref),
           ),
-        ),
         BusinessInfoRow(
           icon: Icons.schedule_outlined,
           title: l10n.openingHours,
           value: openingHours,
         ),
-        BusinessInfoRow(
-          icon: Icons.camera_alt_outlined,
-          title: l10n.instagram,
-          value: business.instagramUrl,
-          onTap: () => _launchParsed(context, ref, business.instagramUrl),
-        ),
-        BusinessInfoRow(
-          icon: Icons.facebook_outlined,
-          title: l10n.facebook,
-          value: business.facebookUrl,
-          onTap: () => _launchParsed(context, ref, business.facebookUrl),
-        ),
+        if (isLaunchableSocialUrl(business.instagramUrl))
+          BusinessInfoRow(
+            icon: Icons.camera_alt_outlined,
+            title: l10n.instagram,
+            value: l10n.instagram,
+            actionLabel: l10n.openInstagramAction,
+            onTap: () => _launchSocial(
+              context,
+              ref,
+              Uri.parse(business.instagramUrl.trim()),
+            ),
+          ),
+        if (isLaunchableSocialUrl(business.facebookUrl))
+          BusinessInfoRow(
+            icon: Icons.facebook_outlined,
+            title: l10n.facebook,
+            value: l10n.facebook,
+            actionLabel: l10n.openFacebookAction,
+            onTap: () => _launchSocial(
+              context,
+              ref,
+              Uri.parse(business.facebookUrl.trim()),
+            ),
+          ),
         BusinessInfoRow(
           icon: Icons.settings_outlined,
           title: l10n.settingsTitle,
@@ -160,42 +164,68 @@ class _BusinessInfoContent extends ConsumerWidget {
     );
   }
 
-  Future<void> _launchParsed(
+  Future<void> _launchPhone(BuildContext context, WidgetRef ref) async {
+    final launched = await _launch(
+      ref,
+      Uri(scheme: 'tel', path: business.phoneNumber.trim()),
+    );
+    if (context.mounted && !launched) {
+      _showInfo(context, context.l10n.noPhoneApp);
+    }
+  }
+
+  Future<void> _launchEmail(BuildContext context, WidgetRef ref) async {
+    final email = business.email.trim();
+    if (!await _launch(ref, Uri(scheme: 'mailto', path: email))) {
+      await Clipboard.setData(ClipboardData(text: email));
+      if (context.mounted) {
+        _showInfo(context, context.l10n.emailAddressCopied);
+      }
+    }
+  }
+
+  Future<void> _launchAddress(BuildContext context, WidgetRef ref) async {
+    final address = business.address.trim();
+    final mapsUri = Uri.https('www.google.com', '/maps/search/', {
+      'api': '1',
+      'query': address,
+    });
+    if (!await _launch(ref, mapsUri)) {
+      await Clipboard.setData(ClipboardData(text: address));
+      if (context.mounted) {
+        _showInfo(context, context.l10n.addressCopied);
+      }
+    }
+  }
+
+  Future<void> _launchSocial(
     BuildContext context,
     WidgetRef ref,
-    String value,
+    Uri uri,
   ) async {
-    final uri = Uri.tryParse(value);
-    if (uri == null) {
-      _showError(context);
-      return;
-    }
-
-    await _launch(context, ref, uri);
-  }
-
-  Future<void> _launch(BuildContext context, WidgetRef ref, Uri uri) async {
-    final launcher = ref.read(externalLinkLauncherProvider);
-    final canLaunch = await launcher.canLaunch(uri);
-    final launched = canLaunch
-        ? await launcher.launch(uri, mode: LaunchMode.externalApplication)
-        : false;
-
-    if (!context.mounted) {
-      return;
-    }
-
-    if (!launched) {
-      _showError(context);
+    if (!await _launch(ref, uri) && context.mounted) {
+      _showWarning(context, context.l10n.socialLinkUnavailable);
     }
   }
 
-  void _showError(BuildContext context) {
+  Future<bool> _launch(WidgetRef ref, Uri uri) =>
+      tryLaunchExternal(ref.read(externalLinkLauncherProvider), uri);
+
+  void _showInfo(BuildContext context, String message) {
     showAppFeedback(
       context,
-      type: AppFeedbackType.error,
-      title: context.l10n.errorTitle,
-      message: context.l10n.unableToOpenLink,
+      type: AppFeedbackType.info,
+      title: context.l10n.infoTitle,
+      message: message,
+    );
+  }
+
+  void _showWarning(BuildContext context, String message) {
+    showAppFeedback(
+      context,
+      type: AppFeedbackType.warning,
+      title: context.l10n.warningTitle,
+      message: message,
     );
   }
 }

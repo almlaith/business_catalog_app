@@ -452,6 +452,78 @@ abstract class AppLocalizations {
   /// **'Unable to open this link.'**
   String get unableToOpenLink;
 
+  /// No description provided for @callAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Call'**
+  String get callAction;
+
+  /// No description provided for @sendEmailAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Send email'**
+  String get sendEmailAction;
+
+  /// No description provided for @openMapAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Open map'**
+  String get openMapAction;
+
+  /// No description provided for @openInstagramAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Instagram'**
+  String get openInstagramAction;
+
+  /// No description provided for @openFacebookAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Facebook'**
+  String get openFacebookAction;
+
+  /// No description provided for @noPhoneApp.
+  ///
+  /// In en, this message translates to:
+  /// **'No phone app is available on this device.'**
+  String get noPhoneApp;
+
+  /// No description provided for @emailAddressCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Email address copied.'**
+  String get emailAddressCopied;
+
+  /// No description provided for @addressCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Address copied.'**
+  String get addressCopied;
+
+  /// No description provided for @linkUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'This link is unavailable.'**
+  String get linkUnavailable;
+
+  /// No description provided for @socialLinkUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'This social link is unavailable.'**
+  String get socialLinkUnavailable;
+
+  /// No description provided for @demoSocialNotConfigured.
+  ///
+  /// In en, this message translates to:
+  /// **'This demo social link is not configured.'**
+  String get demoSocialNotConfigured;
+
+  /// No description provided for @whatsappAppUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'WhatsApp is not available on this device.'**
+  String get whatsappAppUnavailable;
+
   /// No description provided for @settingsTitle.
   ///
   /// In en, this message translates to:

@@ -7,6 +7,7 @@ class BusinessInfoRow extends StatelessWidget {
     required this.icon,
     required this.title,
     required this.value,
+    this.actionLabel,
     this.onTap,
     super.key,
   });
@@ -14,6 +15,7 @@ class BusinessInfoRow extends StatelessWidget {
   final IconData icon;
   final String title;
   final String value;
+  final String? actionLabel;
   final VoidCallback? onTap;
 
   @override
@@ -63,6 +65,16 @@ class BusinessInfoRow extends StatelessWidget {
                             height: 1.32,
                           ),
                         ),
+                        if (actionLabel != null) ...[
+                          const SizedBox(height: AppSpacing.xs),
+                          Text(
+                            actionLabel!,
+                            style: theme.textTheme.labelSmall?.copyWith(
+                              color: theme.colorScheme.primary,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                        ],
                       ],
                     ),
                   ),

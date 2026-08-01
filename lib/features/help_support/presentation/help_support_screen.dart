@@ -13,10 +13,11 @@ import 'package:business_catalog_app/features/catalog/data/catalog_providers.dar
 import 'package:business_catalog_app/features/checkout/application/whatsapp_order_launcher.dart';
 import 'package:business_catalog_app/models/business_config.dart';
 import 'package:business_catalog_app/services/external_link_launcher.dart';
+import 'package:business_catalog_app/services/external_link_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class HelpSupportScreen extends ConsumerWidget {
   const HelpSupportScreen({super.key});
@@ -131,12 +132,8 @@ class _HelpSupportContent extends ConsumerWidget {
           valueKey: const ValueKey('support-action-call'),
           icon: Icons.call_rounded,
           title: l10n.callBusiness,
-          description: business.phoneNumber,
-          onTap: () => _launch(
-            context,
-            ref,
-            Uri(scheme: 'tel', path: business.phoneNumber),
-          ),
+          description: formatPhoneNumber(business.phoneNumber),
+          onTap: () => _launchPhone(context, ref),
         ),
       );
     }
@@ -148,11 +145,7 @@ class _HelpSupportContent extends ConsumerWidget {
           icon: Icons.alternate_email_rounded,
           title: l10n.sendEmail,
           description: business.email,
-          onTap: () => _launch(
-            context,
-            ref,
-            Uri(scheme: 'mailto', path: business.email),
-          ),
+          onTap: () => _launchEmail(context, ref),
         ),
       );
     }
@@ -179,26 +172,34 @@ class _HelpSupportContent extends ConsumerWidget {
       ),
     );
 
-    if (business.instagramUrl.trim().isNotEmpty) {
+    if (isLaunchableSocialUrl(business.instagramUrl)) {
       actions.add(
         AuroraSupportActionCard(
           valueKey: const ValueKey('support-action-instagram'),
           icon: Icons.camera_alt_rounded,
           title: l10n.instagram,
-          description: business.instagramUrl,
-          onTap: () => _launchParsed(context, ref, business.instagramUrl),
+          description: l10n.openInstagramAction,
+          onTap: () => _launchSocial(
+            context,
+            ref,
+            Uri.parse(business.instagramUrl.trim()),
+          ),
         ),
       );
     }
 
-    if (business.facebookUrl.trim().isNotEmpty) {
+    if (isLaunchableSocialUrl(business.facebookUrl)) {
       actions.add(
         AuroraSupportActionCard(
           valueKey: const ValueKey('support-action-facebook'),
           icon: Icons.facebook_rounded,
           title: l10n.facebook,
-          description: business.facebookUrl,
-          onTap: () => _launchParsed(context, ref, business.facebookUrl),
+          description: l10n.openFacebookAction,
+          onTap: () => _launchSocial(
+            context,
+            ref,
+            Uri.parse(business.facebookUrl.trim()),
+          ),
         ),
       );
     }
@@ -210,56 +211,70 @@ class _HelpSupportContent extends ConsumerWidget {
     try {
       final launcher = ref.read(whatsappOrderLauncherProvider);
       final number = launcher.normalizeWhatsAppNumber(business.whatsappNumber);
-      await _launch(
-        context,
+      final launched = await _launch(
         ref,
         Uri.https('wa.me', '/$number', {
           'text': context.l10n.supportWhatsappMessage(business.businessName),
         }),
       );
+      if (context.mounted && !launched) {
+        _showInfo(context, context.l10n.whatsappAppUnavailable);
+      }
     } on FormatException {
       if (context.mounted) {
-        _showError(context);
+        _showWarning(context, context.l10n.invalidWhatsappNumber);
       }
     }
   }
 
-  Future<void> _launchParsed(
+  Future<void> _launchPhone(BuildContext context, WidgetRef ref) async {
+    final launched = await _launch(
+      ref,
+      Uri(scheme: 'tel', path: business.phoneNumber.trim()),
+    );
+    if (context.mounted && !launched) {
+      _showInfo(context, context.l10n.noPhoneApp);
+    }
+  }
+
+  Future<void> _launchEmail(BuildContext context, WidgetRef ref) async {
+    final email = business.email.trim();
+    if (!await _launch(ref, Uri(scheme: 'mailto', path: email))) {
+      await Clipboard.setData(ClipboardData(text: email));
+      if (context.mounted) {
+        _showInfo(context, context.l10n.emailAddressCopied);
+      }
+    }
+  }
+
+  Future<void> _launchSocial(
     BuildContext context,
     WidgetRef ref,
-    String value,
+    Uri uri,
   ) async {
-    final uri = Uri.tryParse(value);
-    if (uri == null) {
-      _showError(context);
-      return;
-    }
-
-    await _launch(context, ref, uri);
-  }
-
-  Future<void> _launch(BuildContext context, WidgetRef ref, Uri uri) async {
-    final launcher = ref.read(externalLinkLauncherProvider);
-    final canLaunch = await launcher.canLaunch(uri);
-    final launched = canLaunch
-        ? await launcher.launch(uri, mode: LaunchMode.externalApplication)
-        : false;
-
-    if (!context.mounted) {
-      return;
-    }
-
-    if (!launched) {
-      _showError(context);
+    if (!await _launch(ref, uri) && context.mounted) {
+      _showWarning(context, context.l10n.socialLinkUnavailable);
     }
   }
 
-  void _showError(BuildContext context) {
+  Future<bool> _launch(WidgetRef ref, Uri uri) =>
+      tryLaunchExternal(ref.read(externalLinkLauncherProvider), uri);
+
+  void _showInfo(BuildContext context, String message) {
     showAppFeedback(
       context,
-      type: AppFeedbackType.error,
-      title: context.l10n.errorTitle,
-      message: context.l10n.unableToOpenLink,
+      type: AppFeedbackType.info,
+      title: context.l10n.infoTitle,
+      message: message,
+    );
+  }
+
+  void _showWarning(BuildContext context, String message) {
+    showAppFeedback(
+      context,
+      type: AppFeedbackType.warning,
+      title: context.l10n.warningTitle,
+      message: message,
     );
   }
 }

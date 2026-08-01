@@ -187,6 +187,42 @@ class AppLocalizationsAr extends AppLocalizations {
   String get unableToOpenLink => 'تعذر فتح هذا الرابط.';
 
   @override
+  String get callAction => 'اتصال';
+
+  @override
+  String get sendEmailAction => 'إرسال بريد';
+
+  @override
+  String get openMapAction => 'فتح الخريطة';
+
+  @override
+  String get openInstagramAction => 'فتح إنستغرام';
+
+  @override
+  String get openFacebookAction => 'فتح فيسبوك';
+
+  @override
+  String get noPhoneApp => 'لا يتوفر تطبيق هاتف على هذا الجهاز.';
+
+  @override
+  String get emailAddressCopied => 'تم نسخ عنوان البريد الإلكتروني.';
+
+  @override
+  String get addressCopied => 'تم نسخ العنوان.';
+
+  @override
+  String get linkUnavailable => 'هذا الرابط غير متاح.';
+
+  @override
+  String get socialLinkUnavailable => 'رابط التواصل هذا غير متاح.';
+
+  @override
+  String get demoSocialNotConfigured => 'لم يتم إعداد رابط التواصل التجريبي.';
+
+  @override
+  String get whatsappAppUnavailable => 'واتساب غير متاح على هذا الجهاز.';
+
+  @override
   String get settingsTitle => 'الإعدادات';
 
   @override

@@ -608,21 +608,178 @@ void main() {
     expect(find.byTooltip('Back'), findsNothing);
   });
 
-  testWidgets('business information hides empty optional rows', (
+  testWidgets('business information hides demo social placeholders', (
     WidgetTester tester,
   ) async {
-    final catalog = sampleCatalog.copyWith(
-      business: sampleCatalog.business.copyWith(facebookUrl: ''),
-    );
-    await tester.pumpCatalogApp(catalogState: AsyncData(catalog));
+    await tester.pumpCatalogApp(catalogState: AsyncData(sampleCatalog));
 
     await tester.tapNavLabel(l10n.businessInfoNavLabel);
     await tester.pumpAndSettle();
 
     expect(find.text(l10n.phone), findsOneWidget);
     expect(find.text(l10n.email), findsOneWidget);
+    expect(find.text(l10n.instagram), findsNothing);
+    expect(find.text(l10n.facebook), findsNothing);
+    expect(find.text(sampleCatalog.business.instagramUrl), findsNothing);
+    expect(find.text(sampleCatalog.business.facebookUrl), findsNothing);
+  });
+
+  testWidgets('business phone launch succeeds externally', (
+    WidgetTester tester,
+  ) async {
+    final launcher = _FakeExternalLinkLauncher(canLaunchResult: true);
+    await tester.pumpCatalogApp(
+      catalogState: AsyncData(sampleCatalog),
+      externalLinkLauncher: launcher,
+    );
+    await tester.tapNavLabel(l10n.businessInfoNavLabel);
+    await tester.pumpAndSettle();
+
+    await tester.tapInkForText(l10n.phone);
+    await tester.pump();
+
+    expect(launcher.launchedUris.single.scheme, 'tel');
+    expect(
+      launcher.launchedUris.single.path,
+      sampleCatalog.business.phoneNumber,
+    );
+  });
+
+  testWidgets('missing phone app shows localized informational feedback', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpCatalogApp(
+      catalogState: AsyncData(sampleCatalog),
+      externalLinkLauncher: _FakeExternalLinkLauncher(canLaunchResult: false),
+    );
+    await tester.tapNavLabel(l10n.businessInfoNavLabel);
+    await tester.pumpAndSettle();
+
+    await tester.tapInkForText(l10n.phone);
+    await tester.pump();
+
+    expect(find.text(l10n.infoTitle), findsOneWidget);
+    expect(find.text(l10n.noPhoneApp), findsOneWidget);
+    await tester.pump(const Duration(milliseconds: 3100));
+    await tester.pumpAndSettle();
+  });
+
+  testWidgets('email fallback copies the business email', (
+    WidgetTester tester,
+  ) async {
+    String? copiedText;
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+      SystemChannels.platform,
+      (call) async {
+        if (call.method == 'Clipboard.setData') {
+          copiedText =
+              (call.arguments as Map<Object?, Object?>)['text'] as String?;
+        }
+        return null;
+      },
+    );
+    addTearDown(
+      () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        SystemChannels.platform,
+        null,
+      ),
+    );
+    await tester.pumpCatalogApp(
+      catalogState: AsyncData(sampleCatalog),
+      externalLinkLauncher: _FakeExternalLinkLauncher(canLaunchResult: false),
+    );
+    await tester.tapNavLabel(l10n.businessInfoNavLabel);
+    await tester.pumpAndSettle();
+
+    await tester.tapInkForText(l10n.email);
+    await tester.pump();
+
+    expect(copiedText, sampleCatalog.business.email);
+    expect(find.text(l10n.emailAddressCopied), findsOneWidget);
+    await tester.pump(const Duration(milliseconds: 3100));
+    await tester.pumpAndSettle();
+  });
+
+  testWidgets('address opens a universal HTTPS Google Maps search', (
+    WidgetTester tester,
+  ) async {
+    addTearDown(() => tester.view.resetPhysicalSize());
+    tester.view.physicalSize = const Size(800, 1000);
+    tester.view.devicePixelRatio = 1;
+    final launcher = _FakeExternalLinkLauncher(canLaunchResult: true);
+    await tester.pumpCatalogApp(
+      catalogState: AsyncData(sampleCatalog),
+      externalLinkLauncher: launcher,
+    );
+    await tester.tapNavLabel(l10n.businessInfoNavLabel);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(l10n.openMapAction));
+    await tester.pump();
+
+    final uri = launcher.launchedUris.single;
+    expect(uri.scheme, 'https');
+    expect(uri.host, 'www.google.com');
+    expect(uri.path, '/maps/search/');
+    expect(uri.queryParameters['query'], sampleCatalog.business.address);
+  });
+
+  testWidgets('address fallback copies the business address', (
+    WidgetTester tester,
+  ) async {
+    addTearDown(() => tester.view.resetPhysicalSize());
+    tester.view.physicalSize = const Size(800, 1000);
+    tester.view.devicePixelRatio = 1;
+    String? copiedText;
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+      SystemChannels.platform,
+      (call) async {
+        if (call.method == 'Clipboard.setData') {
+          copiedText =
+              (call.arguments as Map<Object?, Object?>)['text'] as String?;
+        }
+        return null;
+      },
+    );
+    addTearDown(
+      () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        SystemChannels.platform,
+        null,
+      ),
+    );
+    await tester.pumpCatalogApp(
+      catalogState: AsyncData(sampleCatalog),
+      externalLinkLauncher: _FakeExternalLinkLauncher(canLaunchResult: false),
+    );
+    await tester.tapNavLabel(l10n.businessInfoNavLabel);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(l10n.openMapAction));
+    await tester.pump();
+
+    expect(copiedText, sampleCatalog.business.address);
+    expect(find.text(l10n.addressCopied), findsOneWidget);
+    await tester.pump(const Duration(milliseconds: 3100));
+    await tester.pumpAndSettle();
+  });
+
+  testWidgets('real HTTPS social URL launches without displaying raw URL', (
+    WidgetTester tester,
+  ) async {
+    const instagramUrl = 'https://www.instagram.com/aurora_portfolio';
+    final catalog = sampleCatalog.copyWith(
+      business: sampleCatalog.business.copyWith(
+        instagramUrl: instagramUrl,
+        facebookUrl: '',
+      ),
+    );
+    final launcher = _FakeExternalLinkLauncher(canLaunchResult: true);
+    await tester.pumpCatalogApp(
+      catalogState: AsyncData(catalog),
+      externalLinkLauncher: launcher,
+    );
+    await tester.tapNavLabel(l10n.businessInfoNavLabel);
+    await tester.pumpAndSettle();
     await tester.scrollUntilVisible(
-      find.text(l10n.instagram),
+      find.text(l10n.openInstagramAction),
       160,
       scrollable: find
           .descendant(
@@ -631,8 +788,12 @@ void main() {
           )
           .first,
     );
-    expect(find.text(l10n.instagram), findsOneWidget);
-    expect(find.text(l10n.facebook), findsNothing);
+
+    expect(find.text(instagramUrl), findsNothing);
+    await tester.tapInkForText(l10n.openInstagramAction);
+    await tester.pump();
+
+    expect(launcher.launchedUris.single, Uri.parse(instagramUrl));
   });
 
   testWidgets('settings navigation opens from business information', (
@@ -726,6 +887,40 @@ void main() {
     );
   });
 
+  testWidgets('help screen hides demo social placeholders', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpCatalogApp(catalogState: AsyncData(sampleCatalog));
+
+    await tester.openHelpSupportDirectly();
+
+    expect(
+      find.byKey(const ValueKey('support-action-instagram')),
+      findsNothing,
+    );
+    expect(find.byKey(const ValueKey('support-action-facebook')), findsNothing);
+    expect(find.text(sampleCatalog.business.instagramUrl), findsNothing);
+    expect(find.text(sampleCatalog.business.facebookUrl), findsNothing);
+  });
+
+  testWidgets('unavailable support WhatsApp shows informational feedback', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpCatalogApp(
+      catalogState: AsyncData(sampleCatalog),
+      externalLinkLauncher: _FakeExternalLinkLauncher(canLaunchResult: false),
+    );
+
+    await tester.openHelpSupportDirectly();
+    await tester.tapInkForText(l10n.openWhatsapp);
+    await tester.pump();
+
+    expect(find.text(l10n.infoTitle), findsOneWidget);
+    expect(find.text(l10n.whatsappAppUnavailable), findsOneWidget);
+    await tester.pump(const Duration(milliseconds: 3100));
+    await tester.pumpAndSettle();
+  });
+
   testWidgets('FAQ accordion expands one answer at a time', (
     WidgetTester tester,
   ) async {
@@ -753,11 +948,8 @@ void main() {
     await tester.tapInkForText(l10n.callBusiness);
     await tester.pump();
 
-    expect(find.text(l10n.unableToOpenLink), findsOneWidget);
-    expect(
-      tester.getTopLeft(find.text(l10n.unableToOpenLink)).dy,
-      lessThan(170),
-    );
+    expect(find.text(l10n.noPhoneApp), findsOneWidget);
+    expect(tester.getTopLeft(find.text(l10n.noPhoneApp)).dy, lessThan(170));
 
     await tester.pump(const Duration(milliseconds: 3100));
     await tester.pumpAndSettle();
