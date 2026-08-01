@@ -1,5 +1,6 @@
 import 'package:business_catalog_app/core/constants/app_spacing.dart';
 import 'package:business_catalog_app/core/widgets/aurora_components.dart';
+import 'package:business_catalog_app/core/widgets/bidi_safe_text.dart';
 import 'package:flutter/material.dart';
 
 class BusinessInfoRow extends StatelessWidget {
@@ -59,7 +60,7 @@ class BusinessInfoRow extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: AppSpacing.xs),
-                        Text(
+                        BidiSafeText(
                           value,
                           style: theme.textTheme.bodyMedium?.copyWith(
                             height: 1.32,

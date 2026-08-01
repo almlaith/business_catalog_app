@@ -98,12 +98,16 @@ class AuroraSectionHeader extends StatelessWidget {
     required this.title,
     this.action,
     this.subtitle,
+    this.titleTextDirection,
+    this.subtitleTextDirection,
     super.key,
   });
 
   final String title;
   final String? subtitle;
   final Widget? action;
+  final TextDirection? titleTextDirection;
+  final TextDirection? subtitleTextDirection;
 
   @override
   Widget build(BuildContext context) {
@@ -118,6 +122,7 @@ class AuroraSectionHeader extends StatelessWidget {
             children: [
               Text(
                 title,
+                textDirection: titleTextDirection,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: theme.textTheme.titleLarge?.copyWith(
@@ -128,6 +133,7 @@ class AuroraSectionHeader extends StatelessWidget {
                 const SizedBox(height: AppSpacing.xs),
                 Text(
                   subtitle!,
+                  textDirection: subtitleTextDirection,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: theme.textTheme.bodySmall,

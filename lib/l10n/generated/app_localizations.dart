@@ -299,7 +299,7 @@ abstract class AppLocalizations {
   /// No description provided for @checkoutNotImplemented.
   ///
   /// In en, this message translates to:
-  /// **'Payment and order history are not implemented yet.'**
+  /// **'Review your items before continuing to WhatsApp checkout.'**
   String get checkoutNotImplemented;
 
   /// No description provided for @customerDetails.
@@ -539,7 +539,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsHeaderDescription.
   ///
   /// In en, this message translates to:
-  /// **'Tune the look, language, and support options for this reusable catalog app.'**
+  /// **'Customize your appearance, language, and support preferences.'**
   String get settingsHeaderDescription;
 
   /// No description provided for @appearanceSection.
@@ -599,7 +599,7 @@ abstract class AppLocalizations {
   /// No description provided for @themeSettingDescription.
   ///
   /// In en, this message translates to:
-  /// **'Choose Dark, Light, or System appearance. Dark is the template default.'**
+  /// **'Choose Dark, Light, or System appearance. Dark is the default.'**
   String get themeSettingDescription;
 
   /// No description provided for @systemTheme.
@@ -611,7 +611,7 @@ abstract class AppLocalizations {
   /// No description provided for @systemThemeDescription.
   ///
   /// In en, this message translates to:
-  /// **'Follow the device setting when the client prefers automatic switching.'**
+  /// **'Follow this device\'s appearance setting.'**
   String get systemThemeDescription;
 
   /// No description provided for @lightTheme.
@@ -659,7 +659,7 @@ abstract class AppLocalizations {
   /// No description provided for @applicationSectionDescription.
   ///
   /// In en, this message translates to:
-  /// **'Template information, support, and reset actions.'**
+  /// **'Application information, support, and preference controls.'**
   String get applicationSectionDescription;
 
   /// No description provided for @aboutSection.
@@ -671,7 +671,7 @@ abstract class AppLocalizations {
   /// No description provided for @aboutAppDescription.
   ///
   /// In en, this message translates to:
-  /// **'A reusable local catalog and WhatsApp ordering template for small businesses.'**
+  /// **'A modern catalog and WhatsApp ordering experience for small businesses.'**
   String get aboutAppDescription;
 
   /// No description provided for @appVersion.
@@ -683,7 +683,7 @@ abstract class AppLocalizations {
   /// No description provided for @appVersionDescription.
   ///
   /// In en, this message translates to:
-  /// **'Installed template build information.'**
+  /// **'Current application version.'**
   String get appVersionDescription;
 
   /// No description provided for @resetAppearance.
@@ -695,7 +695,7 @@ abstract class AppLocalizations {
   /// No description provided for @resetAppearanceDescription.
   ///
   /// In en, this message translates to:
-  /// **'Return language and theme to the template defaults.'**
+  /// **'Restore the default theme and language preferences.'**
   String get resetAppearanceDescription;
 
   /// No description provided for @resetAppearanceQuestion.
@@ -767,13 +767,13 @@ abstract class AppLocalizations {
   /// No description provided for @quickSupportActionsDescription.
   ///
   /// In en, this message translates to:
-  /// **'Use the available channels configured for this business.'**
+  /// **'Choose any available way to contact the business.'**
   String get quickSupportActionsDescription;
 
   /// No description provided for @callBusiness.
   ///
   /// In en, this message translates to:
-  /// **'Call business'**
+  /// **'Call'**
   String get callBusiness;
 
   /// No description provided for @sendEmail.
@@ -797,7 +797,7 @@ abstract class AppLocalizations {
   /// No description provided for @visitBusinessInformation.
   ///
   /// In en, this message translates to:
-  /// **'Visit business information'**
+  /// **'View business information'**
   String get visitBusinessInformation;
 
   /// No description provided for @visitBusinessInformationDescription.
@@ -821,7 +821,7 @@ abstract class AppLocalizations {
   /// No description provided for @faqDescription.
   ///
   /// In en, this message translates to:
-  /// **'Generic answers that keep the template reusable.'**
+  /// **'Helpful answers about ordering, support, and application features.'**
   String get faqDescription;
 
   /// No description provided for @faqPlaceOrderQuestion.
@@ -869,7 +869,7 @@ abstract class AppLocalizations {
   /// No description provided for @faqPaymentAnswer.
   ///
   /// In en, this message translates to:
-  /// **'No. This template does not process payments inside the app.'**
+  /// **'No. Payment is arranged directly with the business outside the application.'**
   String get faqPaymentAnswer;
 
   /// No description provided for @faqUnavailableQuestion.
@@ -881,7 +881,7 @@ abstract class AppLocalizations {
   /// No description provided for @faqUnavailableAnswer.
   ///
   /// In en, this message translates to:
-  /// **'Availability is controlled by the local catalog data. Unavailable items are shown clearly and cannot be added to the cart.'**
+  /// **'Some items may be temporarily unavailable and cannot be added to the cart.'**
   String get faqUnavailableAnswer;
 
   /// No description provided for @aboutOrderingTitle.
@@ -953,37 +953,37 @@ abstract class AppLocalizations {
   /// No description provided for @troubleshootingDescription.
   ///
   /// In en, this message translates to:
-  /// **'Quick checks for common local-template issues.'**
+  /// **'Quick solutions for common issues.'**
   String get troubleshootingDescription;
 
   /// No description provided for @troubleshootWhatsapp.
   ///
   /// In en, this message translates to:
-  /// **'If WhatsApp does not open, check that WhatsApp or a compatible browser is available on the device.'**
+  /// **'If WhatsApp does not open, make sure WhatsApp or a compatible browser is installed.'**
   String get troubleshootWhatsapp;
 
   /// No description provided for @troubleshootContactLink.
   ///
   /// In en, this message translates to:
-  /// **'If a contact link does not work, verify the phone, email, or URL in catalog.json.'**
+  /// **'If a contact action does not open, try again or use another available contact method.'**
   String get troubleshootContactLink;
 
   /// No description provided for @troubleshootImages.
   ///
   /// In en, this message translates to:
-  /// **'If images are not visible, confirm the asset path exists and is registered in pubspec.yaml.'**
+  /// **'If product images do not appear, restart the application and try again.'**
   String get troubleshootImages;
 
   /// No description provided for @troubleshootSettings.
   ///
   /// In en, this message translates to:
-  /// **'If settings do not update immediately, reopen the screen and confirm preferences are saved.'**
+  /// **'If appearance or language changes do not update, reopen the screen.'**
   String get troubleshootSettings;
 
   /// No description provided for @troubleshootRetryContact.
   ///
   /// In en, this message translates to:
-  /// **'You can retry the action or contact the business using another available channel.'**
+  /// **'You can contact the business through another available support channel.'**
   String get troubleshootRetryContact;
 
   /// No description provided for @applicationInformation.
@@ -991,6 +991,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Application information'**
   String get applicationInformation;
+
+  /// No description provided for @businessApplicationDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'{businessName} catalog and WhatsApp ordering experience.'**
+  String businessApplicationDescription(Object businessName);
 
   /// No description provided for @refreshFailedTitle.
   ///
@@ -1001,7 +1007,7 @@ abstract class AppLocalizations {
   /// No description provided for @refreshFailedMessage.
   ///
   /// In en, this message translates to:
-  /// **'The local catalog could not be reloaded. Existing content was kept.'**
+  /// **'Content could not be refreshed. Existing content was kept.'**
   String get refreshFailedMessage;
 
   /// No description provided for @successTitle.

@@ -10,6 +10,7 @@ import 'package:business_catalog_app/core/constants/app_assets.dart';
 import 'package:business_catalog_app/core/constants/app_locales.dart';
 import 'package:business_catalog_app/core/constants/app_route_paths.dart';
 import 'package:business_catalog_app/core/widgets/app_skeleton.dart';
+import 'package:business_catalog_app/core/widgets/bidi_safe_text.dart';
 import 'package:business_catalog_app/l10n/generated/app_localizations_en.dart';
 import 'package:business_catalog_app/l10n/generated/app_localizations_ar.dart';
 import 'package:business_catalog_app/core/widgets/local_asset_image.dart';
@@ -432,6 +433,22 @@ void main() {
     expect(find.text(r'$96.00'), findsWidgets);
   });
 
+  testWidgets('cart uses polished WhatsApp checkout guidance', (
+    WidgetTester tester,
+  ) async {
+    await tester.addFirstProductAndOpenCart(sampleCatalog);
+
+    expect(find.text(l10n.checkoutNotImplemented), findsOneWidget);
+    expect(
+      find.text('Payment and order history are not implemented yet.'),
+      findsNothing,
+    );
+    expect(
+      l10n.checkoutNotImplemented.toLowerCase(),
+      isNot(contains('implemented')),
+    );
+  });
+
   testWidgets('cart shows empty state', (WidgetTester tester) async {
     await tester.pumpCatalogApp(catalogState: AsyncData(sampleCatalog));
 
@@ -823,6 +840,26 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('settings copy contains no template-facing wording', (
+    WidgetTester tester,
+  ) async {
+    final settingsCopy = [
+      l10n.settingsHeaderDescription,
+      l10n.themeSettingDescription,
+      l10n.applicationSectionDescription,
+      l10n.aboutAppDescription,
+      l10n.appVersionDescription,
+      l10n.resetAppearanceDescription,
+    ].join(' ').toLowerCase();
+
+    expect(settingsCopy, isNot(contains('template')));
+    expect(settingsCopy, isNot(contains('reusable catalog app')));
+
+    await tester.pumpCatalogApp(catalogState: AsyncData(sampleCatalog));
+    await tester.openSettings();
+    expect(find.text(l10n.settingsHeaderDescription), findsOneWidget);
+  });
+
   testWidgets('settings screen supports Arabic RTL layout', (
     WidgetTester tester,
   ) async {
@@ -832,13 +869,17 @@ void main() {
     );
 
     await tester.openSettings();
-
     expect(find.text(arL10n.preferencesSummaryTitle), findsOneWidget);
     expect(
       Directionality.of(
         tester.element(find.text(arL10n.preferencesSummaryTitle)),
       ),
       TextDirection.rtl,
+    );
+    await tester.scrollUntilVisible(
+      find.byKey(const ValueKey('language-card-ar')),
+      120,
+      scrollable: find.byType(Scrollable).last,
     );
     expect(find.byKey(const ValueKey('language-card-ar')), findsOneWidget);
   });
@@ -903,6 +944,72 @@ void main() {
     expect(find.text(sampleCatalog.business.facebookUrl), findsNothing);
   });
 
+  testWidgets('help copy contains no developer-facing instructions', (
+    WidgetTester tester,
+  ) async {
+    final helpCopy = [
+      l10n.faqDescription,
+      l10n.faqPaymentAnswer,
+      l10n.troubleshootingDescription,
+      l10n.troubleshootWhatsapp,
+      l10n.troubleshootContactLink,
+      l10n.troubleshootImages,
+      l10n.troubleshootSettings,
+      l10n.troubleshootRetryContact,
+    ].join(' ').toLowerCase();
+
+    for (final developerTerm in [
+      'catalog.json',
+      'pubspec.yaml',
+      'asset path',
+      'template issue',
+      'local-template',
+    ]) {
+      expect(helpCopy, isNot(contains(developerTerm)));
+    }
+  });
+
+  testWidgets('application information uses the configured business name', (
+    WidgetTester tester,
+  ) async {
+    const configuredName = 'Configured Atelier';
+    final catalog = sampleCatalog.copyWith(
+      business: sampleCatalog.business.copyWith(businessName: configuredName),
+    );
+    await tester.pumpCatalogApp(catalogState: AsyncData(catalog));
+    await tester.openHelpSupportDirectly();
+    await tester.scrollHelpUntil(
+      find.text(l10n.businessApplicationDescription(configuredName)),
+    );
+
+    expect(find.text(configuredName), findsWidgets);
+    expect(
+      find.text(l10n.businessApplicationDescription(configuredName)),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('polished Arabic settings and help copy renders in RTL', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpCatalogApp(
+      catalogState: AsyncData(sampleCatalog),
+      appSettings: const AppSettings(localeCode: 'ar'),
+    );
+    await tester.openHelpSupportDirectly();
+
+    expect(find.text(arL10n.callBusiness), findsOneWidget);
+    expect(find.text(arL10n.sendEmail), findsOneWidget);
+    expect(
+      Directionality.of(tester.element(find.text(arL10n.callBusiness))),
+      TextDirection.rtl,
+    );
+    expect(
+      arL10n.businessApplicationDescription('Aura Atelier'),
+      'تجربة Aura Atelier لعرض المنتجات واستقبال الطلبات عبر واتساب.',
+    );
+  });
+
   testWidgets('unavailable support WhatsApp shows informational feedback', (
     WidgetTester tester,
   ) async {
@@ -965,6 +1072,11 @@ void main() {
     );
 
     await tester.openSettings();
+    await tester.scrollUntilVisible(
+      find.text(l10n.arabicLanguage),
+      120,
+      scrollable: find.byType(Scrollable).last,
+    );
     await tester.tapInkForText(l10n.arabicLanguage);
     await tester.pumpAndSettle();
 
@@ -1315,6 +1427,78 @@ void main() {
     expect(find.text(arL10n.homeTitle), findsWidgets);
     expect(
       Directionality.of(tester.element(find.text(arL10n.homeTitle).first)),
+      TextDirection.rtl,
+    );
+  });
+
+  testWidgets('Arabic UI preserves LTR business text and punctuation', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpCatalogApp(
+      catalogState: AsyncData(sampleCatalog),
+      appSettings: const AppSettings(localeCode: 'ar'),
+    );
+
+    final description = find.text(sampleCatalog.business.shortDescription);
+    expect(description, findsOneWidget);
+    expect(tester.widget<Text>(description).textDirection, TextDirection.ltr);
+    expect(sampleCatalog.business.shortDescription.endsWith('.'), isTrue);
+    expect(Directionality.of(tester.element(description)), TextDirection.rtl);
+    expect(find.byIcon(Icons.arrow_back_rounded), findsWidgets);
+
+    final context = tester.element(find.byType(Scaffold).first);
+    GoRouter.of(
+      context,
+    ).go(AppRoutePaths.productDetailsPath(sampleCatalog.products.first.id));
+    await tester.pumpAndSettle();
+    final productName = find.text(sampleCatalog.products.first.name).first;
+    expect(tester.widget<Text>(productName).textDirection, TextDirection.ltr);
+    expect(Directionality.of(tester.element(productName)), TextDirection.rtl);
+  });
+
+  testWidgets('Arabic business information keeps contact and hours LTR', (
+    WidgetTester tester,
+  ) async {
+    addTearDown(() => tester.view.resetPhysicalSize());
+    tester.view.physicalSize = const Size(800, 1400);
+    tester.view.devicePixelRatio = 1;
+    await tester.pumpCatalogApp(
+      catalogState: AsyncData(sampleCatalog),
+      appSettings: const AppSettings(localeCode: 'ar'),
+    );
+    await tester.tapNavLabel(arL10n.businessInfoNavLabel);
+    await tester.pumpAndSettle();
+
+    const formattedPhone = '+1 (555) 014-7820';
+    final phone = find.text(formattedPhone);
+    final email = find.text('hello@auraatelier.demo');
+    final hours = find.textContaining('10:00 AM – 8:00 PM').first;
+
+    expect(phone, findsOneWidget);
+    expect(email, findsOneWidget);
+    expect(tester.widget<Text>(phone).textDirection, TextDirection.ltr);
+    expect(tester.widget<Text>(email).textDirection, TextDirection.ltr);
+    expect(tester.widget<Text>(hours).textDirection, TextDirection.ltr);
+    expect(
+      Directionality.of(tester.element(find.text(arL10n.phone))),
+      TextDirection.rtl,
+    );
+  });
+
+  testWidgets('bidi-safe text keeps Arabic values RTL', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Directionality(
+          textDirection: TextDirection.rtl,
+          child: BidiSafeText('نص عربي واضح.'),
+        ),
+      ),
+    );
+
+    expect(
+      tester.widget<Text>(find.text('نص عربي واضح.')).textDirection,
       TextDirection.rtl,
     );
   });

@@ -6,6 +6,7 @@ import 'package:business_catalog_app/core/widgets/app_skeleton.dart';
 import 'package:business_catalog_app/core/widgets/aurora_background.dart';
 import 'package:business_catalog_app/core/widgets/aurora_components.dart';
 import 'package:business_catalog_app/core/widgets/aurora_refresh.dart';
+import 'package:business_catalog_app/core/widgets/bidi_safe_text.dart';
 import 'package:business_catalog_app/features/catalog/data/catalog_providers.dart';
 import 'package:business_catalog_app/features/catalog/utils/catalog_view_data.dart';
 import 'package:business_catalog_app/features/catalog/widgets/category_selector.dart';
@@ -142,6 +143,15 @@ class _CatalogContent extends StatelessWidget {
                       subtitle:
                           selectedCategory?.description ??
                           catalog.business.shortDescription,
+                      titleTextDirection: bidiTextDirection(
+                        selectedCategory?.name ?? l10n.catalogTitle,
+                        Directionality.of(context),
+                      ),
+                      subtitleTextDirection: bidiTextDirection(
+                        selectedCategory?.description ??
+                            catalog.business.shortDescription,
+                        Directionality.of(context),
+                      ),
                     ),
                   ),
                 ),

@@ -9,6 +9,7 @@ import 'package:business_catalog_app/core/widgets/app_skeleton.dart';
 import 'package:business_catalog_app/core/widgets/aurora_background.dart';
 import 'package:business_catalog_app/core/widgets/aurora_components.dart';
 import 'package:business_catalog_app/core/widgets/aurora_refresh.dart';
+import 'package:business_catalog_app/core/widgets/bidi_safe_text.dart';
 import 'package:business_catalog_app/features/catalog/data/catalog_providers.dart';
 import 'package:business_catalog_app/features/checkout/application/whatsapp_order_launcher.dart';
 import 'package:business_catalog_app/models/business_config.dart';
@@ -105,14 +106,19 @@ class _HelpSupportContent extends ConsumerWidget {
             children: [
               AuroraSectionHeader(
                 title: l10n.applicationInformation,
-                subtitle: l10n.aboutAppDescription,
+                subtitle: l10n.businessApplicationDescription(
+                  business.businessName,
+                ),
                 action: const AuroraIconContainer(
                   icon: Icons.info_outline_rounded,
                   size: 42,
                 ),
               ),
               const SizedBox(height: AppSpacing.md),
-              _InfoPill(label: l10n.appTitle, value: l10n.appTitle),
+              _InfoPill(
+                label: l10n.applicationInformation,
+                value: business.businessName,
+              ),
               const SizedBox(height: AppSpacing.sm),
               _InfoPill(label: l10n.appVersion, value: AppConstants.appVersion),
             ],
@@ -330,7 +336,7 @@ class _SupportHeader extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: AppSpacing.sm),
-                  Text(
+                  BidiSafeText(
                     business.businessName,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -402,7 +408,7 @@ class AuroraSupportActionCard extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: AppSpacing.xs),
-                      Text(
+                      BidiSafeText(
                         description,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
@@ -749,7 +755,7 @@ class _InfoPill extends StatelessWidget {
             ),
             const SizedBox(width: AppSpacing.sm),
             Flexible(
-              child: Text(
+              child: BidiSafeText(
                 value,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,

@@ -7,6 +7,7 @@ import 'package:business_catalog_app/core/widgets/app_async_state.dart';
 import 'package:business_catalog_app/core/widgets/app_confirmation_dialog.dart';
 import 'package:business_catalog_app/core/widgets/aurora_background.dart';
 import 'package:business_catalog_app/core/widgets/aurora_components.dart';
+import 'package:business_catalog_app/core/widgets/bidi_safe_text.dart';
 import 'package:business_catalog_app/features/cart/application/cart_controller.dart';
 import 'package:business_catalog_app/features/cart/domain/cart_state.dart';
 import 'package:business_catalog_app/features/cart/widgets/cart_item_tile.dart';
@@ -234,7 +235,7 @@ class _CartSummary extends StatelessWidget {
                 ),
                 AnimatedSwitcher(
                   duration: AppDurations.fast,
-                  child: Text(
+                  child: BidiSafeText(
                     formatCurrency(cart.subtotal, currencyCode: currencyCode),
                     key: ValueKey(cart.subtotalCents),
                     style: theme.textTheme.titleLarge?.copyWith(

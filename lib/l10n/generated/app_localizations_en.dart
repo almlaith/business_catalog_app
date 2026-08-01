@@ -109,7 +109,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get checkoutNotImplemented =>
-      'Payment and order history are not implemented yet.';
+      'Review your items before continuing to WhatsApp checkout.';
 
   @override
   String get customerDetails => 'Customer Details';
@@ -234,7 +234,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsHeaderDescription =>
-      'Tune the look, language, and support options for this reusable catalog app.';
+      'Customize your appearance, language, and support preferences.';
 
   @override
   String get appearanceSection => 'Appearance';
@@ -267,14 +267,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get themeSettingDescription =>
-      'Choose Dark, Light, or System appearance. Dark is the template default.';
+      'Choose Dark, Light, or System appearance. Dark is the default.';
 
   @override
   String get systemTheme => 'System default';
 
   @override
   String get systemThemeDescription =>
-      'Follow the device setting when the client prefers automatic switching.';
+      'Follow this device\'s appearance setting.';
 
   @override
   String get lightTheme => 'Light';
@@ -302,27 +302,27 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get applicationSectionDescription =>
-      'Template information, support, and reset actions.';
+      'Application information, support, and preference controls.';
 
   @override
   String get aboutSection => 'About';
 
   @override
   String get aboutAppDescription =>
-      'A reusable local catalog and WhatsApp ordering template for small businesses.';
+      'A modern catalog and WhatsApp ordering experience for small businesses.';
 
   @override
   String get appVersion => 'App version';
 
   @override
-  String get appVersionDescription => 'Installed template build information.';
+  String get appVersionDescription => 'Current application version.';
 
   @override
   String get resetAppearance => 'Reset appearance settings';
 
   @override
   String get resetAppearanceDescription =>
-      'Return language and theme to the template defaults.';
+      'Restore the default theme and language preferences.';
 
   @override
   String get resetAppearanceQuestion => 'Reset appearance settings?';
@@ -362,10 +362,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get quickSupportActionsDescription =>
-      'Use the available channels configured for this business.';
+      'Choose any available way to contact the business.';
 
   @override
-  String get callBusiness => 'Call business';
+  String get callBusiness => 'Call';
 
   @override
   String get sendEmail => 'Send email';
@@ -378,7 +378,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Start a WhatsApp conversation with the business.';
 
   @override
-  String get visitBusinessInformation => 'Visit business information';
+  String get visitBusinessInformation => 'View business information';
 
   @override
   String get visitBusinessInformationDescription =>
@@ -394,7 +394,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get faqDescription =>
-      'Generic answers that keep the template reusable.';
+      'Helpful answers about ordering, support, and application features.';
 
   @override
   String get faqPlaceOrderQuestion => 'How do I place an order?';
@@ -424,14 +424,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get faqPaymentAnswer =>
-      'No. This template does not process payments inside the app.';
+      'No. Payment is arranged directly with the business outside the application.';
 
   @override
   String get faqUnavailableQuestion => 'Why are some products unavailable?';
 
   @override
   String get faqUnavailableAnswer =>
-      'Availability is controlled by the local catalog data. Unavailable items are shown clearly and cannot be added to the cart.';
+      'Some items may be temporarily unavailable and cannot be added to the cart.';
 
   @override
   String get aboutOrderingTitle => 'About ordering';
@@ -472,38 +472,42 @@ class AppLocalizationsEn extends AppLocalizations {
   String get troubleshootingTitle => 'Troubleshooting';
 
   @override
-  String get troubleshootingDescription =>
-      'Quick checks for common local-template issues.';
+  String get troubleshootingDescription => 'Quick solutions for common issues.';
 
   @override
   String get troubleshootWhatsapp =>
-      'If WhatsApp does not open, check that WhatsApp or a compatible browser is available on the device.';
+      'If WhatsApp does not open, make sure WhatsApp or a compatible browser is installed.';
 
   @override
   String get troubleshootContactLink =>
-      'If a contact link does not work, verify the phone, email, or URL in catalog.json.';
+      'If a contact action does not open, try again or use another available contact method.';
 
   @override
   String get troubleshootImages =>
-      'If images are not visible, confirm the asset path exists and is registered in pubspec.yaml.';
+      'If product images do not appear, restart the application and try again.';
 
   @override
   String get troubleshootSettings =>
-      'If settings do not update immediately, reopen the screen and confirm preferences are saved.';
+      'If appearance or language changes do not update, reopen the screen.';
 
   @override
   String get troubleshootRetryContact =>
-      'You can retry the action or contact the business using another available channel.';
+      'You can contact the business through another available support channel.';
 
   @override
   String get applicationInformation => 'Application information';
+
+  @override
+  String businessApplicationDescription(Object businessName) {
+    return '$businessName catalog and WhatsApp ordering experience.';
+  }
 
   @override
   String get refreshFailedTitle => 'Refresh failed';
 
   @override
   String get refreshFailedMessage =>
-      'The local catalog could not be reloaded. Existing content was kept.';
+      'Content could not be refreshed. Existing content was kept.';
 
   @override
   String get successTitle => 'Success';

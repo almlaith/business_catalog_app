@@ -7,6 +7,7 @@ import 'package:business_catalog_app/core/widgets/app_feedback.dart';
 import 'package:business_catalog_app/core/widgets/app_skeleton.dart';
 import 'package:business_catalog_app/core/widgets/aurora_background.dart';
 import 'package:business_catalog_app/core/widgets/aurora_refresh.dart';
+import 'package:business_catalog_app/core/widgets/bidi_safe_text.dart';
 import 'package:business_catalog_app/core/widgets/local_asset_image.dart';
 import 'package:business_catalog_app/features/business_info/widgets/business_info_row.dart';
 import 'package:business_catalog_app/features/catalog/data/catalog_providers.dart';
@@ -67,12 +68,12 @@ class _BusinessInfoContent extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final openingHours = business.openingHours.entries
         .where((entry) => entry.value.trim().isNotEmpty)
-        .map((entry) => '${entry.key}: ${entry.value}')
+        .map((entry) => '${entry.key}: ${entry.value.replaceAll(' - ', ' – ')}')
         .join('\n');
     String? openingSummary;
     for (final entry in business.openingHours.entries) {
       if (entry.value.trim().isNotEmpty) {
-        openingSummary = entry.value;
+        openingSummary = entry.value.replaceAll(' - ', ' – ');
         break;
       }
     }
@@ -275,7 +276,7 @@ class _BusinessHeader extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  BidiSafeText(
                     business.businessName,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
@@ -286,7 +287,7 @@ class _BusinessHeader extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: AppSpacing.sm),
-                  Text(
+                  BidiSafeText(
                     business.shortDescription,
                     maxLines: 3,
                     overflow: TextOverflow.ellipsis,
@@ -310,7 +311,7 @@ class _BusinessHeader extends StatelessWidget {
                           horizontal: AppSpacing.sm,
                           vertical: AppSpacing.xs,
                         ),
-                        child: Text(
+                        child: BidiSafeText(
                           openingSummary,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,

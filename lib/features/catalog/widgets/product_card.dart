@@ -3,6 +3,7 @@ import 'package:business_catalog_app/core/constants/app_spacing.dart';
 import 'package:business_catalog_app/core/extensions/build_context_extensions.dart';
 import 'package:business_catalog_app/core/utils/currency_formatter.dart';
 import 'package:business_catalog_app/core/widgets/app_pressable.dart';
+import 'package:business_catalog_app/core/widgets/bidi_safe_text.dart';
 import 'package:business_catalog_app/core/widgets/local_asset_image.dart';
 import 'package:business_catalog_app/models/product.dart';
 import 'package:flutter/material.dart';
@@ -107,7 +108,7 @@ class ProductCard extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
+                          BidiSafeText(
                             product.name,
                             maxLines: roomy ? 2 : 1,
                             overflow: TextOverflow.ellipsis,
@@ -119,7 +120,7 @@ class ProductCard extends StatelessWidget {
                           if (showDescription) ...[
                             const SizedBox(height: AppSpacing.xs),
                             Flexible(
-                              child: Text(
+                              child: BidiSafeText(
                                 product.description,
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
@@ -271,7 +272,7 @@ class _ProductPrice extends StatelessWidget {
       runSpacing: 2,
       crossAxisAlignment: WrapCrossAlignment.center,
       children: [
-        Text(
+        BidiSafeText(
           formatCurrency(price, currencyCode: currencyCode),
           style: theme.textTheme.titleMedium?.copyWith(
             color: theme.colorScheme.primary,
@@ -280,7 +281,7 @@ class _ProductPrice extends StatelessWidget {
           ),
         ),
         if (oldPrice != null && oldPrice > price)
-          Text(
+          BidiSafeText(
             formatCurrency(oldPrice, currencyCode: currencyCode),
             style: theme.textTheme.bodySmall?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,

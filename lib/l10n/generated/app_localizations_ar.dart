@@ -108,7 +108,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String get checkoutTitle => 'إتمام الطلب';
 
   @override
-  String get checkoutNotImplemented => 'الدفع وسجل الطلبات غير مفعلة حاليا.';
+  String get checkoutNotImplemented =>
+      'راجع عناصر طلبك قبل المتابعة إلى إتمام الطلب عبر واتساب.';
 
   @override
   String get customerDetails => 'بيانات العميل';
@@ -229,8 +230,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get settingsTooltip => 'فتح الإعدادات';
 
   @override
-  String get settingsHeaderDescription =>
-      'اضبط المظهر واللغة وخيارات الدعم لهذا الكتالوج القابل لإعادة الاستخدام.';
+  String get settingsHeaderDescription => 'خصّص المظهر واللغة وتفضيلات الدعم.';
 
   @override
   String get appearanceSection => 'المظهر';
@@ -262,14 +262,13 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get themeSettingDescription =>
-      'اختر الوضع الداكن أو الفاتح أو حسب النظام. الوضع الداكن هو الافتراضي.';
+      'اختر المظهر الداكن أو الفاتح أو مظهر النظام. المظهر الداكن هو الافتراضي.';
 
   @override
   String get systemTheme => 'حسب النظام';
 
   @override
-  String get systemThemeDescription =>
-      'اتبع إعداد الجهاز عندما يفضل العميل التبديل التلقائي.';
+  String get systemThemeDescription => 'اتبع إعداد المظهر على هذا الجهاز.';
 
   @override
   String get lightTheme => 'فاتح';
@@ -297,27 +296,27 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get applicationSectionDescription =>
-      'معلومات القالب والدعم وإجراءات إعادة الضبط.';
+      'معلومات التطبيق والدعم وإدارة التفضيلات.';
 
   @override
   String get aboutSection => 'حول التطبيق';
 
   @override
   String get aboutAppDescription =>
-      'قالب كتالوج محلي وطلبات واتساب قابل لإعادة الاستخدام للأنشطة الصغيرة.';
+      'تجربة حديثة لعرض المنتجات واستقبال الطلبات عبر واتساب للأعمال الصغيرة.';
 
   @override
   String get appVersion => 'إصدار التطبيق';
 
   @override
-  String get appVersionDescription => 'معلومات إصدار القالب المثبت.';
+  String get appVersionDescription => 'إصدار التطبيق الحالي.';
 
   @override
   String get resetAppearance => 'إعادة ضبط المظهر';
 
   @override
   String get resetAppearanceDescription =>
-      'إرجاع اللغة والنمط إلى الإعدادات الافتراضية.';
+      'استعادة إعدادات المظهر واللغة الافتراضية.';
 
   @override
   String get resetAppearanceQuestion => 'هل تريد إعادة ضبط إعدادات المظهر؟';
@@ -357,10 +356,10 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get quickSupportActionsDescription =>
-      'استخدم القنوات المتاحة والمضبوطة لهذا النشاط.';
+      'اختر أي وسيلة متاحة للتواصل مع النشاط التجاري.';
 
   @override
-  String get callBusiness => 'اتصال بالنشاط';
+  String get callBusiness => 'اتصال';
 
   @override
   String get sendEmail => 'إرسال بريد إلكتروني';
@@ -388,7 +387,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get faqDescription =>
-      'إجابات عامة تحافظ على قابلية القالب لإعادة الاستخدام.';
+      'إجابات مفيدة حول الطلبات والدعم وميزات التطبيق.';
 
   @override
   String get faqPlaceOrderQuestion => 'كيف أرسل طلباً؟';
@@ -416,14 +415,14 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get faqPaymentAnswer =>
-      'لا. هذا القالب لا يعالج المدفوعات داخل التطبيق.';
+      'لا. يتم ترتيب الدفع مباشرة مع النشاط التجاري خارج التطبيق.';
 
   @override
   String get faqUnavailableQuestion => 'لماذا تكون بعض العناصر غير متاحة؟';
 
   @override
   String get faqUnavailableAnswer =>
-      'يتم التحكم بالتوفر من بيانات الكتالوج المحلية. تظهر العناصر غير المتاحة بوضوح ولا يمكن إضافتها إلى السلة.';
+      'قد تكون بعض العناصر غير متاحة مؤقتاً ولا يمكن إضافتها إلى السلة.';
 
   @override
   String get aboutOrderingTitle => 'حول الطلب';
@@ -464,38 +463,42 @@ class AppLocalizationsAr extends AppLocalizations {
   String get troubleshootingTitle => 'استكشاف الأخطاء';
 
   @override
-  String get troubleshootingDescription =>
-      'فحوصات سريعة لمشكلات القالب المحلي الشائعة.';
+  String get troubleshootingDescription => 'حلول سريعة للمشكلات الشائعة.';
 
   @override
   String get troubleshootWhatsapp =>
-      'إذا لم يفتح واتساب، تحقق من توفر واتساب أو متصفح متوافق على الجهاز.';
+      'إذا لم يفتح واتساب، تأكد من تثبيت واتساب أو وجود متصفح متوافق.';
 
   @override
   String get troubleshootContactLink =>
-      'إذا لم يعمل رابط التواصل، تحقق من الهاتف أو البريد أو الرابط في catalog.json.';
+      'إذا لم يفتح أحد خيارات التواصل، حاول مرة أخرى أو استخدم وسيلة تواصل أخرى.';
 
   @override
   String get troubleshootImages =>
-      'إذا لم تظهر الصور، تأكد من وجود مسار الأصل وتسجيله في pubspec.yaml.';
+      'إذا لم تظهر صور المنتجات، أعد تشغيل التطبيق وحاول مرة أخرى.';
 
   @override
   String get troubleshootSettings =>
-      'إذا لم تتحدث الإعدادات فوراً، أعد فتح الشاشة وتأكد من حفظ التفضيلات.';
+      'إذا لم يتم تطبيق تغييرات المظهر أو اللغة، أعد فتح الشاشة.';
 
   @override
   String get troubleshootRetryContact =>
-      'يمكنك إعادة المحاولة أو التواصل مع النشاط عبر قناة أخرى متاحة.';
+      'يمكنك التواصل مع النشاط التجاري من خلال وسيلة دعم أخرى متاحة.';
 
   @override
   String get applicationInformation => 'معلومات التطبيق';
+
+  @override
+  String businessApplicationDescription(Object businessName) {
+    return 'تجربة $businessName لعرض المنتجات واستقبال الطلبات عبر واتساب.';
+  }
 
   @override
   String get refreshFailedTitle => 'تعذر التحديث';
 
   @override
   String get refreshFailedMessage =>
-      'تعذرت إعادة تحميل الكتالوج المحلي. تم الإبقاء على المحتوى الحالي.';
+      'تعذر تحديث المحتوى. تم الإبقاء على المحتوى الحالي.';
 
   @override
   String get successTitle => 'تم بنجاح';

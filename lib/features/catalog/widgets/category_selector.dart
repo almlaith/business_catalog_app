@@ -1,6 +1,7 @@
 import 'package:business_catalog_app/app/theme/aurora_tokens.dart';
 import 'package:business_catalog_app/core/constants/app_spacing.dart';
 import 'package:business_catalog_app/core/extensions/build_context_extensions.dart';
+import 'package:business_catalog_app/core/widgets/bidi_safe_text.dart';
 import 'package:business_catalog_app/models/category.dart';
 import 'package:flutter/material.dart';
 
@@ -98,7 +99,11 @@ class _CategoryFilterChip extends StatelessWidget {
                 color: selected ? Colors.white : colorScheme.onSurfaceVariant,
                 fontWeight: FontWeight.w900,
               ),
-              child: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis),
+              child: BidiSafeText(
+                label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
           ),
         ),

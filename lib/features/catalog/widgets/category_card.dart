@@ -1,6 +1,7 @@
 import 'package:business_catalog_app/app/theme/aurora_tokens.dart';
 import 'package:business_catalog_app/core/constants/app_spacing.dart';
 import 'package:business_catalog_app/core/widgets/app_pressable.dart';
+import 'package:business_catalog_app/core/widgets/bidi_safe_text.dart';
 import 'package:business_catalog_app/core/widgets/local_asset_image.dart';
 import 'package:business_catalog_app/models/category.dart';
 import 'package:flutter/material.dart';
@@ -69,7 +70,7 @@ class CategoryCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(
+                      BidiSafeText(
                         category.name,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
@@ -81,7 +82,7 @@ class CategoryCard extends StatelessWidget {
                             ),
                       ),
                       const SizedBox(height: AppSpacing.xs),
-                      Text(
+                      BidiSafeText(
                         category.description,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,

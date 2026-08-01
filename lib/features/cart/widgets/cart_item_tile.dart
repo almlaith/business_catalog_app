@@ -3,6 +3,7 @@ import 'package:business_catalog_app/core/constants/app_spacing.dart';
 import 'package:business_catalog_app/core/extensions/build_context_extensions.dart';
 import 'package:business_catalog_app/core/utils/currency_formatter.dart';
 import 'package:business_catalog_app/core/widgets/aurora_components.dart';
+import 'package:business_catalog_app/core/widgets/bidi_safe_text.dart';
 import 'package:business_catalog_app/core/widgets/local_asset_image.dart';
 import 'package:business_catalog_app/features/cart/domain/cart_item.dart';
 import 'package:business_catalog_app/features/cart/widgets/quantity_stepper.dart';
@@ -49,7 +50,7 @@ class CartItemTile extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
-                      child: Text(
+                      child: BidiSafeText(
                         item.product.name,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
@@ -73,7 +74,7 @@ class CartItemTile extends StatelessWidget {
                     ),
                   ],
                 ),
-                Text(
+                BidiSafeText(
                   formatCurrency(
                     item.product.price,
                     currencyCode: currencyCode,
@@ -96,7 +97,7 @@ class CartItemTile extends StatelessWidget {
                     ),
                     AnimatedSwitcher(
                       duration: AppDurations.fast,
-                      child: Text(
+                      child: BidiSafeText(
                         formatCurrency(
                           item.lineTotal,
                           currencyCode: currencyCode,

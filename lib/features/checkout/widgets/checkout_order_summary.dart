@@ -2,6 +2,7 @@ import 'package:business_catalog_app/core/constants/app_spacing.dart';
 import 'package:business_catalog_app/core/extensions/build_context_extensions.dart';
 import 'package:business_catalog_app/core/utils/currency_formatter.dart';
 import 'package:business_catalog_app/core/widgets/aurora_components.dart';
+import 'package:business_catalog_app/core/widgets/bidi_safe_text.dart';
 import 'package:business_catalog_app/features/cart/domain/cart_state.dart';
 import 'package:flutter/material.dart';
 
@@ -55,7 +56,7 @@ class CheckoutOrderSummary extends StatelessWidget {
                       horizontal: AppSpacing.sm,
                       vertical: AppSpacing.xs,
                     ),
-                    child: Text(
+                    child: BidiSafeText(
                       '${item.quantity}',
                       style: theme.textTheme.labelMedium?.copyWith(
                         color: theme.colorScheme.primary,
@@ -66,7 +67,7 @@ class CheckoutOrderSummary extends StatelessWidget {
                 ),
                 const SizedBox(width: AppSpacing.sm),
                 Expanded(
-                  child: Text(
+                  child: BidiSafeText(
                     item.product.name,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
@@ -76,7 +77,7 @@ class CheckoutOrderSummary extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: AppSpacing.md),
-                Text(
+                BidiSafeText(
                   formatCurrency(item.lineTotal, currencyCode: currencyCode),
                   style: theme.textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w900,
@@ -102,7 +103,7 @@ class CheckoutOrderSummary extends StatelessWidget {
               ),
               AnimatedSwitcher(
                 duration: AppDurations.fast,
-                child: Text(
+                child: BidiSafeText(
                   formatCurrency(cart.subtotal, currencyCode: currencyCode),
                   key: ValueKey(cart.subtotalCents),
                   style: theme.textTheme.headlineSmall?.copyWith(

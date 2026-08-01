@@ -8,6 +8,7 @@ import 'package:business_catalog_app/core/widgets/app_feedback.dart';
 import 'package:business_catalog_app/core/widgets/app_skeleton.dart';
 import 'package:business_catalog_app/core/widgets/aurora_background.dart';
 import 'package:business_catalog_app/core/widgets/aurora_components.dart';
+import 'package:business_catalog_app/core/widgets/bidi_safe_text.dart';
 import 'package:business_catalog_app/core/widgets/local_asset_image.dart';
 import 'package:business_catalog_app/features/cart/application/cart_controller.dart';
 import 'package:business_catalog_app/features/cart/widgets/quantity_stepper.dart';
@@ -129,7 +130,7 @@ class _ProductDetailsContentState
                       child: Row(
                         children: [
                           Expanded(
-                            child: Text(
+                            child: BidiSafeText(
                               product.name,
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
@@ -167,7 +168,7 @@ class _ProductDetailsContentState
                         currencyCode: business.currencyCode,
                       ),
                       const SizedBox(height: AppSpacing.xl),
-                      Text(
+                      BidiSafeText(
                         product.description,
                         style: theme.textTheme.bodyLarge?.copyWith(
                           color: theme.colorScheme.onSurfaceVariant,
@@ -330,7 +331,7 @@ class _TagPill extends StatelessWidget {
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
-        child: Text(
+        child: BidiSafeText(
           label,
           style: Theme.of(context).textTheme.labelSmall?.copyWith(
             color: colorScheme.onSurfaceVariant,
@@ -362,7 +363,7 @@ class _ProductDetailsPrice extends StatelessWidget {
       spacing: 10,
       crossAxisAlignment: WrapCrossAlignment.center,
       children: [
-        Text(
+        BidiSafeText(
           formatCurrency(price, currencyCode: currencyCode),
           style: theme.textTheme.headlineSmall?.copyWith(
             color: theme.colorScheme.primary,
@@ -370,7 +371,7 @@ class _ProductDetailsPrice extends StatelessWidget {
           ),
         ),
         if (oldPrice != null && oldPrice > price)
-          Text(
+          BidiSafeText(
             formatCurrency(oldPrice, currencyCode: currencyCode),
             style: theme.textTheme.titleMedium?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,

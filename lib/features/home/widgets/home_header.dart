@@ -2,6 +2,7 @@ import 'package:business_catalog_app/app/theme/aurora_tokens.dart';
 import 'package:business_catalog_app/core/constants/app_spacing.dart';
 import 'package:business_catalog_app/core/extensions/build_context_extensions.dart';
 import 'package:business_catalog_app/core/widgets/aurora_components.dart';
+import 'package:business_catalog_app/core/widgets/bidi_safe_text.dart';
 import 'package:business_catalog_app/core/widgets/local_asset_image.dart';
 import 'package:business_catalog_app/models/business_config.dart';
 import 'package:flutter/material.dart';
@@ -118,7 +119,7 @@ class HomeHeader extends StatelessWidget {
                       ),
                       const SizedBox(width: AppSpacing.lg),
                       Expanded(
-                        child: Text(
+                        child: BidiSafeText(
                           business.businessName,
                           maxLines: 3,
                           overflow: TextOverflow.ellipsis,
@@ -132,7 +133,7 @@ class HomeHeader extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: AppSpacing.lg),
-                  Text(
+                  BidiSafeText(
                     business.shortDescription,
                     maxLines: 3,
                     overflow: TextOverflow.ellipsis,

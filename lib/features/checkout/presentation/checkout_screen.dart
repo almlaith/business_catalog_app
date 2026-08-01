@@ -242,6 +242,7 @@ class _CheckoutContent extends StatelessWidget {
                 TextFormField(
                   key: const ValueKey('checkout-phone-field'),
                   controller: phoneController,
+                  textDirection: TextDirection.ltr,
                   keyboardType: TextInputType.phone,
                   textInputAction: TextInputAction.next,
                   decoration: InputDecoration(
