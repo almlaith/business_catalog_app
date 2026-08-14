@@ -1,6 +1,6 @@
 # Business Catalog
 
-A reusable Flutter template for small businesses that need a local catalog, in-memory cart, checkout form, and WhatsApp order handoff without a backend. The sample data uses a fictional business, but the app is intended to be customized for restaurants, bakeries, perfume stores, salons, boutiques, and service catalogs.
+A reusable Flutter template for small businesses that need a catalog, in-memory cart, checkout form, and WhatsApp order handoff. The sample data uses a fictional business, but the app is intended to be customized for restaurants, bakeries, perfume stores, salons, boutiques, and service catalogs.
 
 ## Features
 
@@ -63,6 +63,26 @@ flutter run
 ```
 
 Use an Android emulator, iOS simulator on macOS, or a physical device.
+
+## Data Sources
+
+The catalog source is selected at build/run time with Dart defines. Local mode is the development default and intentionally uses the bundled JSON catalog:
+
+```sh
+flutter run --dart-define=CATALOG_SOURCE=local
+```
+
+Remote mode reads the public, read-only catalog from the separate `business_catalog_backend` Spring Boot repository. The backend must already be running; this app does not start it:
+
+```powershell
+flutter run `
+  --dart-define=CATALOG_SOURCE=remote `
+  --dart-define=API_BASE_URL=http://10.0.2.2:8080
+```
+
+Android Emulator uses `10.0.2.2` to reach the host machine. Debug Android builds permit cleartext HTTP for local development; production/release builds retain the platform's secure default. Use an HTTPS API URL in production. iOS local HTTP may require a narrowly scoped App Transport Security exception for the chosen development host; no broad production exception is included.
+
+`CATALOG_SOURCE` supports only `local` and `remote`. `API_BASE_URL` is required in remote mode, and failures do not silently fall back to bundled data. The backend currently exposes read-only business, category, product, and combined catalog endpoints; mutations, authentication, and persisted orders are outside this phase.
 
 ## Customization Entry Point
 
@@ -218,8 +238,7 @@ Configure signing in Xcode for the client Apple Developer account.
 
 ## Known Limitations
 
-- Local JSON only.
-- No backend.
+- The remote backend API is read-only.
 - No Firebase.
 - No authentication.
 - No payments.
