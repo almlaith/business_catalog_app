@@ -57,7 +57,9 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
             loading: () => const AppLoadingState(),
             error: (error, stackTrace) => AppErrorState(
               error: error,
-              onRetry: () => ref.invalidate(catalogDataProvider),
+              onRetry: () => ref
+                  .read(catalogControllerProvider.notifier)
+                  .retryInitialLoad(),
             ),
             data: (catalog) => _CheckoutContent(
               cart: cart,

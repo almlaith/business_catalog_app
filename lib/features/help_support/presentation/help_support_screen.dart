@@ -38,10 +38,13 @@ class HelpSupportScreen extends ConsumerWidget {
             loading: () => const AppSkeletonHelpSupport(),
             error: (error, stackTrace) => AppErrorState(
               error: error,
-              onRetry: () => ref.invalidate(catalogDataProvider),
+              onRetry: () => ref
+                  .read(catalogControllerProvider.notifier)
+                  .retryInitialLoad(),
             ),
             data: (catalog) => AuroraRefreshWrapper(
-              onRefresh: () => ref.refresh(catalogDataProvider.future),
+              onRefresh: () =>
+                  ref.read(catalogControllerProvider.notifier).refreshCatalog(),
               child: _HelpSupportContent(business: catalog.business),
             ),
           ),

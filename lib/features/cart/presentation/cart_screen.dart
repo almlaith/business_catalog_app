@@ -30,7 +30,8 @@ class CartScreen extends ConsumerWidget {
       error: (error, stackTrace) => _CartScaffold(
         child: AppErrorState(
           error: error,
-          onRetry: () => ref.invalidate(catalogDataProvider),
+          onRetry: () =>
+              ref.read(catalogControllerProvider.notifier).retryInitialLoad(),
         ),
       ),
       data: (catalog) => _CartScaffold(
