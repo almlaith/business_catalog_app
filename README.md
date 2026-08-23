@@ -1,6 +1,33 @@
 # Business Catalog
 
-A reusable Flutter template for small businesses that need a local catalog, in-memory cart, checkout form, and WhatsApp order handoff without a backend. The sample data uses a fictional business, but the app is intended to be customized for restaurants, bakeries, perfume stores, salons, boutiques, and service catalogs.
+A reusable, production-oriented Flutter business catalog template for small businesses that need a mobile product or service catalog without requiring a backend.
+
+The app provides a configurable catalog, in-memory cart, checkout flow, and WhatsApp order handoff. It is designed to be adapted for businesses such as restaurants, bakeries, perfume stores, salons, boutiques, and service providers.
+
+## Highlights
+
+- Cross-platform Flutter application for Android and iOS.
+- Configurable business, category, and product data through local JSON.
+- Shopping cart and checkout validation.
+- WhatsApp order generation and handoff.
+- English and Arabic localization with full RTL/LTR support.
+- Responsive Material 3 interface.
+- Persistent theme and language preferences.
+- Defensive catalog validation and missing-image fallbacks.
+- Feature-first project architecture.
+- No backend, Firebase, authentication, or payment provider required.
+
+## Tech Stack
+
+- **Framework:** Flutter
+- **Language:** Dart
+- **State Management:** Riverpod
+- **Navigation:** GoRouter
+- **Models:** Freezed, json_serializable
+- **Localization:** Flutter gen_l10n, ARB, intl
+- **Local Storage:** shared_preferences
+- **External Links:** url_launcher
+- **UI:** Material 3
 
 ## Features
 
@@ -17,19 +44,7 @@ A reusable Flutter template for small businesses that need a local catalog, in-m
 - English and Arabic localization with RTL/LTR support.
 - Missing-image fallback UI.
 - Defensive catalog validation for IDs, category links, and prices.
-
-## Technology Stack
-
-- Flutter and Dart.
-- Material 3.
-- Riverpod.
-- GoRouter.
-- Freezed and `json_serializable`.
-- `shared_preferences`.
-- `url_launcher`.
-- `intl`.
-- Flutter `gen_l10n` using ARB files.
-
+  
 ## Project Structure
 
 ```text
